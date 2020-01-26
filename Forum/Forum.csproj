@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>aspnet-Forum-29CDCBAC-08C2-4700-8760-5DDF86BE1594</UserSecretsId>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DataAccessLayer\" />
+    <Folder Include="DataAccessLayer\IService\" />
+    <Folder Include="DataAccessLayer\Service\" />
+    <Folder Include="ViewModels\" />
+    <Folder Include="Models\" />
+    <Folder Include="Views\Channel\" />
+    <Folder Include="Views\Thread\" />
+    <Folder Include="CommonClasses\" />
+    <Folder Include="Views\Shared\Components\" />
+    <Folder Include="Views\Shared\Components\CategoryCount\" />
+    <Folder Include="Views\Shared\Components\NavBar\" />
+    <Folder Include="Views\Shared\Components\ThreadsFollowing\" />
+    <Folder Include="Views\Shared\Components\FeaturedPoll\" />
+    <Folder Include="Components\" />
+    <Folder Include="Views\Shared\Components\TopBar\" />
+    <Folder Include="Views\Shared\Components\ImageHeader\" />
+  </ItemGroup>
+</Project>
