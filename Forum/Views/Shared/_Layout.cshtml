@@ -26,10 +26,12 @@
     <![endif]-->
 </head>
 <body>
-    @await Component.InvokeAsync("ImageHeader")
 
     <!-- nav bar -->
+    <h1>New</h1>
     @await Component.InvokeAsync("NavBar")
+
+    @await Component.InvokeAsync("ImageHeader")
 
     <main role="main">
         <div class="container">

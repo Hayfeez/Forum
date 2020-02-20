@@ -12,6 +12,8 @@ using Forum.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Forum.DataAccessLayer.IService;
+using Forum.DataAccessLayer.Service;
 
 namespace Forum
 {
@@ -34,6 +36,13 @@ namespace Forum
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            
+
+            services.AddScoped<IThreadService, ThreadService>();
+            services.AddScoped<IChannelService, ChannelService>();
+            services.AddScoped<IReplyService, ReplyService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
