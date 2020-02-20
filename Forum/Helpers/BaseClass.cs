@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Forum.CommonClasses
+namespace Forum.Helpers
 {
     public static class BaseClass
     {

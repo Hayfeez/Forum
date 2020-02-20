@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Forum.DataAccessLayer.IService;
 using Forum.Models;
-using static Forum.CommonClasses.BaseClass;
+using static Forum.Helpers.BaseClass;
 
 namespace Forum.DataAccessLayer.Service
 {

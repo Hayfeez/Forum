@@ -2,7 +2,7 @@
 using System.Net.Mail;
 using Microsoft.Extensions.Options;
 
-namespace Forum.CommonClasses
+namespace Forum.Helpers
 {
     public class MailHelper
     {
