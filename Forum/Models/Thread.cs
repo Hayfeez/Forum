@@ -12,9 +12,9 @@ namespace Forum.Models
         public string Content { get; set; }
         public DateTime DateCreated { get; set; }
 
-        public virtual AppUser AppUser { get; set; }
-        public virtual SubCategory SubCategory { get; set; }
+        public  SubscriberUser SubscriberUser { get; set; }
+        public  Category Category { get; set; }
 
-        public virtual IEnumerable<ThreadReply> ThreadReplies { get; set; }
+        public  IEnumerable<ThreadReply> ThreadReplies { get; set; }
     }
 }

@@ -7,16 +7,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Forum.Models;
 using Forum.ViewModels;
+using AutoMapper;
+using Forum.Helpers;
 
 namespace Forum.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IMapper _mapper;
+        private readonly int _subscriberId = BaseClass.GetSubscriberId();
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IMapper mapper)
         {
             _logger = logger;
+            _mapper = mapper;
         }
 
         public IActionResult Index()

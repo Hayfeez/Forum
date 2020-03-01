@@ -13,7 +13,7 @@ namespace Forum.Models
         public DateTime DateCreated { get; set; }
         public string HeaderImageUrl { get; set; }
 
-        public virtual IEnumerable<AppUser> AppUsers { get; set; }
-        public virtual IEnumerable<Channel> Channels { get; set; }
+        public  IEnumerable<SubscriberUser> SubscriberUsers { get; set; }
+        public  IEnumerable<Channel> Channels { get; set; }
     }
 }

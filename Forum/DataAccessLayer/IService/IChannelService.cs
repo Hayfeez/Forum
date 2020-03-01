@@ -15,11 +15,11 @@ namespace Forum.DataAccessLayer.IService
         Task<DbActionsResponse> UpdateChannel(Channel channel);
         Task<DbActionsResponse> DeleteChannel(int channelId);
 
-        IEnumerable<SubCategory> GetAllCategoriesInChannel(int channelId);
-        SubCategory GetSubCategoryById(int subcategoryId);
-        Task<DbActionsResponse> CreateSubCategory(SubCategory subCat);
-        Task<DbActionsResponse> UpdateSubCategory(SubCategory subCat);
-        Task<DbActionsResponse> DeleteSubCategory(int subCategoryId);
+        IEnumerable<Category> GetAllCategoriesInChannel(int channelId);
+        Category GetCategoryById(int categoryId);
+        Task<DbActionsResponse> CreateCategory(Category cat);
+        Task<DbActionsResponse> UpdateCategory(Category cat);
+        Task<DbActionsResponse> DeleteCategory(int categoryId);
     }
 
 }

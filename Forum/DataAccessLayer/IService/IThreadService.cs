@@ -9,8 +9,8 @@ namespace Forum.DataAccessLayer.IService
     public interface IThreadService
     {
         IEnumerable<Thread> GetAllThreads(int subscriberId);
-        IEnumerable<Thread> GetFilteredThreads(string  searchQuery);
-        IEnumerable<Thread> GetAllThreadsInChannel(int channelId, int? subCategoryId);
+        IEnumerable<Thread> SearchThread(string  searchQuery);
+        IEnumerable<Thread> GetAllThreadsInChannelOrCategory(int channelId, int? categoryId);
         Thread GetThreadById(long threadId);
 
         Task<DbActionsResponse> CreateThread(Thread thread);

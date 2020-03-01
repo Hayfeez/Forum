@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Forum.DataAccessLayer.IService;
 using Forum.DataAccessLayer.Service;
+using AutoMapper;
+using Forum.Helpers;
 
 namespace Forum
 {
@@ -32,21 +34,30 @@ namespace Forum
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages().AddRazorRuntimeCompilation();
 
-            
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new MappingProfile());
+            });
+            var mapper = config.CreateMapper();
+            services.AddSingleton(mapper);
+
+            services.Configure<ReadAppSettings>(Configuration.GetSection("AppConfig"));
 
             services.AddScoped<IThreadService, ThreadService>();
             services.AddScoped<IChannelService, ChannelService>();
             services.AddScoped<IReplyService, ReplyService>();
+            services.AddTransient<SeedData>();
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, SeedData seedData)
         {
             if (env.IsDevelopment())
             {
@@ -59,6 +70,9 @@ namespace Forum
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            seedData.Seed();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

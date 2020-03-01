@@ -6,11 +6,11 @@ namespace Forum.Helpers
 {
     public class MailHelper
     {
-        IOptions<ReadSMTPSettings> _smtpSettings;
+        IOptions<ReadAppSettings> _appSettings;
 
-        public MailHelper(IOptions<ReadSMTPSettings> smtpSettings)
+        public MailHelper(IOptions<ReadAppSettings> appSettings)
         {
-            _smtpSettings = smtpSettings;
+            _appSettings = appSettings;
         }
 
 
@@ -20,7 +20,7 @@ namespace Forum.Helpers
                 return false;
 
             Msg += "Note:Please do not reply to this e~mail address because its a virtual address.";
-            MailMessage mailMsg = new MailMessage(_smtpSettings.Value.SenderAddress, ToAddress);
+            MailMessage mailMsg = new MailMessage(_appSettings.Value.SenderAddress, ToAddress);
             mailMsg.Priority = MailPriority.High;
             {
                 var withBlock = mailMsg;
@@ -30,7 +30,7 @@ namespace Forum.Helpers
             }
             try
             {
-                SmtpClient client = new SmtpClient(_smtpSettings.Value.SmtpServer, _smtpSettings.Value.SmtpPort);
+                SmtpClient client = new SmtpClient(_appSettings.Value.SmtpServer, _appSettings.Value.SmtpPort);
                 client.Send(mailMsg);
                 
                 return true;

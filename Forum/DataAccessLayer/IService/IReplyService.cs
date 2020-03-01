@@ -8,8 +8,7 @@ namespace Forum.DataAccessLayer.IService
 {
     public interface IReplyService
     {
-        IEnumerable<Thread> GetAllRepliesToThread(long threadId);
-        Thread GetReplyById(long replyId);
+        IEnumerable<ThreadReply> GetAllRepliesToThread(long threadId);
 
         Task<DbActionsResponse> CreateReply(ThreadReply reply);
         Task<DbActionsResponse> UpdateReply(long replyId, string newContent);

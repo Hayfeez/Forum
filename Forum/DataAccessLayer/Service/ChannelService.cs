@@ -18,25 +18,16 @@ namespace Forum.DataAccessLayer.Service
             _dbContext = dbContext;
         }
 
-        public async Task<DbActionsResponse> CreateChannel(Channel channel)
+
+        #region Channel
+        public IEnumerable<Channel> GetAllChannels(int subscriberId)
         {
             try
             {
-                try
-                {
-                    if (_dbContext.Channels.Any(a => a.Title == channel.Title && a.Subscriber.Id == channel.Subscriber.Id))
-                        return DbActionsResponse.DuplicateExist;
-
-                    _dbContext.Channels.Add(channel);
-                    await _dbContext.SaveChangesAsync();
-
-                    return DbActionsResponse.Success;
-                    
-                }
-                catch (Exception ex)
-                {
-                    return DbActionsResponse.Error;
-                }
+                return _dbContext.Channels
+                    .Include(f => f.Categories)
+                    .Include(a => a.Subscriber)
+                    .Where(b => b.Subscriber.Id == subscriberId);
             }
             catch (Exception ex)
             {
@@ -44,155 +35,48 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-        public async Task<DbActionsResponse> CreateSubCategory(SubCategory subCat)
-        {
-            try
-            {
-                if (_dbContext.SubCategories.Any(a => a.Title == subCat.Title && a.Channel.Id == subCat.Channel.Id))
-                    return DbActionsResponse.DuplicateExist;
-
-                _dbContext.SubCategories.Add(subCat);
-                await _dbContext.SaveChangesAsync();
-                return DbActionsResponse.Success;
-            }
-            catch (Exception ex)
-            {
-                return DbActionsResponse.Error;
-            }
-        }
-
-        public async Task<DbActionsResponse> DeleteChannel(int channelId)
-        {
-            try
-            {
-                var channel = _dbContext.Channels.Where(a => a.Id == channelId).Include(a=>a.SubCategories).FirstOrDefault();
-                if (channel == null) return DbActionsResponse.DuplicateExist;
-
-                if (channel.SubCategories.Count() > 0)
-                    return DbActionsResponse.DeleteDenied;
-
-                _dbContext.Channels.Remove(channel);
-                await _dbContext.SaveChangesAsync();
-                return DbActionsResponse.Success;
-            }
-            catch (Exception ex)
-            {
-                return DbActionsResponse.Error;
-            }
-        }
-
-        public async Task<DbActionsResponse> DeleteSubCategory(int subCatId)
-        {
-            try
-            {
-                var cat = _dbContext.SubCategories.Where(a => a.Id == subCatId).Include(a => a.Threads).FirstOrDefault();
-                if (cat == null) return DbActionsResponse.DuplicateExist;
-
-                if (cat.Threads.Count() > 0)
-                    return DbActionsResponse.DeleteDenied;
-
-                _dbContext.SubCategories.Remove(cat);
-                 await _dbContext.SaveChangesAsync();
-                return DbActionsResponse.Success;
-            }
-            catch (Exception ex)
-            {
-                return DbActionsResponse.Error;
-            }
-        }
-
-        public IEnumerable<SubCategory> GetAllCategoriesInChannel(int channelId)
-        {
-            try
-            {
-                return _dbContext.SubCategories
-                    .Include(f => f.Threads)
-                    .Include(a => a.Channel)
-                    .Where(b => b.Channel.Id == channelId);
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-
-        public IEnumerable<Channel> GetAllChannels(int subscriberId)
-        {
-            try
-            {
-                return _dbContext.Channels
-                    .Include(f => f.SubCategories)
-                    .Include(a => a.Subscriber)
-                    .Where(b => b.Subscriber.Id == subscriberId);
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-
         public Channel GetChannelById(int channelId)
         {
             try
             {
-                var f =  _dbContext.Channels.Where(a=>a.Id == channelId)
-                    .Include(f => f.SubCategories).ThenInclude(a=>a.Threads).ThenInclude(b=>b.AppUser)
-                    .Include(f=>f.SubCategories).ThenInclude(f => f.Threads).ThenInclude(a => a.ThreadReplies).ThenInclude(r => r.AppUser)
+                var f = _dbContext.Channels.Where(a => a.Id == channelId)
+                    .Include(f => f.Categories).ThenInclude(a => a.Threads).ThenInclude(b => b.SubscriberUser)
+                    .Include(f => f.Categories).ThenInclude(f => f.Threads).ThenInclude(a => a.ThreadReplies).ThenInclude(r => r.SubscriberUser)
                     .FirstOrDefault();
 
                 return f;
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
-        public SubCategory GetSubCategoryById(int subCatId)
+        public async Task<DbActionsResponse> CreateChannel(Channel channel)
         {
             try
             {
-                var f = _dbContext.SubCategories.Where(a => a.Id == subCatId)
-                    .Include(f => f.Threads).ThenInclude(a => a.AppUser)
-                    .Include(f => f.Threads).ThenInclude(a => a.ThreadReplies).ThenInclude(r => r.AppUser)
-                    .FirstOrDefault();
-
-                return f;
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-
-        public async Task<DbActionsResponse> UpdateSubCategory(SubCategory subCat)
-        {
-            try
-            {
-                var cat = _dbContext.SubCategories.Where(a => a.Id == subCat.Id).FirstOrDefault();
-                if (cat == null) return DbActionsResponse.NotFound;
-
-                if (_dbContext.SubCategories.Any(a => a.Id != subCat.Id && a.Title == subCat.Title))
+                if (_dbContext.Channels.Any(a => a.Title == channel.Title && a.Subscriber.Id == channel.Subscriber.Id))
                     return DbActionsResponse.DuplicateExist;
 
-                cat.Title = subCat.Title;
-                cat.Description = subCat.Description;                
+                _dbContext.Channels.Add(channel);
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
 
-                _dbContext.SubCategories.Update(cat);
-                 await _dbContext.SaveChangesAsync();
-                return DbActionsResponse.Success;
+                return DbActionsResponse.Failed;
+
             }
             catch (Exception ex)
             {
-                return DbActionsResponse.Error;
+                throw ex;
             }
         }
-
+       
         public async Task<DbActionsResponse> UpdateChannel(Channel channel)
         {
             try
             {
-                var  chann = _dbContext.Channels.Where(a => a.Id == channel.Id).FirstOrDefault();
+                var chann = _dbContext.Channels.Where(a => a.Id == channel.Id).FirstOrDefault();
                 if (chann == null) return DbActionsResponse.NotFound;
 
                 if (_dbContext.Channels.Any(a => a.Id != channel.Id && a.Title == channel.Title))
@@ -202,15 +86,139 @@ namespace Forum.DataAccessLayer.Service
                 chann.Description = channel.Description;
                 chann.LogoUrl = channel.LogoUrl;
 
-
                 _dbContext.Channels.Update(chann);
-                await _dbContext.SaveChangesAsync();
-                return DbActionsResponse.Success;
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
+
+                return DbActionsResponse.Failed;
             }
             catch (Exception ex)
             {
-                return DbActionsResponse.Error;
+                throw ex;
             }
         }
+        public async Task<DbActionsResponse> DeleteChannel(int channelId)
+        {
+            try
+            {
+                var channel = _dbContext.Channels.Where(a => a.Id == channelId).Include(a => a.Categories).FirstOrDefault();
+                if (channel == null) return DbActionsResponse.NotFound;
+
+                if (channel.Categories.Count() > 0)
+                    return DbActionsResponse.DeleteDenied;
+
+                _dbContext.Channels.Remove(channel);
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
+
+                return DbActionsResponse.Failed;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        #endregion
+
+
+        #region Category
+        public IEnumerable<Category> GetAllCategoriesInChannel(int channelId)
+        {
+            try
+            {
+                return _dbContext.Categories
+                    .Include(f => f.Threads)
+                    .Include(a => a.Channel)
+                    .Where(b => b.Channel.Id == channelId);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public Category GetCategoryById(int categoryId)
+        {
+            try
+            {
+                var f = _dbContext.Categories.Where(a => a.Id == categoryId)
+                    .Include(f => f.Threads).ThenInclude(a => a.SubscriberUser)
+                    .Include(f => f.Threads).ThenInclude(a => a.ThreadReplies).ThenInclude(r => r.SubscriberUser)
+                    .FirstOrDefault();
+
+                return f;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<DbActionsResponse> CreateCategory(Category category)
+        {
+            try
+            {
+                if (_dbContext.Categories.Any(a => a.Title == category.Title && a.Channel.Id == category.Channel.Id))
+                    return DbActionsResponse.DuplicateExist;
+
+                _dbContext.Categories.Add(category);
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
+
+                return DbActionsResponse.Failed;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<DbActionsResponse> UpdateCategory(Category category)
+        {
+            try
+            {
+                var existingCategory = _dbContext.Categories.Where(a => a.Id == category.Id).FirstOrDefault();
+                if (existingCategory == null) return DbActionsResponse.NotFound;
+
+                if (_dbContext.Categories.Any(a => a.Id != category.Id && a.Title == category.Title))
+                    return DbActionsResponse.DuplicateExist;
+
+                existingCategory.Title = category.Title;
+                existingCategory.Description = category.Description;
+
+                _dbContext.Categories.Update(existingCategory);
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
+
+                return DbActionsResponse.Failed;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<DbActionsResponse> DeleteCategory(int categoryId)
+        {
+            try
+            {
+                var cat = _dbContext.Categories.Where(a => a.Id == categoryId).Include(a => a.Threads).FirstOrDefault();
+                if (cat == null) return DbActionsResponse.NotFound;
+
+                if (cat.Threads.Count() > 0)
+                    return DbActionsResponse.DeleteDenied;
+
+                _dbContext.Categories.Remove(cat);
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
+
+                return DbActionsResponse.Failed;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        #endregion
+
+       
     }
 }

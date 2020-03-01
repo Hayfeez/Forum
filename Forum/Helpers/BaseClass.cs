@@ -20,6 +20,7 @@ namespace Forum.Helpers
         public enum DbActionsResponse
         {
             Success = 1,
+            Failed,
             NotFound,
             DuplicateExist,
             DeleteDenied,
@@ -58,10 +59,15 @@ namespace Forum.Helpers
                     return "";
             }
         }
+
+        public  static int GetSubscriberId()
+        {
+            return 1;
+        }
     }
 
 
-    public class ReadSMTPSettings
+    public class ReadAppSettings
     {
         public string SmtpServer { get; set; }
         public string SenderAddress { get; set; }

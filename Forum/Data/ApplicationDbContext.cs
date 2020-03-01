@@ -13,12 +13,15 @@ namespace Forum.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+            
+         //   this.Configuration.LazyLoadingEnabled = false;
         }
 
-        public DbSet<AppUser> AppUsers { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Channel> Channels { get; set; }
-        public DbSet<SubCategory> SubCategories { get; set; }
+        public DbSet<Category> Categories { get; set; }
         public DbSet<Subscriber> Subscribers { get; set; }
+        public DbSet<SubscriberUser> SubscriberUsers { get; set; }
         public DbSet<Thread> Threads { get; set; }
         public DbSet<ThreadReply> ThreadReplies { get; set; }
         
