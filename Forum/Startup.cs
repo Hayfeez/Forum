@@ -16,6 +16,7 @@ using Forum.DataAccessLayer.IService;
 using Forum.DataAccessLayer.Service;
 using AutoMapper;
 using Forum.Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Forum
 {
@@ -35,10 +36,31 @@ namespace Forum
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                    // services.AddDefaultIdentity<IdentityUser>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            //    .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages().AddRazorRuntimeCompilation();
+
+
+        //    services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest)
+        //.AddRazorPagesOptions(options =>
+        //{
+        //   // options.AllowAreas = true;
+        //    options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
+        //    options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
+        //});
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = $"/Account/Login";
+                options.LogoutPath = $"/Account/Logout";
+                options.AccessDeniedPath = $"/Account/AccessDenied";
+            });
 
             var config = new MapperConfiguration(cfg =>
             {
@@ -48,13 +70,22 @@ namespace Forum
             services.AddSingleton(mapper);
 
             services.Configure<ReadAppSettings>(Configuration.GetSection("AppConfig"));
+            services.AddTransient<SeedData>();
+            services.AddSingleton<MailHelper>();
+            services.AddSingleton<LoadStaticContent>();
+            services.AddScoped<LoadDynamicContent>();
 
+            services.AddScoped<ISubscriberService, SubscriberService>();
             services.AddScoped<IThreadService, ThreadService>();
             services.AddScoped<IChannelService, ChannelService>();
             services.AddScoped<IReplyService, ReplyService>();
-            services.AddTransient<SeedData>();
+            
+
+
 
         }
+
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, SeedData seedData)

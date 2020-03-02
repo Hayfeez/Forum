@@ -14,6 +14,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.2" />
     <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,12 +27,14 @@
     <Folder Include="Views\Threads\" />
     <Folder Include="Helpers\" />
     <Folder Include="Views\Shared\Components\" />
-    <Folder Include="Views\Shared\Components\CategoryCount\" />
+    <Folder Include="Views\Shared\Components\ChannelCount\" />
     <Folder Include="Views\Shared\Components\NavBar\" />
     <Folder Include="Views\Shared\Components\ThreadsFollowing\" />
     <Folder Include="Views\Shared\Components\FeaturedPoll\" />
     <Folder Include="Components\" />
     <Folder Include="Views\Shared\Components\TopBar\" />
     <Folder Include="Views\Shared\Components\ImageHeader\" />
+    <Folder Include="Views\Account\" />
+    <Folder Include="StaticData\" />
   </ItemGroup>
 </Project>

@@ -12,6 +12,7 @@ namespace Forum.DataAccessLayer.IService
         IEnumerable<Thread> SearchThread(string  searchQuery);
         IEnumerable<Thread> GetAllThreadsInChannelOrCategory(int channelId, int? categoryId);
         Thread GetThreadById(long threadId);
+        Thread GetGuideline();
 
         Task<DbActionsResponse> CreateThread(Thread thread);
         Task<DbActionsResponse> UpdateThread(long threadId, string newContent);

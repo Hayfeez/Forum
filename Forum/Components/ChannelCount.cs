@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Forum.Components
 {
-    public class CategoryCount : ViewComponent
+    public class ChannelCount : ViewComponent
     {
-        public CategoryCount()
+        public ChannelCount()
         {
         }
 

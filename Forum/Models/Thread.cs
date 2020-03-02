@@ -10,6 +10,7 @@ namespace Forum.Models
         public long Id { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
+        public string Tags { get; set; }
         public DateTime DateCreated { get; set; }
 
         public  SubscriberUser SubscriberUser { get; set; }

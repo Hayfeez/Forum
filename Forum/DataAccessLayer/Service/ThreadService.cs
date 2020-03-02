@@ -73,6 +73,25 @@ namespace Forum.DataAccessLayer.Service
             }            
         }
 
+        public Thread GetGuideline()
+        {
+            try
+            {
+                var thread = new Thread
+                {
+                    Title = "Welcome New Users! Please read this before posting!",
+                    Content = "Congratulations oh, you have found the Community! Before you make a new topic or post, please read community guidelines.",
+                    //   DatePosted = 
+                };
+
+                return thread;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public Thread GetThreadById(long threadId)
         {
             try

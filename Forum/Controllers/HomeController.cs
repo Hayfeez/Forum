@@ -9,6 +9,7 @@ using Forum.Models;
 using Forum.ViewModels;
 using AutoMapper;
 using Forum.Helpers;
+using Forum.DataAccessLayer.IService;
 
 namespace Forum.Controllers
 {
@@ -16,17 +17,26 @@ namespace Forum.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IMapper _mapper;
+        private readonly IThreadService _threadService;
         private readonly int _subscriberId = BaseClass.GetSubscriberId();
 
-        public HomeController(ILogger<HomeController> logger, IMapper mapper)
+        public HomeController(ILogger<HomeController> logger, IMapper mapper, IThreadService threadService)
         {
             _logger = logger;
             _mapper = mapper;
+            _threadService = threadService;
         }
 
         public IActionResult Index()
         {
-            return View();
+            var guideline = _threadService.GetGuideline();           
+            var model = new HomeViewModel
+            {
+                Guideline = _mapper.Map<ThreadVM>(guideline),
+                Threads = new List<ThreadVM>()
+            };
+
+            return View(model);
         }
 
         public IActionResult Privacy()

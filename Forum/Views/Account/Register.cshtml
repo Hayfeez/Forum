@@ -1,0 +1,86 @@
+﻿@model RegisterVM
+@{
+    ViewData["Title"] = "Create Acount";
+    Layout = "_NoLoginLayout";
+}
+
+<!-- HEADER -->
+<header class="signup__header">
+    <div class="container">
+        <div class="signup__header-content">
+            <p>Already have an account?</p>
+            <a asp-action="Login" asp-controller="Account" class="btn">Log in</a>
+        </div>
+    </div>
+</header>
+
+<!-- MAIN -->
+<main class="signup__main">
+    <img class="signup__bg" src="~/images/signup-bg.png" alt="bg">
+
+    <div class="container">
+        <div class="signup__container">
+            <div class="signup__logo">
+                <a href="#"><img src="~/fonts/icons/main/Logo_Forum.svg" alt="logo">Forum</a>
+            </div>
+
+            <div class="signup__head">
+                <h3>Create a New Forum Account</h3>
+                <p>By signing up you can start posting, replaying to topics, earn badges, favorite, vote topics and many more.</p>
+            </div>
+            <div class="signup__form">
+                <form asp-action="Register" asp-controller="Account" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <!--    <div asp-validation-summary="All" class="text-danger"></div> -->
+
+                    <div class="signup__section">
+                        <label class="signup__label" asp-for="Username"></label>
+                        <input type="text" class="form-control" asp-for="Username" id="username">
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                    </div>
+                    <div class="signup__section">
+                        <label class="signup__label" asp-for="Email"></label>
+                        <input type="text" class="form-control" asp-for="Email" id="email">
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="signup__section">
+                        <label class="signup__label" asp-for="Password"></label>
+                        <div class="message-input">
+                            <input type="password" asp-for="Password" class="form-control" id="password">
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                            <!--  <span class="message-input__strong">strong</span> -->
+                        </div>
+                    </div>
+                    <div class="signup__section">
+                        <label class="signup__label" asp-for="ConfirmPassword"></label>
+                        <div class="message-input">
+                            <input type="password" asp-for="ConfirmPassword" class="form-control" id="confirmpassword">
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            <!--  <span class="message-input__strong">strong</span> -->
+                        </div>
+                    </div>
+                    <div class="signup__checkbox">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="signup__box">
+                                    <label class="custom-checkbox">
+                                        <input asp-for="Terms" type="checkbox">
+                                        <i></i>
+                                    </label>
+                                    <span>I agree to the Terms & Conditions.</span>
+                                </label>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <button type="submit" class="signup__btn-create btn btn--type-02">Create New Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Forum.ViewModels
 {
@@ -33,6 +34,7 @@ namespace Forum.ViewModels
         public int AuthorRating { get; set; }
         public DateTime DatePosted { get; set; }
         public string Content { get; set; }
+        public string Tags { get; set; }
         public IEnumerable<ThreadReplyVM> Replies { get; set; }
 
         public int RepliesCount { get; set; }
@@ -57,21 +59,30 @@ namespace Forum.ViewModels
 
 
     #region Add/Update
-    public class SaveThread
+    public class SaveThreadVM
     {
         public long Id { get; set; }
+
+        [Required]
         public string Title { get; set; }
+
+        [Required]
         public string Content { get; set; }
+
+        public string Tags { get; set; }
+
         public DateTime DateCreated { get; set; }
 
-        public int Category { get; set; }
+        public int ChannelId { get; set; }
+        public int CategoryId { get; set; }
         public string UserId { get; set; }
         
     }
 
-    public class SaveThreadReply
+    public class SaveThreadReplyVM
     {
         public long Id { get; set; }
+        [Required]
         public string Content { get; set; }
         public DateTime DateCreated { get; set; }
 

@@ -123,6 +123,21 @@ namespace Forum.DataAccessLayer.Service
 
 
         #region Category
+        public IEnumerable<Category> GetAllCategories(int subscriberId)
+        {
+            try
+            {
+                return _dbContext.Categories
+                    .Include(f => f.Threads)
+                    .Include(a => a.Channel).ThenInclude(b=>b.Subscriber)
+                    .Where(b => b.Channel.Subscriber.Id == subscriberId);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public IEnumerable<Category> GetAllCategoriesInChannel(int channelId)
         {
             try

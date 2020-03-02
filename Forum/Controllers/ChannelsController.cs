@@ -87,5 +87,31 @@ namespace Forum.Controllers
         }
 
 
+        #region private methods
+
+        public void AddToViewBag(string type, string message)
+        {
+            TempData["Type"] = type;
+            TempData["Message"] = message;
+        }
+
+        public string GetViewBagMessage(string key)
+        {
+            if (key.ToLower() == "type" && TempData["Type"] != null)
+            {
+                return TempData["Type"].ToString();
+
+            }
+
+            else if (key.ToLower() == "message" && TempData["Message"] != null)
+            {
+                return TempData["Message"].ToString();
+
+            }
+
+            return null;
+        }
+
+        #endregion
     }
 }

@@ -1,4 +1,5 @@
-﻿<!doctype html>
+﻿
+<!doctype html>
 <html lang="en-US">
 <head>
     <meta charset="utf-8" />
@@ -26,12 +27,10 @@
     <![endif]-->
 </head>
 <body>
+    @await Component.InvokeAsync("ImageHeader")
 
     <!-- nav bar -->
-    <h1>New</h1>
     @await Component.InvokeAsync("NavBar")
-
-    @await Component.InvokeAsync("ImageHeader")
 
     <main role="main">
         <div class="container">
@@ -50,7 +49,7 @@
         <div class="footer js-dropdown">
             <div class="container">
                 <div class="footer__logo">
-                    Forum
+                    <!--Image of Forum-->
                 </div>
                 <div class="footer__nav">
 
@@ -62,11 +61,11 @@
                             <li><a href="#">Privacy</a></li>
                             <li><a href="#">Send Feedback</a></li>
                         </ul>
-                        <ul class="footer__social">
+                        <!--   <ul class="footer__social">
                             <li><a href="#"><i class="fa fa-facebook-square" aria-hidden="true"></i></a></li>
                             <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
                             <li><a href="#"><i class="fa fa-cloud" aria-hidden="true"></i></a></li>
-                        </ul>
+                        </ul> -->
                     </div>
                 </div>
             </div>

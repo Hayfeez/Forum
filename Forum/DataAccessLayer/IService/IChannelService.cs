@@ -15,6 +15,7 @@ namespace Forum.DataAccessLayer.IService
         Task<DbActionsResponse> UpdateChannel(Channel channel);
         Task<DbActionsResponse> DeleteChannel(int channelId);
 
+        IEnumerable<Category> GetAllCategories(int subscriberd);
         IEnumerable<Category> GetAllCategoriesInChannel(int channelId);
         Category GetCategoryById(int categoryId);
         Task<DbActionsResponse> CreateCategory(Category cat);

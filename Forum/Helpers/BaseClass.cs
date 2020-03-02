@@ -64,6 +64,8 @@ namespace Forum.Helpers
         {
             return 1;
         }
+
+       
     }
 
 
@@ -73,6 +75,13 @@ namespace Forum.Helpers
         public string SenderAddress { get; set; }
         public string DisplayName { get; set; }
         public int SmtpPort { get; set; }
+    }
+
+
+    public class Tags
+    {
+        public string Text { get; set; }
+        public string ColourCode  { get; set; }
     }
 }
 
