@@ -59,24 +59,19 @@ namespace Forum.Helpers
                     return "";
             }
         }
-
-        public  static int GetSubscriberId()
-        {
-            return 1;
-        }
-
        
     }
 
 
     public class ReadAppSettings
     {
-        public string SmtpServer { get; set; }
-        public string SenderAddress { get; set; }
-        public string DisplayName { get; set; }
-        public int SmtpPort { get; set; }
+        public string SMTPServerHost { get; set; }
+        public string SMTPSenderAddress { get; set; }
+        public string SMTPDisplayAddress { get; set; }
+        public string SMTPServerUsername { get; set; }
+        public string SMTPServerPassword { get; set; }
+        public int SMTPServerPort { get; set; }
     }
-
 
     public class Tags
     {

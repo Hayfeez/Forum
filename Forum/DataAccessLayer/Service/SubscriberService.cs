@@ -15,7 +15,7 @@ namespace Forum.DataAccessLayer.Service
 
         public int GetSubscriberId()
         {
-            return 1;
+            return 6;
         }
     }
 }

@@ -36,8 +36,15 @@ namespace Forum
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
-                    // services.AddDefaultIdentity<IdentityUser>()
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+
+            })
+                // services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -79,8 +86,7 @@ namespace Forum
             services.AddScoped<IThreadService, ThreadService>();
             services.AddScoped<IChannelService, ChannelService>();
             services.AddScoped<IReplyService, ReplyService>();
-            
-
+            services.AddScoped<IAccountService, AccountService>();
 
 
         }
@@ -102,6 +108,7 @@ namespace Forum
                 app.UseHsts();
             }
 
+            //seedData.ClearDB();
             seedData.Seed();
 
             app.UseHttpsRedirection();

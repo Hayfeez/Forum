@@ -10,7 +10,7 @@ namespace Forum.ViewModels
         [Required]
         [Display(Name = "Username or Email")]
         // [EmailAddress]
-        public string Email { get; set; }
+        public string UsernameEmail { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -23,6 +23,19 @@ namespace Forum.ViewModels
         public string ReturnUrl { get; set; }
        
     }
+
+
+    public class JoinVM
+    {
+
+        [Required]
+        [Display(Name = "Email Address")]
+        [EmailAddress]
+        public string Email { get; set; }
+        
+
+    }
+
 
     public class RegisterVM
     {
@@ -51,6 +64,8 @@ namespace Forum.ViewModels
         [Required]
         public bool Terms { get; set; }
 
-        public string ReturnUrl { get; set; }
+        public string InviteCode { get; set; }
+
+        // public string ReturnUrl { get; set; }
     }
 }

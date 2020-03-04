@@ -13,7 +13,7 @@ namespace Forum.Helpers
         {
             CreateMap<Thread, ThreadVM>()
                    .ForMember(dest => dest.DatePosted, opt => { opt.MapFrom(d => d.DateCreated); })
-                   .ForMember(dest => dest.AuthorId, opt => { opt.MapFrom(d => d.SubscriberUser.UserId); })
+                   .ForMember(dest => dest.AuthorId, opt => { opt.MapFrom(d => d.SubscriberUser.ApplicationUserId); })
                     .ForMember(dest => dest.AuthorImageUrl, opt => { opt.MapFrom(d => d.SubscriberUser.ProfileImageUrl); })
                     .ForMember(dest => dest.AuthorName, opt => { opt.MapFrom(d => d.SubscriberUser.ApplicationUser.UserName); })
                     .ForMember(dest => dest.AuthorRating, opt => { opt.MapFrom(d => d.SubscriberUser.Rating); })
@@ -23,7 +23,7 @@ namespace Forum.Helpers
 
             CreateMap<ThreadReply, ThreadReplyVM>()
                    .ForMember(dest => dest.DatePosted, opt => { opt.MapFrom(d => d.DateCreated); })
-                   .ForMember(dest => dest.AuthorId, opt => { opt.MapFrom(d => d.SubscriberUser.UserId); })
+                   .ForMember(dest => dest.AuthorId, opt => { opt.MapFrom(d => d.SubscriberUser.ApplicationUserId); })
                     .ForMember(dest => dest.AuthorImageUrl, opt => { opt.MapFrom(d => d.SubscriberUser.ProfileImageUrl); })
                     .ForMember(dest => dest.AuthorName, opt => { opt.MapFrom(d => d.SubscriberUser.ApplicationUser.UserName); })
                     .ForMember(dest => dest.AuthorRating, opt => { opt.MapFrom(d => d.SubscriberUser.Rating); })

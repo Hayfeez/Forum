@@ -10,7 +10,7 @@
     <div class="container">
         <div class="signup__header-content">
             <p>No account yet?</p>
-            <a asp-action="Register" asp-controller="Account" class="btn">Sign up</a>
+            <a asp-action="JoinForum" asp-controller="Account" class="btn">Join now</a>
         </div>
     </div>
 </header>
@@ -31,9 +31,9 @@
                 <form asp-action="Login" asp-controller="Account" asp-route-returnUrl="@Model.ReturnUrl" method="post">
 
                     <div class="signup__section">
-                        <label class="signup__label" asp-for="Email"></label>
-                        <input type="text" class="form-control" asp-for="Email" id="email">
-                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <label class="signup__label" asp-for="UsernameEmail"></label>
+                        <input type="text" class="form-control" asp-for="UsernameEmail" id="email">
+                        <span asp-validation-for="UsernameEmail" class="text-danger"></span>
                     </div>
                     <div class="signup__section">
                         <label class="signup__label" asp-for="Password"></label>

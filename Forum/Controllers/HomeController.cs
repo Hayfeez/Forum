@@ -18,13 +18,17 @@ namespace Forum.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IMapper _mapper;
         private readonly IThreadService _threadService;
-        private readonly int _subscriberId = BaseClass.GetSubscriberId();
+        private readonly ISubscriberService _subscriberService;
+        private readonly int _subscriberId;
 
-        public HomeController(ILogger<HomeController> logger, IMapper mapper, IThreadService threadService)
+        public HomeController(ILogger<HomeController> logger, IMapper mapper,
+            IThreadService threadService, ISubscriberService subscriberService)
         {
             _logger = logger;
             _mapper = mapper;
             _threadService = threadService;
+            _subscriberService = subscriberService;
+            _subscriberId = _subscriberService.GetSubscriberId();
         }
 
         public IActionResult Index()

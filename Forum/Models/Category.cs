@@ -11,6 +11,7 @@ namespace Forum.Models
         public string Description { get; set; }
         public DateTime DateCreated { get; set; }
 
+        public int ChannelId { get; set; }
         public  Channel Channel { get; set; }
         public  IEnumerable<Thread> Threads { get; set; }
     }

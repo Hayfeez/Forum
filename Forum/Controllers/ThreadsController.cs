@@ -20,13 +20,18 @@ namespace Forum.Controllers
         private readonly ILogger<ThreadsController> _logger;
         private readonly IMapper _mapper;
         private readonly IThreadService _threadService;
-        private readonly int _subscriberId = BaseClass.GetSubscriberId();
+        private readonly ISubscriberService _subscriberService;
+        private readonly int _subscriberId;
 
-        public ThreadsController(ILogger<ThreadsController> logger, IMapper mapper, IThreadService threadService)
+        public ThreadsController(ILogger<ThreadsController> logger, IMapper mapper,
+                    IThreadService threadService, ISubscriberService subscriberService)
         {
             _logger = logger;
             _threadService = threadService;
             _mapper = mapper;
+            _subscriberService = subscriberService;
+            _subscriberId = _subscriberService.GetSubscriberId();
+
         }
 
         public IActionResult Thread(long id)

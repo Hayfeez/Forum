@@ -13,6 +13,8 @@ namespace Forum.Models
         public string Tags { get; set; }
         public DateTime DateCreated { get; set; }
 
+        public int CategoryId { get; set; }
+        public long SubscriberUserId { get; set; }
         public  SubscriberUser SubscriberUser { get; set; }
         public  Category Category { get; set; }
 

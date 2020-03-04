@@ -30,6 +30,7 @@ namespace Forum.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Subscriber> Subscribers { get; set; }
         public DbSet<SubscriberUser> SubscriberUsers { get; set; }
+        public DbSet<SubscriberInvite> SubscriberInvites { get; set; }
         public DbSet<Thread> Threads { get; set; }
         public DbSet<ThreadReply> ThreadReplies { get; set; }
         
