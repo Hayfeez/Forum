@@ -11,7 +11,7 @@
                     {
                         foreach (var item in Model)
                         {
-                            <li class="col-xs-6"><a asp-action="ChannelThreads" asp-controller="Channel" asp-route-channelId="@item.Id" class="category"><i class="bg-f9bc64"></i>@item.Name</a></li>
+                            <li class="col-xs-6"><a asp-action="ChannelThreads" asp-controller="Channels" asp-route-channel="@item.Name" class="category"><i class="bg-f9bc64"></i>@item.Name</a></li>
                         }
                     }
                     else
@@ -21,7 +21,7 @@
                 </ul>
             </nav>
         </div>
-        <div class="nav__select">
+        @*   <div class="nav__select">
             <div class="btn-select" data-dropdown-btn="tags">Tags</div>
             <div class="dropdown dropdown--design-01" data-dropdown-list="tags">
                 <div class="tags">
@@ -36,7 +36,7 @@
 
                 </div>
             </div>
-        </div>
+        </div>*@
     </div>
     <div class="nav__menu js-dropdown">
         <ul>

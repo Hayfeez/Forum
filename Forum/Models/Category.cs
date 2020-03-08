@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Forum.Models
 {
@@ -12,7 +13,7 @@ namespace Forum.Models
         public DateTime DateCreated { get; set; }
 
         public int ChannelId { get; set; }
-        public  Channel Channel { get; set; }
-        public  IEnumerable<Thread> Threads { get; set; }
+       [JsonIgnore] public  Channel Channel { get; set; }
+        [JsonIgnore] public  IEnumerable<Thread> Threads { get; set; }
     }
 }

@@ -6,7 +6,7 @@ using Forum.Data;
 using Forum.DataAccessLayer.IService;
 using Forum.Models;
 using Microsoft.EntityFrameworkCore;
-using static Forum.Helpers.BaseClass;
+using Forum.Helpers;
 
 namespace Forum.DataAccessLayer.Service
 {
@@ -25,7 +25,7 @@ namespace Forum.DataAccessLayer.Service
             try
             {
                 return _dbContext.Channels
-                    .Include(f => f.Categories)
+                    .Include(f => f.Categories).ThenInclude(b=>b.Threads)
                     .Include(a => a.Subscriber)
                     .Where(b => b.Subscriber.Id == subscriberId);
             }
@@ -40,6 +40,23 @@ namespace Forum.DataAccessLayer.Service
             try
             {
                 var f = _dbContext.Channels.Where(a => a.Id == channelId)
+                    .Include(f => f.Categories).ThenInclude(a => a.Threads).ThenInclude(b => b.SubscriberUser)
+                    .Include(f => f.Categories).ThenInclude(f => f.Threads).ThenInclude(a => a.ThreadReplies).ThenInclude(r => r.SubscriberUser)
+                    .FirstOrDefault();
+
+                return f;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public Channel GetChannelByName(string name)
+        {
+            try
+            {
+                var f = _dbContext.Channels.Where(a => a.Title.ToLower() == name.ToLower())
                     .Include(f => f.Categories).ThenInclude(a => a.Threads).ThenInclude(b => b.SubscriberUser)
                     .Include(f => f.Categories).ThenInclude(f => f.Threads).ThenInclude(a => a.ThreadReplies).ThenInclude(r => r.SubscriberUser)
                     .FirstOrDefault();
@@ -138,14 +155,18 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-        public IEnumerable<Category> GetAllCategoriesInChannel(int channelId)
+        public IEnumerable<Category> GetAllCategoriesInChannel(int channelId, bool useInclude = true)
         {
             try
             {
-                return _dbContext.Categories
-                    .Include(f => f.Threads)
-                    .Include(a => a.Channel)
-                    .Where(b => b.Channel.Id == channelId);
+                if (useInclude)
+                    return _dbContext.Categories
+                        .Where(b => b.ChannelId == channelId)
+                        .Include(f => f.Threads)
+                        .Include(a => a.Channel);
+
+                else
+                    return _dbContext.Categories.Where(b => b.ChannelId == channelId);
             }
             catch (Exception ex)
             {
@@ -157,6 +178,23 @@ namespace Forum.DataAccessLayer.Service
             try
             {
                 var f = _dbContext.Categories.Where(a => a.Id == categoryId)
+                    .Include(f => f.Threads).ThenInclude(a => a.SubscriberUser)
+                    .Include(f => f.Threads).ThenInclude(a => a.ThreadReplies).ThenInclude(r => r.SubscriberUser)
+                    .FirstOrDefault();
+
+                return f;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public Category GetCategoryByName(string name)
+        {
+            try
+            {
+                var f = _dbContext.Categories.Where(a => a.Title.ToLower() == name.ToLower())
+                    .Include(a=>a.Channel)
                     .Include(f => f.Threads).ThenInclude(a => a.SubscriberUser)
                     .Include(f => f.Threads).ThenInclude(a => a.ThreadReplies).ThenInclude(r => r.SubscriberUser)
                     .FirstOrDefault();

@@ -36,6 +36,7 @@
     <Folder Include="Views\Shared\Components\ImageHeader\" />
     <Folder Include="Views\Account\" />
     <Folder Include="StaticData\" />
+    <Folder Include="wwwroot\scripts\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\summernote-bs4.min.js" />

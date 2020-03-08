@@ -47,19 +47,19 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-        public async Task<BaseClass.DbActionsResponse> CreateSubscriberInvite(SubscriberInvite invite)
+        public async Task<DbActionsResponse> CreateSubscriberInvite(SubscriberInvite invite)
         {
             try
             {
                 if (_dbContext.SubscriberInvites.Any(a => a.SubscriberId == invite.SubscriberId && a.Email == invite.Email))
-                    return BaseClass.DbActionsResponse.DuplicateExist;
+                    return DbActionsResponse.DuplicateExist;
 
 
                 _dbContext.SubscriberInvites.Add(invite);
                 if (await _dbContext.SaveChangesAsync() > 0)
-                    return BaseClass.DbActionsResponse.Success;
+                    return DbActionsResponse.Success;
 
-                return BaseClass.DbActionsResponse.Failed;
+                return DbActionsResponse.Failed;
 
             }
             catch (Exception ex)
@@ -70,20 +70,20 @@ namespace Forum.DataAccessLayer.Service
         }
 
 
-        public async Task<BaseClass.DbActionsResponse> DeleteSubscriberInvite(SubscriberInvite invite)
+        public async Task<DbActionsResponse> DeleteSubscriberInvite(SubscriberInvite invite)
         {
             try
             {
                 var existingInvite = _dbContext.SubscriberInvites.SingleOrDefault(a => a.SubscriberId == invite.SubscriberId && a.Email == invite.Email);
                 if (existingInvite == null)
-                    return BaseClass.DbActionsResponse.NotFound;
+                    return DbActionsResponse.NotFound;
 
 
                 _dbContext.SubscriberInvites.Remove(existingInvite);
                 if (await _dbContext.SaveChangesAsync() > 0)
-                    return BaseClass.DbActionsResponse.Success;
+                    return DbActionsResponse.Success;
 
-                return BaseClass.DbActionsResponse.Failed;
+                return DbActionsResponse.Failed;
             }
             catch (Exception ex)
             {
@@ -140,19 +140,19 @@ namespace Forum.DataAccessLayer.Service
         }
 
 
-        public async Task<BaseClass.DbActionsResponse> CreateSubscriberUser(SubscriberUser user)
+        public async Task<DbActionsResponse> CreateSubscriberUser(SubscriberUser user)
         {
             try
             {
                 if (_dbContext.SubscriberUsers.Any(a => a.SubscriberId == user.SubscriberId
                             && a.ApplicationUserId == user.ApplicationUserId && a.IsActive))
-                    return BaseClass.DbActionsResponse.DuplicateExist;
+                    return DbActionsResponse.DuplicateExist;
 
                 _dbContext.SubscriberUsers.Add(user);
                 if (await _dbContext.SaveChangesAsync() > 0)
-                    return BaseClass.DbActionsResponse.Success;
+                    return DbActionsResponse.Success;
 
-                return BaseClass.DbActionsResponse.Failed;
+                return DbActionsResponse.Failed;
             }
             catch (Exception ex)
             {
@@ -160,20 +160,20 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-        public async Task<BaseClass.DbActionsResponse> DeleteSubscriberUser(long userId)
+        public async Task<DbActionsResponse> DeleteSubscriberUser(long userId)
         {
             try
             {
                 var existingUser = _dbContext.SubscriberUsers.SingleOrDefault(a => a.Id == userId && a.IsActive);
                 if (existingUser == null)
-                    return BaseClass.DbActionsResponse.NotFound;
+                    return DbActionsResponse.NotFound;
 
                 existingUser.IsActive = false;
                 _dbContext.SubscriberUsers.Update(existingUser);
                 if (await _dbContext.SaveChangesAsync() > 0)
-                    return BaseClass.DbActionsResponse.Success;
+                    return DbActionsResponse.Success;
 
-                return BaseClass.DbActionsResponse.Failed;
+                return DbActionsResponse.Failed;
             }
             catch (Exception ex)
             {
@@ -181,22 +181,22 @@ namespace Forum.DataAccessLayer.Service
             }
         }
         
-        public async Task<BaseClass.DbActionsResponse> UpdateSubscriberUser(SubscriberUser user)
+        public async Task<DbActionsResponse> UpdateSubscriberUser(SubscriberUser user)
         {
             try
             {
                 var existingUser = _dbContext.SubscriberUsers.SingleOrDefault(a => a.Id == user.Id && a.IsActive);
                 if (existingUser == null)
-                    return BaseClass.DbActionsResponse.NotFound;
+                    return DbActionsResponse.NotFound;
 
                 existingUser.HeaderImageUrl = user.HeaderImageUrl;
                 existingUser.ProfileImageUrl = user.ProfileImageUrl;
                 
                 _dbContext.SubscriberUsers.Update(existingUser);
                 if (await _dbContext.SaveChangesAsync() > 0)
-                    return BaseClass.DbActionsResponse.Success;
+                    return DbActionsResponse.Success;
 
-                return BaseClass.DbActionsResponse.Failed;
+                return DbActionsResponse.Failed;
             }
             catch (Exception ex)
             {
@@ -204,21 +204,21 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-        public async Task<BaseClass.DbActionsResponse> UpdateUserRating(int subscriberId, string appUserId, double rating)
+        public async Task<DbActionsResponse> UpdateUserRating(int subscriberId, string appUserId, double rating)
         {
             try
             {
                 var existingUser = _dbContext.SubscriberUsers.SingleOrDefault(a => a.SubscriberId == subscriberId && a.ApplicationUserId == appUserId && a.IsActive);
                 if (existingUser == null)
-                    return BaseClass.DbActionsResponse.NotFound;
+                    return DbActionsResponse.NotFound;
 
                 existingUser.Rating = rating;
 
                 _dbContext.SubscriberUsers.Update(existingUser);
                 if (await _dbContext.SaveChangesAsync() > 0)
-                    return BaseClass.DbActionsResponse.Success;
+                    return DbActionsResponse.Success;
 
-                return BaseClass.DbActionsResponse.Failed;
+                return DbActionsResponse.Failed;
             }
             catch (Exception ex)
             {
@@ -229,5 +229,67 @@ namespace Forum.DataAccessLayer.Service
         #endregion
 
 
+        #region ResetPassword Code  
+
+        public ResetPasswordCode GetResetPasswordCode(string Email, int subscriberId)
+        {
+            try
+            {
+                return _dbContext.ResetPasswordCodes
+                    .SingleOrDefault(a => a.SubscriberId == subscriberId && a.Email == Email);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DbActionsResponse> CreateResetPasswordCode(ResetPasswordCode reset)
+        {
+            try
+            {
+                if (_dbContext.ResetPasswordCodes.Any(a => a.SubscriberId == reset.SubscriberId && a.Email == reset.Email))
+                    return DbActionsResponse.DuplicateExist;
+
+
+                _dbContext.ResetPasswordCodes.Add(reset);
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
+
+                return DbActionsResponse.Failed;
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+
+        public async Task<DbActionsResponse> DeleteResetPasswordCode(ResetPasswordCode reset)
+        {
+            try
+            {
+                var existingCode = _dbContext.ResetPasswordCodes.SingleOrDefault(a => a.SubscriberId == reset.SubscriberId && a.Email == reset.Email);
+                if (existingCode == null)
+                    return DbActionsResponse.NotFound;
+
+
+                _dbContext.ResetPasswordCodes.Remove(existingCode);
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
+
+                return DbActionsResponse.Failed;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+
+        #endregion
     }
 }

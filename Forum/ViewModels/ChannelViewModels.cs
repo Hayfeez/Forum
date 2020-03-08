@@ -4,6 +4,14 @@ using Forum.Models;
 
 namespace Forum.ViewModels
 {
+
+    public class ChannelThreadCount
+    {
+        public int ChannelId { get; set; }
+        public string ChannelTitle { get; set; }
+        public long ThreadCount { get; set; }
+    }
+
     #region List
 
     public class ChannelList

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Forum.Models;
-using static Forum.Helpers.BaseClass;
+using Forum.Helpers;
 
 namespace Forum.DataAccessLayer.IService
 {

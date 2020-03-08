@@ -17,6 +17,11 @@ using Forum.DataAccessLayer.Service;
 using AutoMapper;
 using Forum.Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 namespace Forum
 {
@@ -36,31 +41,50 @@ namespace Forum
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            //services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            services.AddDefaultIdentity<IdentityUser>(options =>
             {
-                options.SignIn.RequireConfirmedAccount = true;
-                options.Password.RequireDigit = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
+                options.SignIn.RequireConfirmedAccount = false;
 
-            })
-                // services.AddDefaultIdentity<IdentityUser>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+                // Password settings.
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequiredUniqueChars = 1;
+
+                // Lockout settings.
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = false;
+
+                // User settings.
+                options.User.AllowedUserNameCharacters =
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                options.User.RequireUniqueEmail = true;
+
+            }).AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+               // .AddDefaultTokenProviders();
+               // .AddClaimsPrincipalFactory<UserClaimFactory>();
+            //<---- add this line ;
 
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddControllersWithViews();
+           // services.AddControllersWithViews();
             services.AddRazorPages().AddRazorRuntimeCompilation();
+            services.AddControllers(config =>
+            {
+                // using Microsoft.AspNetCore.Mvc.Authorization;
+                // using Microsoft.AspNetCore.Authorization;
+                var policy = new AuthorizationPolicyBuilder()
+                                 .RequireAuthenticatedUser()
+                                 .Build();
+                config.Filters.Add(new AuthorizeFilter(policy));
+            });
 
-
-        //    services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest)
-        //.AddRazorPagesOptions(options =>
-        //{
-        //   // options.AllowAreas = true;
-        //    options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
-        //    options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
-        //});
+            //services.AddSession();
 
             services.ConfigureApplicationCookie(options =>
             {
@@ -88,7 +112,7 @@ namespace Forum
             services.AddScoped<IReplyService, ReplyService>();
             services.AddScoped<IAccountService, AccountService>();
 
-
+            //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
 
@@ -115,9 +139,21 @@ namespace Forum
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            //app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
+
+           // var supportedCultures = new[]
+           //{
+           //     new CultureInfo("en-NG")
+           // };
+
+           // app.UseRequestLocalization(new RequestLocalizationOptions
+           // {
+           //     DefaultRequestCulture = new RequestCulture("en-NG"),
+           //     SupportedCultures = supportedCultures,
+           //     SupportedUICultures = supportedCultures
+           // });
 
             app.UseEndpoints(endpoints =>
             {

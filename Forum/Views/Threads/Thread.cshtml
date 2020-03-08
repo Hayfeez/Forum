@@ -1,26 +1,26 @@
 ﻿@model ThreadVM
 @inject LoadStaticContent _staticData;
 @{
-    ViewData["Title"] = "Create Topic";
+    ViewData["Title"] = Model.Title;
 }
 
     <div class="row">
        
         <div class="topics">
             <div class="topics__heading">
-                <h2 class="topics__heading-title">Which movie have you watched most recently?</h2>
-                <a class="btn btn-link" href="#">Follow Thread</a>
+                <h2 class="topics__heading-title">@Model.Title</h2>
                 <div class="topics__heading-info">
-                    <a href="#" class="category"><i class="bg-3ebafa"></i> Exchange</a>
+                    <a asp-action="ChannelThreads" asp-controller="Channels"  asp-route-channel="@Model.Category.Channel.Name" class="category"><i class="bg-3ebafa"></i> @Model.Category.Channel.Name</a>
+                    
+                    <a asp-action="CategoryThreads" asp-controller="Channels" asp-route-category="@Model.Category.Name" class="category"><i class="bg-3ebafa"></i> @Model.Category.Name</a>
                     <div class="tags">
-                        <a href="#" class="bg-4f80b0">gaming</a>
-                        <a href="#" class="bg-424ee8">nature</a>
-                        <a href="#" class="bg-36b7d7">entertainment</a>
+                      
                     </div>
                 </div>
             </div>
             <div class="topics__body">
                 <div class="topics__content">
+                    <!-- post -->
                     <div class="topic">
                         <div class="topic__head">
                             <div class="topic__avatar">
@@ -35,7 +35,7 @@
                         </div>
                         <div class="topic__content">
                             <div class="topic__text">
-                                @Model.Content
+                                @Html.Raw(Model.Content)
                             </div>
                             <div class="topic__footer">
                                 <div class="topic__footer-likes">
@@ -54,6 +54,7 @@
                                 </div>
                                 <div class="topic__footer-share">
                                     <div data-visible="desktop">
+
                                         <a href="#"><i class="icon-Share_Topic"></i></a>
                                         <a href="#"><i class="icon-Flag_Topic"></i></a>
                                         <a href="#"><i class="icon-Bookmark"></i></a>
@@ -66,6 +67,8 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- post details -->
                     <div class="topic">
                         <div class="topic__content">
                             <div class="topic__info">
@@ -88,86 +91,96 @@
                                 <div class="topic__info-section">
                                     <div>
                                         <span class="topic__info-title">Replies</span>
-                                        <div class="topic__info-count">18</div>
+                                        <div class="topic__info-count">@Model.RepliesCount</div>
                                     </div>
                                     <div>
                                         <span class="topic__info-title">Views</span>
                                         <div class="topic__info-count">205</div>
                                     </div>
                                     <div>
-                                        <span class="topic__info-title">Users</span>
+                                        <span class="topic__info-title">Followers</span>
                                         <div class="topic__info-count">6</div>
                                     </div>
                                     <div>
                                         <span class="topic__info-title">Likes</span>
                                         <div class="topic__info-count">315</div>
                                     </div>
-                                    <div>
-                                        <span class="topic__info-title">Links</span>
-                                        <div class="topic__info-count">7</div>
-                                    </div>
                                 </div>
                                 <a href="#" class="topic__info-more"><i class="icon-Arrow_Down"></i></a>
                             </div>
-                           
+
                             <div class="topic__title">
                                 @*   <p>There are <span>81 replies</span> with an estimated read time of <span>11 minutes.</span></p>*@
                             </div>
-                            <div class="topic__btns">                              
-                            
+                            <div class="topic__btns">
+
                             </div>
                         </div>
                     </div>
-                    <div class="topic">
-                        <div class="topic__head">
-                            <div class="topic__avatar">
-                                <a href="#" class="avatar"><img src="~/fonts/icons/avatars/N.svg" alt="avatar"></a>
-                            </div>
-                            <div class="topic__caption">
-                                <div class="topic__name">
-                                    <a href="#">Nicolas</a>
+
+                    <!-- replies -->
+                    @if (Model.RepliesCount > 0)
+                    {
+                        @foreach (var item in Model.Replies)
+                        {
+                            <div class="topic">
+                                <div class="topic__head">
+                                    <div class="topic__avatar">
+                                        <a href="#" class="avatar"><img src="@item.AuthorImageUrl" alt="user photo"></a>
+                                    </div>
+                                    <div class="topic__caption">
+                                        <div class="topic__name">
+                                            <a href="#">@item.AuthorName</a>
+                                        </div>
+                                        <div class="topic__date">
+                                            <i class="icon-Watch_Later"></i>@item.DatePosted.ToLongDateString()
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="topic__date">
-                                    
-                                    <i class="icon-Watch_Later"></i>06 May, 2017
+                                <div class="topic__content">
+                                    <div class="topic__text">
+                                        <p>@Html.Raw(item.Content)</p>
+                                    </div>
+                                    <div class="topic__footer">
+                                        <div class="topic__footer-likes">
+                                            <div>
+                                                <a href="#"><i class="icon-Upvote"></i></a>
+                                                <span>137</span>
+                                            </div>
+                                            <div>
+                                                <a href="#"><i class="icon-Downvote"></i></a>
+                                                <span>02</span>
+                                            </div>
+                                            <div>
+                                                <a href="#"><i class="icon-Favorite_Topic"></i></a>
+                                                <span>46</span>
+                                            </div>
+                                        </div>
+                                        <div class="topic__footer-share">
+                                            <div data-visible="desktop">
+                                                <a href="#"><i class="icon-Share_Topic"></i></a>
+                                                <a href="#"><i class="icon-Flag_Topic"></i></a>
+                                                <a href="#"><i class="icon-Bookmark"></i></a>
+                                            </div>
+                                            <div data-visible="mobile">
+                                                <a href="#"><i class="icon-More_Options"></i></a>
+                                            </div>
+
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                        }
+
+
+                    }
+                    else
+                    {
+                        <div class="topic">
+                            <p>Be the first to reply to this post</p>
                         </div>
-                        <div class="topic__content">
-                            <div class="topic__text">
-                                <p>I am using BootStrap 4, but they are asking me to use PHP framework, which I won't do. My code is secure against SQL injection, XSS and all other attacks, it is well organized, i was using OOP. I just think CodeCanyon will always find a reason to reject my work....</p>
-                            </div>
-                            <div class="topic__footer">
-                                <div class="topic__footer-likes">
-                                    <div>
-                                        <a href="#"><i class="icon-Upvote"></i></a>
-                                        <span>137</span>
-                                    </div>
-                                    <div>
-                                        <a href="#"><i class="icon-Downvote"></i></a>
-                                        <span>02</span>
-                                    </div>
-                                    <div>
-                                        <a href="#"><i class="icon-Favorite_Topic"></i></a>
-                                        <span>46</span>
-                                    </div>
-                                </div>
-                                <div class="topic__footer-share">
-                                    <div data-visible="desktop">
-                                        <a href="#"><i class="icon-Share_Topic"></i></a>
-                                        <a href="#"><i class="icon-Flag_Topic"></i></a>
-                                        <a href="#"><i class="icon-Bookmark"></i></a>
-                                    </div>
-                                    <div data-visible="mobile">
-                                        <a href="#"><i class="icon-More_Options"></i></a>
-                                    </div>
-                                   
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                  
-                 
+                    }
+
                     <div class="topic topic--selected">
                         <div class="topic__head">
                             <div class="topic__avatar">
@@ -196,7 +209,8 @@
                             </div>
                         </div>
                     </div>
-             
+
+
                 </div>
                
             </div>

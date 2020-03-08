@@ -10,9 +10,11 @@ using Forum.ViewModels;
 using Forum.DataAccessLayer.IService;
 using AutoMapper;
 using Forum.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Forum.Controllers
 {
+    [AllowAnonymous]
     public class ChannelsController : Controller
     {
         private readonly ILogger<ChannelsController> _logger;
@@ -35,11 +37,58 @@ namespace Forum.Controllers
 
         public IActionResult Index()
         {
+            return RedirectToAction("Index", "Home");
+        }
+
+        [Route("LoadChannelCategories/{channelId}")]
+        public IActionResult Category(int channelId)
+        {
             try
             {
-                var channels = _channelService.GetAllChannels(_subscriberId);
-                var d = _mapper.Map<IEnumerable<ChannelVM>>(channels);
-                return View(new ChannelList { Channels = d });
+                if (channelId == 0)
+                    return Ok(new ResponseObject
+                    {
+                        Data = null,
+                        Message = "Select a Channel",
+                        Status = Status.NotFound
+                    });
+
+                var chanel = _channelService.GetAllCategoriesInChannel(channelId, false);
+
+                return Ok(new ResponseObject
+                {
+                    Data = chanel.ToList(),
+                    Message = "",
+                    Status = Status.Success
+                });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error while getting categories");
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        public IActionResult ChannelThreads(string channel)
+        {
+            try
+            {
+                var chanel = _channelService.GetChannelByName(channel);
+                if (chanel != null)
+                {
+                    var threads = _threadService.GetAllThreadsInChannelOrCategory(chanel.Id, null);
+                    var threadList = new ChannelThreads
+                    {
+                        Channel = _mapper.Map<ChannelVM>(chanel),
+                        Threads = _mapper.Map<IEnumerable<ThreadVM>>(threads).OrderByDescending(a=>a.DatePosted)
+                    };
+
+                    return View(threadList);
+                }
+
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
@@ -48,40 +97,23 @@ namespace Forum.Controllers
             }
         }
 
-        public IActionResult ChannelThreads(int channelId)
+        public IActionResult CategoryThreads(string category)
         {
             try
             {
-                var channel = _channelService.GetChannelById(channelId);
-                var threads = _threadService.GetAllThreadsInChannelOrCategory(channelId, null);
-                var threadList = new ChannelThreads
+                var catego = _channelService.GetCategoryByName(category);
+                if (catego != null)
                 {
-                    Channel = _mapper.Map<ChannelVM>(channel),
-                    Threads = _mapper.Map<IEnumerable<ThreadVM>>(threads)
-                };                
+                    //var threads = _threadService.GetAllThreadsInChannelOrCategory(catego.ChannelId, catego.Id);
+                    var threadList = new CategoryThreads
+                    {
+                        Category = _mapper.Map<CategoryVM>(catego),
+                        Threads = _mapper.Map<IEnumerable<ThreadVM>>(catego.Threads).OrderByDescending(a => a.DatePosted)
+                    };
 
-                return View(threadList);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(0, ex, "Error while getting threads");
-                return View("Views/Shared/Error.cshtml", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-            }
-        }
-
-        public IActionResult CategoryThreads(int categoryId)
-        {
-            try
-            {
-                var category = _channelService.GetCategoryById(categoryId);
-                var threads = _threadService.GetAllThreadsInChannelOrCategory(categoryId, null);
-                var threadList = new CategoryThreads
-                {
-                    Category = _mapper.Map<CategoryVM>(category),
-                    Threads = _mapper.Map<IEnumerable<ThreadVM>>(threads)
-                };
-
-                return View(threadList);
+                    return View(threadList);
+                }
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {

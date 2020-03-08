@@ -10,28 +10,39 @@ using Forum.ViewModels;
 using Forum.DataAccessLayer.IService;
 using AutoMapper;
 using Forum.Helpers;
-using static Forum.Helpers.BaseClass;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace Forum.Controllers
 {
+    [AllowAnonymous]
     public class ThreadsController : Controller
     {
         private readonly ILogger<ThreadsController> _logger;
         private readonly IMapper _mapper;
         private readonly IThreadService _threadService;
+        private readonly IChannelService _channelService;
         private readonly ISubscriberService _subscriberService;
         private readonly int _subscriberId;
 
+
+
         public ThreadsController(ILogger<ThreadsController> logger, IMapper mapper,
-                    IThreadService threadService, ISubscriberService subscriberService)
+                    IThreadService threadService, ISubscriberService subscriberService, IChannelService channelService)
         {
             _logger = logger;
             _threadService = threadService;
+            _channelService = channelService;
             _mapper = mapper;
             _subscriberService = subscriberService;
             _subscriberId = _subscriberService.GetSubscriberId();
 
+        }
+
+        public IActionResult Index()
+        {
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult Thread(long id)
@@ -45,7 +56,7 @@ namespace Forum.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(0, ex, "Error while getting threads");
+                _logger.LogError(0, ex, "Error while getting thread");
                 return View("Views/Shared/Error.cshtml", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
                 // _logger.LogError(0, ex, "Error while processing request from {Address}", address);
@@ -63,7 +74,7 @@ namespace Forum.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(0, ex, "Error while getting threads");
+                _logger.LogError(0, ex, "Error while getting guideline");
                 return View("Views/Shared/Error.cshtml", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
                 // _logger.LogError(0, ex, "Error while processing request from {Address}", address);
@@ -98,30 +109,35 @@ namespace Forum.Controllers
             {
                 if(ModelState.IsValid)
                 {
-                    model.UserId = "1";
-
-                    var user = new SubscriberUser();
-                    var category = new Category();
-
-                   var response =  await _threadService.CreateThread(new Thread
+                    //model.UserId = _userManager.GetUserId; "1";
+                    long subscriberUserId = User.Identity.GetSubscriberUserId();
+                    var response =  await _threadService.CreateThread(new Thread
                     {
                        Content = model.Content,
                        Title = model.Title,
                        Tags = model.Tags,
                        DateCreated = DateTime.Now,
-                       SubscriberUser = user,
-                       Category = category
+                       CategoryId = model.CategoryId,
+                       SubscriberUserId = subscriberUserId                      
+                       
+                       
                     });
 
                     if(response == DbActionsResponse.DuplicateExist)
                     {
-
+                        ModelState.AddModelError(string.Empty, "This title exists");
+                        return View(model);
                     }
                     else if(response == DbActionsResponse.Success)
                     {
+                        ModelState.AddModelError(string.Empty, "Topic saved successfully");
+                        var category = _channelService.GetCategoryById(model.CategoryId);
 
+                        return RedirectToAction("CategoryThreads", "Channels", new { category = category?.Title });
                     }
+
                     //Failed
+                    ModelState.AddModelError(string.Empty, "Topic not saved");
                     return View(model);
                 }
 
@@ -130,7 +146,7 @@ namespace Forum.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(0, ex, "Error while loading thread page");
+                _logger.LogError(0, ex, "Error while creating thread");
                 return View("Views/Shared/Error.cshtml", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
             }

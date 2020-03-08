@@ -3,36 +3,6 @@ namespace Forum.Helpers
 {
     public static class BaseClass
     {
-       public enum DbActions
-        {
-            Add = 1,
-            Update,
-            Delete
-        }
-
-        public enum Status
-        {
-            Success = 1,
-            Warning,
-            Error
-        }
-
-        public enum DbActionsResponse
-        {
-            Success = 1,
-            Failed,
-            NotFound,
-            DuplicateExist,
-            DeleteDenied,
-            Error
-        }
-
-        public class ResponseObject
-        {
-            public Status Status { get; set; }
-            public string Message { get; set; }
-            public dynamic Data { get; set; }
-        }
 
         public static string GetResponseMessage(DbActionsResponse response, DbActions action, string entity = null)
         {
@@ -59,7 +29,40 @@ namespace Forum.Helpers
                     return "";
             }
         }
-       
+
+    }
+
+
+    public enum DbActions
+    {
+        Add = 1,
+        Update,
+        Delete
+    }
+
+    public enum DbActionsResponse
+    {
+        Success = 1,
+        Failed,
+        NotFound,
+        DuplicateExist,
+        DeleteDenied,
+        Error
+    }
+
+    public enum Status
+    {
+        Success = 1,
+        Failed,
+        NotFound,
+        Error
+    }
+
+    public class ResponseObject
+    {
+        public Status Status { get; set; }
+        public string Message { get; set; }
+        public object Data { get; set; }
     }
 
 

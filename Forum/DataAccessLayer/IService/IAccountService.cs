@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Forum.Models;
-using static Forum.Helpers.BaseClass;
+using Forum.Helpers;
 
 namespace Forum.DataAccessLayer.IService
 {
@@ -22,5 +22,11 @@ namespace Forum.DataAccessLayer.IService
         SubscriberInvite GetSubscriberInvite(string Email, int subscriberId);
         Task<DbActionsResponse> CreateSubscriberInvite(SubscriberInvite invite);
         Task<DbActionsResponse> DeleteSubscriberInvite(SubscriberInvite invite);
+
+
+        ResetPasswordCode GetResetPasswordCode(string Email, int subscriberId);
+        Task<DbActionsResponse> CreateResetPasswordCode(ResetPasswordCode reset);
+        Task<DbActionsResponse> DeleteResetPasswordCode(ResetPasswordCode reset);
+
     }
 }

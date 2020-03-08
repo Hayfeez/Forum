@@ -39,6 +39,10 @@ namespace Forum.Helpers
                      .ForMember(dest => dest.Categories, opt => { opt.MapFrom(d => d.Categories); })
                     .ForMember(dest => dest.CategoryCount, opt => { opt.MapFrom(d => d.Categories.Count()); });
 
+            CreateMap<Channel, ChannelThreadCount>()
+                    .ForMember(dest => dest.ChannelTitle, opt => { opt.MapFrom(d => d.Title); })
+                     .ForMember(dest => dest.ChannelId, opt => { opt.MapFrom(d => d.Id); })
+                    .ForMember(dest => dest.ThreadCount, opt => { opt.MapFrom(d => d.Categories.Sum(a=>a.Threads.Count())); });
         }
 
     }

@@ -6,7 +6,7 @@ using Forum.Data;
 using Forum.DataAccessLayer.IService;
 using Forum.Models;
 using Microsoft.EntityFrameworkCore;
-using static Forum.Helpers.BaseClass;
+using Forum.Helpers;
 
 namespace Forum.DataAccessLayer.Service
 {
@@ -97,6 +97,7 @@ namespace Forum.DataAccessLayer.Service
             try
             {
                 var topic = _dbContext.Threads.Where(a => a.Id == threadId)
+                    .Include(a=>a.Category).ThenInclude(b=>b.Channel)
                     .Include(a => a.ThreadReplies).ThenInclude(b => b.SubscriberUser)
                     .Include(a => a.SubscriberUser).FirstOrDefault();
 
@@ -112,7 +113,7 @@ namespace Forum.DataAccessLayer.Service
         {
             try
             {
-                if (_dbContext.Threads.Any(a => a.Title == thread.Title && a.Category.Id == thread.Category.Id))
+                if (_dbContext.Threads.Any(a => a.Title == thread.Title && a.CategoryId == thread.CategoryId))
                     return DbActionsResponse.DuplicateExist;
 
                 _dbContext.Threads.Add(thread);

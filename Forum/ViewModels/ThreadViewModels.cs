@@ -73,8 +73,16 @@ namespace Forum.ViewModels
 
         public DateTime DateCreated { get; set; }
 
+        [Required]
         public int ChannelId { get; set; }
+        [Required]
         public int CategoryId { get; set; }
+
+    
+        //public string ChannelName { get; set; }
+      
+        //public string CategoryName { get; set; }
+
         public string UserId { get; set; }
         
     }

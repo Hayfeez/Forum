@@ -6,7 +6,7 @@ using Forum.Data;
 using Forum.DataAccessLayer.IService;
 using Forum.Models;
 using Microsoft.EntityFrameworkCore;
-using static Forum.Helpers.BaseClass;
+using Forum.Helpers;
 
 namespace Forum.DataAccessLayer.Service
 {

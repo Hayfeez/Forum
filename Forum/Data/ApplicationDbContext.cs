@@ -33,6 +33,7 @@ namespace Forum.Data
         public DbSet<SubscriberInvite> SubscriberInvites { get; set; }
         public DbSet<Thread> Threads { get; set; }
         public DbSet<ThreadReply> ThreadReplies { get; set; }
-        
+        public DbSet<ResetPasswordCode> ResetPasswordCodes { get; set; }
+
     }
 }
