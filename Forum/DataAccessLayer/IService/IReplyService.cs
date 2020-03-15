@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Forum.Models;
-using static Forum.CommonClasses.BaseClass;
+using Forum.Helpers;
 
 namespace Forum.DataAccessLayer.IService
 {
     public interface IReplyService
     {
-        IEnumerable<Thread> GetAllRepliesToThread(long threadId);
-        Thread GetReplyById(long replyId);
+        IEnumerable<ThreadReply> GetAllRepliesToThread(long threadId);
 
         Task<DbActionsResponse> CreateReply(ThreadReply reply);
         Task<DbActionsResponse> UpdateReply(long replyId, string newContent);

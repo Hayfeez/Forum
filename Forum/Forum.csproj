@@ -12,6 +12,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.2" />
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,16 +23,55 @@
     <Folder Include="DataAccessLayer\Service\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Models\" />
-    <Folder Include="Views\Channel\" />
-    <Folder Include="Views\Thread\" />
-    <Folder Include="CommonClasses\" />
+    <Folder Include="Views\Channels\" />
+    <Folder Include="Views\Threads\" />
+    <Folder Include="Helpers\" />
     <Folder Include="Views\Shared\Components\" />
-    <Folder Include="Views\Shared\Components\CategoryCount\" />
+    <Folder Include="Views\Shared\Components\ChannelCount\" />
     <Folder Include="Views\Shared\Components\NavBar\" />
     <Folder Include="Views\Shared\Components\ThreadsFollowing\" />
     <Folder Include="Views\Shared\Components\FeaturedPoll\" />
     <Folder Include="Components\" />
     <Folder Include="Views\Shared\Components\TopBar\" />
     <Folder Include="Views\Shared\Components\ImageHeader\" />
+    <Folder Include="Views\Account\" />
+    <Folder Include="StaticData\" />
+    <Folder Include="wwwroot\scripts\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\summernote-bs4.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\summernote.min.css" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\summernote-bs4.js.map" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\summernote-bs4.min.js.map" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\summernote.min.js.map" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\summernote.js.map" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\summernote-lite.js.map" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\summernote-lite.min.css" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\summernote.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\summernote-lite.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-it-IT.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-he-IL.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-th-TH.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-hr-HR.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-fi-FI.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-az-AZ.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-es-ES.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-lt-LV.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-sr-RS.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-sl-SI.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-gl-ES.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-ja-JP.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-zh-CN.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-es-EU.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-tr-TR.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-uk-UA.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-uz-UZ.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-nb-NO.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-pl-PL.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-id-ID.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-fr-FR.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-de-DE.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-sk-SK.min.js" />
+    <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-pt-PT.min.js" />
   </ItemGroup>
 </Project>

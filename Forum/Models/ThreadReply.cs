@@ -11,8 +11,11 @@ namespace Forum.Models
         public string Content { get; set; }
         public DateTime DateCreated { get; set; }
 
-        public virtual AppUser AppUser { get; set; }
-        public virtual Thread Thread { get; set; }
+
+        public long SubscriberUserId { get; set; }
+        public long ThreadId { get; set; }
+        public SubscriberUser SubscriberUser { get; set; }
+        public Thread Thread { get; set; }
 
     }
 }

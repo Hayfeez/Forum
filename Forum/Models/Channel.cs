@@ -15,7 +15,8 @@ namespace Forum.Models
         public DateTime DateCreated { get; set; }
         public string LogoUrl { get; set; }
 
-        public virtual Subscriber Subscriber { get; set; }
-        public virtual IEnumerable<SubCategory> SubCategories { get; set; }
+        public int SubscriberId { get; set; }
+        public  Subscriber Subscriber { get; set; }
+        public  IEnumerable<Category> Categories { get; set; }
     }
 }

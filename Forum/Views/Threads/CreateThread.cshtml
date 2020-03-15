@@ -1,0 +1,170 @@
+﻿@model SaveThreadVM
+@inject LoadDynamicContent _dynamicData;
+@{
+    ViewData["Title"] = "Create Topic";
+}
+
+<link href="~/vendor/summernote/summernote-lite.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="create col-lg-8 col-md-8">
+        <div class="create__head">
+            <div class="create__title"><img src="~/fonts/icons/main/New_Topic.svg" alt="New topic">Create New Thread</div>
+            <span>Forum Guidelines</span>
+        </div>
+        <form method="post" asp-action="CreateThread" asp-acontroler="Threads">
+            <div class="create__section">
+                <label class="create__label" for="title">Thread Title</label>
+                <input type="text" class="form-control" asp-for="Title" id="title" placeholder="Add here">
+            </div>
+            <div class="row" id="channelSection">
+                <input type="hidden" asp-for="ChannelId" />
+                <input type="hidden" asp-for="CategoryId" />
+                <div class="col-md-6">
+                    <div class="create__section">
+                        <label class="create__label" for="channel">Select Channel</label>
+                        <label class="custom-select">
+                            <select id="channel">
+                                <option value="">Select</option>
+                                @foreach (var item in _dynamicData.GetChannels())
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="create__section">
+                        <label class="create__label" for="category">Select Category</label>
+                        <label class="custom-select">
+                            <select id="category">
+                                <option value="">Select</option>
+
+                            </select>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="create__section create__textarea">
+                <label class="create__label" for="content">Content</label>
+
+                <textarea class="summernote" asp-for="Content" id="content">
+
+                </textarea>
+            </div>
+
+            
+            @* <div class="create__section">
+            <label class="create__label" for="tags">Add Tags</label>
+            <input type="text" class="form-control" asp-for="Tags" id="tags" placeholder="e.g. nature, science">
+        </div> *@
+            <div class="create__advanced">
+                <div class="row">
+
+                </div>
+            </div>
+            <div class="create__footer">
+                <a href="#" class="create__btn-cansel btn">Cancel</a>
+                <button type="submit" class="create__btn-create btn btn--type-02">Create Thread</button>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="col-lg-4 col-md-4">
+
+        <!-- -->
+        @await Component.InvokeAsync("ChannelCount")
+
+        <!-- -->
+        @await Component.InvokeAsync("ThreadsFollowing")
+
+        <!-- -->
+        @await Component.InvokeAsync("FeaturedPoll")
+
+    </div>
+</div>
+
+@section Scripts {
+
+    <script src="~/vendor/summernote/summernote-lite.js"></script>
+<script src="~/scripts/general.js"></script>
+
+    <script>
+        let summernoteToolbar = [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'strikethrough', 'italic', 'clear', 'superscript', 'subscript', 'fontsize', 'fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']], //'height', 'style'
+            ['insert', ['link', 'picture', 'table']],  //'video', 'hr'
+            ['view', ['fullscreen']] //, 'codeview', 'help', 'undo', 'redo'
+        ];
+
+       
+        $(document).ready(function () {
+            alert($('#ChannelId').val());
+            alert($('#CategoryId').val());
+            loadChannelCategory($('#channel').val());
+            debugger;
+            if (!($('#ChannelId').val() != "" || $('#ChannelId'.val() != "0"))) {
+                debugger;
+                $('#channel').attr('disabled', true);
+                if (!($('#CategoryId').val() != "" || $('#CategoryId'.val() != "0"))) {
+                    debugger;
+                    $('#channelSection').hide();
+                }
+                else {
+                    debugger;
+                    loadChannelCategory($('#ChannelId').val());
+                }
+            }       
+            
+            //$('#content').summernote('code');
+            //$('#content').summernote('code', '');
+            //$('#content').summernote('code', data);
+
+            $('#content').summernote({
+                placeholder: 'Content',
+                height: 300,
+                toolbar: summernoteToolbar
+            });
+
+            $('#channel').on('change', function () {
+                let channelId = $(this).val();               
+                $('#category').empty();
+                $('#category').append("<option value=''>Select </option>");
+                loadChannelCategory(channelId);
+            });
+
+            $('#category').on('change', function () {
+                if ($(this).val() != "" || $(this).val() != "0") {
+                    $('#CategoryId').val($(this).val());
+                }
+            })
+
+        });
+
+        function loadChannelCategory(channelId) {
+            if (channelId != "") {
+                $('#ChannelId').val(channelId);
+                axiosInstance.get(`../LoadChannelCategories/${channelId}`)
+                    .then(res => {
+                        if (res.data) {
+                            if (res.data.status === STATUS.Success) {
+                                $.each(res.data.data, function (index, item) {
+                                    $('#category').append(`<option value='${item.id}'>${item.title} </option>`);
+                                });
+                            }
+                        }
+                    }).catch(error => {
+                        alert('error');
+                    });
+            }
+        }
+
+    </script>
+}
+
+
