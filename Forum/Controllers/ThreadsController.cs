@@ -13,6 +13,7 @@ using Forum.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace Forum.Controllers
 {
@@ -25,8 +26,6 @@ namespace Forum.Controllers
         private readonly IChannelService _channelService;
         private readonly ISubscriberService _subscriberService;
         private readonly int _subscriberId;
-
-
 
         public ThreadsController(ILogger<ThreadsController> logger, IMapper mapper,
                     IThreadService threadService, ISubscriberService subscriberService, IChannelService channelService)
@@ -45,13 +44,12 @@ namespace Forum.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public IActionResult Thread(long id)
+        public IActionResult Thread(string id)
         {
             try
             {
                 var thread = _threadService.GetThreadById(id);
                 var model = _mapper.Map<ThreadVM>(thread);
-                
                 return View(model);
             }
             catch (Exception ex)
@@ -63,18 +61,18 @@ namespace Forum.Controllers
             }            
         }
 
-        public IActionResult Guideline()
+        public IActionResult Pinned(string id, [FromServices] IPinnedPostService _pinnedPostService)
         {
             try
             {
-                var thread = _threadService.GetGuideline() ;
-                var model =  _mapper.Map<ThreadVM>(thread);
+                var pinned = _pinnedPostService.GetPinnedPostById(id);
+                var model =  _mapper.Map<ThreadVM>(pinned);
 
-                return View("Thread", model);
+                return View("Pinned", model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(0, ex, "Error while getting guideline");
+                _logger.LogError(0, ex, "Error while getting pinned post");
                 return View("Views/Shared/Error.cshtml", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
                 // _logger.LogError(0, ex, "Error while processing request from {Address}", address);
@@ -111,17 +109,21 @@ namespace Forum.Controllers
                 {
                     //model.UserId = _userManager.GetUserId; "1";
                     long subscriberUserId = User.Identity.GetSubscriberUserId();
-                    var response =  await _threadService.CreateThread(new Thread
-                    {
-                       Content = model.Content,
-                       Title = model.Title,
-                       Tags = model.Tags,
-                       DateCreated = DateTime.Now,
-                       CategoryId = model.CategoryId,
-                       SubscriberUserId = subscriberUserId                      
+                    var data = _mapper.Map<Thread>(model);
+                    data.SubscriberUserId = subscriberUserId;
+                    var response = await _threadService.CreateThread(data);
+
+                    //var response =  await _threadService.CreateThread(new Thread
+                    //{
+                    //   Content = model.Content,
+                    //   Title = model.Title,
+                    //   Tags = model.Tags,
+                    //   DateCreated = DateTime.Now,
+                    //   CategoryId = model.CategoryId,
+                    //   SubscriberUserId = subscriberUserId                      
                        
                        
-                    });
+                    //});
 
                     if(response == DbActionsResponse.DuplicateExist)
                     {
@@ -133,7 +135,8 @@ namespace Forum.Controllers
                         ModelState.AddModelError(string.Empty, "Topic saved successfully");
                         var category = _channelService.GetCategoryById(model.CategoryId);
 
-                        return RedirectToAction("CategoryThreads", "Channels", new { category = category?.Title });
+                        //return RedirectToAction("CategoryThreads", "Channels", new { category = category?.Title });
+                        return RedirectToAction("Thread", "Threads", new { id = data.Id });
                     }
 
                     //Failed
@@ -153,6 +156,7 @@ namespace Forum.Controllers
         }
 
 
+      
         #region private methods
 
         public void AddToViewBag(string type, string message)

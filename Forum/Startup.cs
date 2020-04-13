@@ -104,13 +104,15 @@ namespace Forum
             services.AddTransient<SeedData>();
             services.AddSingleton<MailHelper>();
             services.AddSingleton<LoadStaticContent>();
-            services.AddScoped<LoadDynamicContent>();
+            services.AddTransient<LoadDynamicContent>();
 
             services.AddScoped<ISubscriberService, SubscriberService>();
             services.AddScoped<IThreadService, ThreadService>();
             services.AddScoped<IChannelService, ChannelService>();
             services.AddScoped<IReplyService, ReplyService>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddTransient<ISearchService, SearchService>();
+            services.AddScoped<IPinnedPostService, PinnedPostService>();
 
             //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
@@ -132,7 +134,7 @@ namespace Forum
                 app.UseHsts();
             }
 
-            //seedData.ClearDB();
+           // seedData.ClearDB();
             seedData.Seed();
 
             app.UseHttpsRedirection();

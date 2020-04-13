@@ -11,6 +11,13 @@ namespace Forum.Helpers
     {
         public MappingProfile()
         {
+            CreateMap<SaveThreadVM, Thread>()
+                .ForMember(dest => dest.DateCreated, opt => { opt.MapFrom(d => DateTime.Now); });
+
+            CreateMap<PinnedPost, ThreadVM>()
+               .ForMember(dest => dest.DatePosted, opt => { opt.MapFrom(d => d.DateCreated); })
+               .ForMember(dest => dest.AuthorName, opt => { opt.MapFrom(d => "Administrator"); });
+
             CreateMap<Thread, ThreadVM>()
                    .ForMember(dest => dest.DatePosted, opt => { opt.MapFrom(d => d.DateCreated); })
                    .ForMember(dest => dest.AuthorId, opt => { opt.MapFrom(d => d.SubscriberUser.ApplicationUserId); })

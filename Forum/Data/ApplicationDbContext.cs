@@ -34,6 +34,7 @@ namespace Forum.Data
         public DbSet<Thread> Threads { get; set; }
         public DbSet<ThreadReply> ThreadReplies { get; set; }
         public DbSet<ResetPasswordCode> ResetPasswordCodes { get; set; }
+        public DbSet<PinnedPost> PinnedPosts { get; set; }
 
     }
 }

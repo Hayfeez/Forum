@@ -20,7 +20,7 @@ namespace Forum.DataAccessLayer.IService
 
         IEnumerable<SubscriberInvite> GetAllSubscriberUserInvites(int subscriberId);
         SubscriberInvite GetSubscriberInvite(string Email, int subscriberId);
-        Task<DbActionsResponse> CreateSubscriberInvite(SubscriberInvite invite);
+        Task<DbActionsResponse> CreateSubscriberInvite(SubscriberInvite invite, bool isAdmin);
         Task<DbActionsResponse> DeleteSubscriberInvite(SubscriberInvite invite);
 
 

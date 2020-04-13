@@ -12,6 +12,7 @@ namespace Forum.Models
         public string Description { get; set; }
         public DateTime DateCreated { get; set; }
         public string HeaderImageUrl { get; set; }
+        public bool AllowJoinNow { get; set; }
 
         public  IEnumerable<SubscriberUser> SubscriberUsers { get; set; }
         public  IEnumerable<Channel> Channels { get; set; }

@@ -82,7 +82,7 @@ namespace Forum.Controllers
                     var threadList = new ChannelThreads
                     {
                         Channel = _mapper.Map<ChannelVM>(chanel),
-                        Threads = _mapper.Map<IEnumerable<ThreadVM>>(threads).OrderByDescending(a=>a.DatePosted)
+                        Threads = _mapper.Map<IEnumerable<ThreadVM>>(threads)
                     };
 
                     return View(threadList);
@@ -108,7 +108,7 @@ namespace Forum.Controllers
                     var threadList = new CategoryThreads
                     {
                         Category = _mapper.Map<CategoryVM>(catego),
-                        Threads = _mapper.Map<IEnumerable<ThreadVM>>(catego.Threads).OrderByDescending(a => a.DatePosted)
+                        Threads = _mapper.Map<IEnumerable<ThreadVM>>(catego.Threads)
                     };
 
                     return View(threadList);

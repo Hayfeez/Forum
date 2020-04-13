@@ -1,0 +1,46 @@
+﻿@model ThreadVM
+@inject LoadStaticContent _staticData;
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+    <div class="row">
+       
+        <div class="topics">
+            <div class="topics__heading">
+                <h2 class="topics__heading-title">@Model.Title</h2>
+                <div class="topics__heading-info">
+                   
+                </div>
+            </div>
+            <div class="topics__body">
+                <div class="topics__content">
+                    <!-- post -->
+                    <div class="topic">
+                        <div class="topic__head">
+                            <div class="topic__avatar">
+                                <a href="#" class="avatar"><img src="~/fonts/icons/avatars/B.svg" alt="avatar"></a>
+                            </div>
+                            <div class="topic__caption">
+                                <div class="topic__name">
+                                    <a href="#">@Model.Title</a>
+                                </div>
+                                <div class="topic__date"><i class="icon-Watch_Later"></i>@Model.DatePosted.ToLongDateString()</div>
+                            </div>
+                        </div>
+                        <div class="topic__content">
+                            <div class="topic__text">
+                                @Html.Raw(Model.Content)
+                            </div>
+                           
+                        </div>
+                    </div>
+
+                 
+                </div>
+               
+            </div>
+           
+        </div>
+ 
+    </div>

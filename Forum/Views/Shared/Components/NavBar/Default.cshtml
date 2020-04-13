@@ -11,15 +11,15 @@
                 </a>
             </div>
             <div class="header__search">
-                <form asp-action="Search" asp-controller="Thread" method="post">
+                <form asp-action="Search" asp-controller="Search" method="post">
                     <label>
                         <i class="icon-Search js-header-search-btn-open"></i>
-                        <input type="search" placeholder="Search topics in all channels" class="form-control">
+                        <input type="search" placeholder="Search in all channels" class="form-control">
                     </label>
                 </form>
                 <div class="header__search-close js-header-search-btn-close"><i class="icon-Cancel"></i></div>
                 <div class="header__search-btn">
-                   <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+                   <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
 
                 </div>
 
@@ -78,6 +78,17 @@
                                 <li><a href="#">Followed People</a></li>
                             </ul>
                         </div>
+                        <!--     if (UserManager.IsInRoleAsync(SubscriberUser, "Administrator"))
+         {
+             <div>
+                 <ul class="dropdown__catalog">
+                     <li>Admin Panel</li>
+                     <li><a asp-controller="Manage" asp-action="InviteUser">Invite Users</a></li>
+                     <li><a asp-controller="Manage" asp-action="">View Users</a></li>
+                     <li><a asp-controller="Manage" asp-action="">Pinned Posts</a></li>
+                 </ul>
+             </div>
+         } -->
                     </nav>
                 </div>
 

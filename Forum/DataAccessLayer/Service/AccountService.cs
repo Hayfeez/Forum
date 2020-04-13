@@ -47,10 +47,15 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-        public async Task<DbActionsResponse> CreateSubscriberInvite(SubscriberInvite invite)
+        public async Task<DbActionsResponse> CreateSubscriberInvite(SubscriberInvite invite, bool isAdmin)
         {
             try
             {
+                if (!isAdmin &&_dbContext.Subscribers.SingleOrDefault(a => a.Id == invite.SubscriberId)?.AllowJoinNow != true)
+                {
+                    return DbActionsResponse.DeleteDenied;
+                }
+
                 if (_dbContext.SubscriberInvites.Any(a => a.SubscriberId == invite.SubscriberId && a.Email == invite.Email))
                     return DbActionsResponse.DuplicateExist;
 

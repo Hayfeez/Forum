@@ -34,16 +34,16 @@ namespace Forum.Controllers
         }
 
        
-        public IActionResult Index()
+        public IActionResult Index([FromServices]IPinnedPostService _pinnedPostService)
         {
             try
             {
-                var guideline = _threadService.GetGuideline();
-                var threads = _threadService.GetAllThreads(_subscriberId);
+                var pinnedPosts = _pinnedPostService.GetPinnedPosts(_subscriberId);
+                var threads = _threadService.GetLatestThreads(_subscriberId, 10);
                 var model = new HomeViewModel
                 {
-                    Guideline = _mapper.Map<ThreadVM>(guideline),
-                    Threads = _mapper.Map<List<ThreadVM>>(threads).OrderByDescending(a => a.DatePosted)
+                    PinnedPosts = _mapper.Map<List<PinnedPost>>(pinnedPosts),
+                    Threads = _mapper.Map<List<ThreadVM>>(threads)
                 };
 
                 return View(model);

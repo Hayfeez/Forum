@@ -48,7 +48,7 @@ namespace Forum.Data
                 string password = hasher.HashPassword(superUser, "password");
                 superUser.PasswordHash = password;
 
-                var subscriberUser = new SubscriberUser { ApplicationUser = superUser, DateJoined = DateTime.Now, IsActive = true, Subscriber = subscriber, Rating = 0.0, ProfileImageUrl = "", HeaderImageUrl = "" };
+                var subscriberUser = new SubscriberUser { ApplicationUserId = userId, Email = superUser.Email, Password = superUser.PasswordHash,  DateJoined = DateTime.Now, IsActive = true, Subscriber = subscriber, Rating = 0.0, ProfileImageUrl = "", HeaderImageUrl = "" };
 
                 _context.Subscribers.Add(subscriber);
                 _context.Channels.AddRange(channels);
