@@ -22,20 +22,15 @@ namespace Forum.Controllers
         private readonly ILogger<ThreadsController> _logger;
         private readonly IMapper _mapper;
         private readonly ISearchService _searchService;
-        private readonly ISubscriberService _subscriberService;
-        private readonly int _subscriberId;
+        private readonly Subscriber _tenant;        
 
-
-
-        public SearchController(ILogger<ThreadsController> logger, IMapper mapper,
-                    ISearchService searchService, ISubscriberService subscriberService)
+        public SearchController(ILogger<ThreadsController> logger, Subscriber tenant, IMapper mapper,
+                    ISearchService searchService)
         {
             _logger = logger;
             _searchService = searchService;
             _mapper = mapper;
-            _subscriberService = subscriberService;
-            _subscriberId = _subscriberService.GetSubscriberId();
-
+            _tenant = tenant;
         }
 
         [HttpPost]
@@ -51,7 +46,7 @@ namespace Forum.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var response = _searchService.SearchAllThreads(_subscriberId, searchText);
+                    var response = _searchService.SearchAllThreads(_tenant.Id, searchText);
                     
                     return View(new SearchViewModel {
                         Threads = _mapper.Map<List<ThreadVM>>(response),

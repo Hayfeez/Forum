@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AutoMapper;
 using Forum.DataAccessLayer.IService;
+using Forum.Models;
 using Forum.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,15 +12,13 @@ namespace Forum.Components
     {
         private readonly IMapper _mapper;
         private readonly IChannelService _channelService;
-        private readonly ISubscriberService _subscriberService;
+        private readonly Subscriber _tenant;
 
-        private readonly int _subscriberId;
-        public ChannelCount(IMapper mapper,IChannelService channelService, ISubscriberService subscriberService)
+        public ChannelCount(IMapper mapper,IChannelService channelService, Subscriber tenant)
         {
             _mapper = mapper;
             _channelService = channelService;
-            _subscriberService = subscriberService;
-            _subscriberId = _subscriberService.GetSubscriberId();
+            _tenant = tenant;
         }
 
         public IViewComponentResult Invoke()
@@ -27,7 +26,7 @@ namespace Forum.Components
             var model = new List<ChannelThreadCount>();
             try
             {
-                var allchannels = _channelService.GetAllChannels(_subscriberId);
+                var allchannels = _channelService.GetAllChannels(_tenant.Id);
                 model =  _mapper.Map<List<ChannelThreadCount>>(allchannels);
             }
             catch (Exception ex)

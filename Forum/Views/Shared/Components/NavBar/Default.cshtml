@@ -1,13 +1,15 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using Forum.Models
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
+@inject Subscriber  Tenant
 
 <header>
     <div class="header js-header js-dropdown">
         <div class="container">
             <div class="header__logo">
                 <a asp-action="Index" asp-controller="Home">
-                    Forum
+                    @Tenant.Name
                 </a>
             </div>
             <div class="header__search">

@@ -51,7 +51,7 @@ namespace Forum.DataAccessLayer.Service
         {
             try
             {
-                if (!isAdmin &&_dbContext.Subscribers.SingleOrDefault(a => a.Id == invite.SubscriberId)?.AllowJoinNow != true)
+                if (!isAdmin &&_dbContext.Tenants.SingleOrDefault(a => a.Id == invite.SubscriberId)?.AllowJoinNow != true)
                 {
                     return DbActionsResponse.DeleteDenied;
                 }

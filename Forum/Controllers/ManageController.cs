@@ -22,17 +22,17 @@ namespace Forum.Controllers
         private readonly ILogger<ManageController> _logger;
         private readonly IMapper _mapper;
         private readonly IAccountService _accountService;
-        private readonly ISubscriberService _subscriberService;
-        private readonly int _subscriberId;
+        private readonly Subscriber _tenant;
+        private readonly ITenantService _subscriberService;
 
-        public ManageController(ILogger<ManageController> logger, IMapper mapper,
-            IAccountService accountService, ISubscriberService subscriberService)
+        public ManageController(ILogger<ManageController> logger, Subscriber tenant, IMapper mapper,
+            IAccountService accountService, ITenantService subscriberService)
         {
             _logger = logger;
             _mapper = mapper;
             _accountService = accountService;
+            _tenant = tenant;
             _subscriberService = subscriberService;
-            _subscriberId = _subscriberService.GetSubscriberId();
         }
 
         #region Invites
@@ -74,7 +74,7 @@ namespace Forum.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var checkEmail = _accountService.IsUserASubscriberUser(model.Email, _subscriberId);
+                    var checkEmail = _accountService.IsUserASubscriberUser(model.Email, _tenant.Id);
                     if (checkEmail)
                     {
                         ModelState.AddModelError(string.Empty, "This user is already a member");
@@ -88,7 +88,7 @@ namespace Forum.Controllers
                         DateCreated = DateTime.Now,
                         Email = model.Email,
                         InviteCode = code,
-                        SubscriberId = _subscriberId,
+                        SubscriberId = _tenant.Id,
                     }, true);
 
                     if (createInvite == DbActionsResponse.DuplicateExist)

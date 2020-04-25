@@ -24,18 +24,16 @@ namespace Forum.Controllers
         private readonly IMapper _mapper;
         private readonly IThreadService _threadService;
         private readonly IChannelService _channelService;
-        private readonly ISubscriberService _subscriberService;
-        private readonly int _subscriberId;
+        private readonly Subscriber _tenant;
 
-        public ThreadsController(ILogger<ThreadsController> logger, IMapper mapper,
-                    IThreadService threadService, ISubscriberService subscriberService, IChannelService channelService)
+        public ThreadsController(ILogger<ThreadsController> logger, Subscriber tenant, IMapper mapper,
+                    IThreadService threadService, IChannelService channelService)
         {
             _logger = logger;
             _threadService = threadService;
             _channelService = channelService;
             _mapper = mapper;
-            _subscriberService = subscriberService;
-            _subscriberId = _subscriberService.GetSubscriberId();
+            _tenant = tenant;
 
         }
 

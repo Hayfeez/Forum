@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AutoMapper;
 using Forum.DataAccessLayer.IService;
+using Forum.Models;
 using Forum.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,13 +12,13 @@ namespace Forum.Components
     {
         private readonly IChannelService _channelService;
         private readonly IMapper _mapper;
-        private readonly ISubscriberService _subscriberService;
+        private readonly Subscriber _tenant;
 
-        public TopBar(IChannelService channelService, IMapper mapper, ISubscriberService subscriberService)
+        public TopBar(IChannelService channelService, IMapper mapper, Subscriber tenant)
         {
             _channelService = channelService;
             _mapper = mapper;
-            _subscriberService = subscriberService;
+            _tenant = tenant;
         }
 
        
@@ -26,7 +27,7 @@ namespace Forum.Components
             List<ChannelVM> model = new List<ChannelVM>();
             try
             {
-                var categories = _channelService.GetAllChannels(_subscriberService.GetSubscriberId());
+                var categories = _channelService.GetAllChannels(_tenant.Id);
 
                 model = _mapper.Map<List<ChannelVM>>(categories);
                 return View(model);

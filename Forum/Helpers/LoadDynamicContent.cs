@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using AutoMapper;
 using Forum.DataAccessLayer.IService;
+using Forum.Models;
 using Forum.ViewModels;
 using Newtonsoft.Json;
 
@@ -11,23 +12,21 @@ namespace Forum.Helpers
     public class LoadDynamicContent
     {
         private readonly IChannelService _channelService;
-        private readonly ISubscriberService _subscriberService;
+        private readonly Subscriber _tenant;
         private readonly IMapper _mapper;
-        private readonly int userSubscriberId;
 
-        public LoadDynamicContent(IChannelService channelService, IMapper mapper, ISubscriberService subscriberService)
+        public LoadDynamicContent(IChannelService channelService, IMapper mapper, Subscriber tenant)
         {
             _channelService = channelService;
             _mapper = mapper;
-            _subscriberService = subscriberService;
-            userSubscriberId = _subscriberService.GetSubscriberId();
+            _tenant = tenant;
         }
 
         public List<ChannelVM> GetChannels()
         {
             try
             {
-                var channels = _channelService.GetAllChannels(userSubscriberId);
+                var channels = _channelService.GetAllChannels(_tenant.Id);
 
                 return _mapper.Map<List<ChannelVM>>(channels);
             }
@@ -43,7 +42,7 @@ namespace Forum.Helpers
         {
             try
             {
-                var categories = _channelService.GetAllCategories(userSubscriberId);
+                var categories = _channelService.GetAllCategories(_tenant.Id);
 
                 return _mapper.Map<List<CategoryVM>>(categories);
             }

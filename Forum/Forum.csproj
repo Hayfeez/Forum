@@ -15,6 +15,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.2" />
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
+    <PackageReference Include="SaasKit.Multitenancy" Version="1.1.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,6 +40,7 @@
     <Folder Include="wwwroot\scripts\" />
     <Folder Include="Views\Manage\" />
     <Folder Include="Views\Search\" />
+    <Folder Include="Views\Default\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\summernote-bs4.min.js" />
