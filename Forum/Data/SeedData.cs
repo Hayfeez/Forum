@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Forum.Helpers;
 using Forum.Models;
 using Microsoft.AspNetCore.Identity;
 
@@ -24,7 +25,7 @@ namespace Forum.Data
                 if (_context.Channels.Any())
                     return Task.CompletedTask;
 
-                var subscriber = new Subscriber { Description = "Main Forum", DateCreated = DateTime.Now, Domain = "main.forum", AllowJoinNow = false, HeaderImageUrl = "", Name = "Main Forum" };
+                var subscriber = new Subscriber { Description = "Main Forum", DateCreated = DateTime.Now, Domain = "myforum.localhost", AllowJoinNow = false, HeaderImageUrl = "", Name = "Main Forum", IsActive = true, IsPublic = true };
 
                 var channel1 = new Channel { Subscriber = subscriber, DateCreated = DateTime.Now, Description = "Career", LogoUrl = "", Title = "Career" };
                 var channel2 = new Channel { Subscriber = subscriber, DateCreated = DateTime.Now, Description = "Sports", LogoUrl = "", Title = "Sports" };
@@ -48,7 +49,7 @@ namespace Forum.Data
                 string password = hasher.HashPassword(superUser, "password");
                 superUser.PasswordHash = password;
 
-                var subscriberUser = new SubscriberUser { ApplicationUserId = userId, Email = superUser.Email, Password = superUser.PasswordHash,  DateJoined = DateTime.Now, IsActive = true, Subscriber = subscriber, Rating = 0.0, ProfileImageUrl = "", HeaderImageUrl = "" };
+                var subscriberUser = new SubscriberUser { ApplicationUserId = userId, Email = superUser.Email, Password = superUser.PasswordHash, UserRole = UserRoles.Admin,  DateJoined = DateTime.Now, IsActive = true, Subscriber = subscriber, Rating = 0.0, ProfileImageUrl = "" };
 
                 _context.Tenants.Add(subscriber);
                 _context.Channels.AddRange(channels);

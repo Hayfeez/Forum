@@ -8,17 +8,12 @@ namespace Forum.DataAccessLayer.IService
 {
     public interface IAccountService
     {
-        IEnumerable<SubscriberUser> GetAllSubscriberUsers(int subscriberId); 
         SubscriberUser GetSubscriberUser(string userId, int subscriberId);
         bool IsUserASubscriberUser(string email, int subscriberId);
-        Task<DbActionsResponse> UpdateUserRating(int subscriberId, string ApplicationUserId, double rating);
-
         Task<DbActionsResponse> CreateSubscriberUser(SubscriberUser user);
         Task<DbActionsResponse> UpdateSubscriberUser(SubscriberUser user);
-        Task<DbActionsResponse> DeleteSubscriberUser(long userId);
 
 
-        IEnumerable<SubscriberInvite> GetAllSubscriberUserInvites(int subscriberId);
         SubscriberInvite GetSubscriberInvite(string Email, int subscriberId);
         Task<DbActionsResponse> CreateSubscriberInvite(SubscriberInvite invite, bool isAdmin);
         Task<DbActionsResponse> DeleteSubscriberInvite(SubscriberInvite invite);

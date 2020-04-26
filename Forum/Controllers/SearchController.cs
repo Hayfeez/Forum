@@ -19,12 +19,12 @@ namespace Forum.Controllers
     [AllowAnonymous]
     public class SearchController : Controller
     {
-        private readonly ILogger<ThreadsController> _logger;
+        private readonly ILogger<SearchController> _logger;
         private readonly IMapper _mapper;
         private readonly ISearchService _searchService;
         private readonly Subscriber _tenant;        
 
-        public SearchController(ILogger<ThreadsController> logger, Subscriber tenant, IMapper mapper,
+        public SearchController(ILogger<SearchController> logger, Subscriber tenant, IMapper mapper,
                     ISearchService searchService)
         {
             _logger = logger;
@@ -33,7 +33,7 @@ namespace Forum.Controllers
             _tenant = tenant;
         }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult Search(string searchText)
         {
             return RedirectToAction("SearchResult", new { searchText = searchText });

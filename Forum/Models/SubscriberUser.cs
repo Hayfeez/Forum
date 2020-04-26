@@ -8,11 +8,11 @@ namespace Forum.Models
     {
         public long Id { get; set; }
         public double Rating { get; set; }
-        public string HeaderImageUrl { get; set; }
         public string ProfileImageUrl { get; set; }
 
         public string Email { get; set; }
         public string Password { get; set; }
+        public string UserRole { get; set; }
         public DateTime DateJoined { get; set; }
         public bool IsActive { get; set; }
 

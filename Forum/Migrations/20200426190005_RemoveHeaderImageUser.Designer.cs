@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Forum.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200425124416_AddLogoImageToSUbscriber")]
-    partial class AddLogoImageToSUbscriber
+    [Migration("20200426190005_RemoveHeaderImageUser")]
+    partial class RemoveHeaderImageUser
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -150,6 +150,12 @@ namespace Forum.Migrations
                     b.Property<string>("HeaderImageUrl")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LogoImageUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -203,9 +209,6 @@ namespace Forum.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("HeaderImageUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -220,6 +223,9 @@ namespace Forum.Migrations
 
                     b.Property<int>("SubscriberId")
                         .HasColumnType("int");
+
+                    b.Property<string>("UserRole")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

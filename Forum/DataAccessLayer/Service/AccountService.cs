@@ -21,19 +21,6 @@ namespace Forum.DataAccessLayer.Service
 
         #region Subscriber Invite
 
-        public IEnumerable<SubscriberInvite> GetAllSubscriberUserInvites(int subscriberId)
-        {
-            try
-            {
-                return _dbContext.SubscriberInvites
-                    .Where(a => a.SubscriberId == subscriberId).Include(a => a.Subscriber);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
         public SubscriberInvite GetSubscriberInvite(string Email, int subscriberId)
         {
             try
@@ -74,7 +61,6 @@ namespace Forum.DataAccessLayer.Service
 
         }
 
-
         public async Task<DbActionsResponse> DeleteSubscriberInvite(SubscriberInvite invite)
         {
             try
@@ -96,26 +82,10 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-
-
         #endregion
 
 
         #region Subscriber User
-
-        public IEnumerable<SubscriberUser> GetAllSubscriberUsers(int subscriberId)
-        {
-            try
-            {
-                return _dbContext.SubscriberUsers
-                     .Where(a => a.SubscriberId == subscriberId && a.IsActive).Include(a => a.Subscriber).Include(a=>a.ApplicationUser);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
 
         public SubscriberUser GetSubscriberUser(string userAppId, int subscriberId)
         {
@@ -144,7 +114,6 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-
         public async Task<DbActionsResponse> CreateSubscriberUser(SubscriberUser user)
         {
             try
@@ -164,28 +133,7 @@ namespace Forum.DataAccessLayer.Service
                 throw ex;
             }
         }
-
-        public async Task<DbActionsResponse> DeleteSubscriberUser(long userId)
-        {
-            try
-            {
-                var existingUser = _dbContext.SubscriberUsers.SingleOrDefault(a => a.Id == userId && a.IsActive);
-                if (existingUser == null)
-                    return DbActionsResponse.NotFound;
-
-                existingUser.IsActive = false;
-                _dbContext.SubscriberUsers.Update(existingUser);
-                if (await _dbContext.SaveChangesAsync() > 0)
-                    return DbActionsResponse.Success;
-
-                return DbActionsResponse.Failed;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-        
+      
         public async Task<DbActionsResponse> UpdateSubscriberUser(SubscriberUser user)
         {
             try
@@ -194,31 +142,8 @@ namespace Forum.DataAccessLayer.Service
                 if (existingUser == null)
                     return DbActionsResponse.NotFound;
 
-                existingUser.HeaderImageUrl = user.HeaderImageUrl;
                 existingUser.ProfileImageUrl = user.ProfileImageUrl;
                 
-                _dbContext.SubscriberUsers.Update(existingUser);
-                if (await _dbContext.SaveChangesAsync() > 0)
-                    return DbActionsResponse.Success;
-
-                return DbActionsResponse.Failed;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public async Task<DbActionsResponse> UpdateUserRating(int subscriberId, string appUserId, double rating)
-        {
-            try
-            {
-                var existingUser = _dbContext.SubscriberUsers.SingleOrDefault(a => a.SubscriberId == subscriberId && a.ApplicationUserId == appUserId && a.IsActive);
-                if (existingUser == null)
-                    return DbActionsResponse.NotFound;
-
-                existingUser.Rating = rating;
-
                 _dbContext.SubscriberUsers.Update(existingUser);
                 if (await _dbContext.SaveChangesAsync() > 0)
                     return DbActionsResponse.Success;
@@ -271,7 +196,6 @@ namespace Forum.DataAccessLayer.Service
 
         }
 
-
         public async Task<DbActionsResponse> DeleteResetPasswordCode(ResetPasswordCode reset)
         {
             try
@@ -292,8 +216,6 @@ namespace Forum.DataAccessLayer.Service
                 throw ex;
             }
         }
-
-
 
         #endregion
     }

@@ -26,8 +26,8 @@ namespace Forum.DataAccessLayer.Service
                         .Include(a => a.Category)
                             .ThenInclude(b => b.Channel)
                                 .ThenInclude(c => c.Subscriber)
-                        .Where(a => a.Category.Channel.Subscriber.Id == subscriberId)
-                        .OrderByDescending(a => a.DateCreated);
+                        .Include(a=>a.ThreadReplies)
+                        .Where(a => a.Category.Channel.Subscriber.Id == subscriberId);
 
                 return threads;
             }

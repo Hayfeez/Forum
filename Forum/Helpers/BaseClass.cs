@@ -81,6 +81,13 @@ namespace Forum.Helpers
         public string Text { get; set; }
         public string ColourCode  { get; set; }
     }
-  
+
+    public static class UserRoles
+    {
+        public const string Admin = "Administrator";
+        public const string Mod = "Moderator";
+        public const string User = "User";
+
+    }
 }
 

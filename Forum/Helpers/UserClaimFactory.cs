@@ -11,21 +11,22 @@ namespace Forum.Helpers
     public static class CustomClaimTypes
     {
         public const string SusbcriberUserId = "SusbcriberUserId";
-        public const string SusbcriberId = "SusbcriberId";
+        public const string SusbcriberUserRole = "SusbcriberUserRole";
+       // public const string SusbcriberId = "SusbcriberId";
     }
 
     public static class IdentityExtensions
     {
-        public static int GetSubscriberId(this IIdentity identity)
-        {
-            ClaimsIdentity claimsIdentity = identity as ClaimsIdentity;
-            Claim claim = claimsIdentity?.FindFirst(CustomClaimTypes.SusbcriberId);
+        //public static int GetSubscriberId(this IIdentity identity)
+        //{
+        //    ClaimsIdentity claimsIdentity = identity as ClaimsIdentity;
+        //    Claim claim = claimsIdentity?.FindFirst(CustomClaimTypes.SusbcriberId);
 
-            if (claim == null)
-                return 0;
+        //    if (claim == null)
+        //        return 0;
 
-            return int.Parse(claim.Value);
-        }
+        //    return int.Parse(claim.Value);
+        //}
 
         public static long GetSubscriberUserId(this IIdentity identity)
         {
@@ -37,6 +38,15 @@ namespace Forum.Helpers
 
             return long.Parse(claim.Value);
         }
+
+        public static string GetSubscriberUserRole(this IIdentity identity)
+        {
+            ClaimsIdentity claimsIdentity = identity as ClaimsIdentity;
+            Claim claim = claimsIdentity?.FindFirst(CustomClaimTypes.SusbcriberUserRole);
+
+            return claim?.Value ?? string.Empty;
+        }
+
 
         public static string GetName(this IIdentity identity)
         {

@@ -37,9 +37,34 @@ namespace Forum.Controllers
 
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string tag)
         {
-            return RedirectToAction("Index", "Home");
+            try
+            {
+                if (string.IsNullOrEmpty(tag)) tag = "lt";
+
+                var allthreads = _threadService.GetAllThreads(_tenant.Id);
+                IEnumerable<ThreadVM> data;
+
+                if (tag == "fp")  //fp is latest for now
+                    data = _mapper.Map<IEnumerable<ThreadVM>>(allthreads.OrderByDescending(a => a.DateCreated));
+
+                else if (tag == "pp") //popular by no of replies
+                    data = _mapper.Map<IEnumerable<ThreadVM>>(allthreads.OrderByDescending(a => a.ThreadReplies.Count()));
+
+                else if (tag == "nr") //no replies
+                    data = _mapper.Map<IEnumerable<ThreadVM>>(allthreads.Where(a => a.ThreadReplies.Count() == 0));
+                else
+                    data = _mapper.Map<IEnumerable<ThreadVM>>(allthreads.OrderByDescending(a => a.DateCreated));
+
+                ViewBag.tag = tag;
+                return View(data);
+
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index", "Home");
+            }            
         }
 
         public IActionResult Thread(string id)
@@ -48,14 +73,13 @@ namespace Forum.Controllers
             {
                 var thread = _threadService.GetThreadById(id);
                 var model = _mapper.Map<ThreadVM>(thread);
+                if(model == null) return RedirectToAction("Index", "Home");
                 return View(model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(0, ex, "Error while getting thread");
                 return View("Views/Shared/Error.cshtml", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-
-                // _logger.LogError(0, ex, "Error while processing request from {Address}", address);
             }            
         }
 
@@ -105,23 +129,9 @@ namespace Forum.Controllers
             {
                 if(ModelState.IsValid)
                 {
-                    //model.UserId = _userManager.GetUserId; "1";
-                    long subscriberUserId = User.Identity.GetSubscriberUserId();
                     var data = _mapper.Map<Thread>(model);
-                    data.SubscriberUserId = subscriberUserId;
+                    data.SubscriberUserId = User.Identity.GetSubscriberUserId(); ;
                     var response = await _threadService.CreateThread(data);
-
-                    //var response =  await _threadService.CreateThread(new Thread
-                    //{
-                    //   Content = model.Content,
-                    //   Title = model.Title,
-                    //   Tags = model.Tags,
-                    //   DateCreated = DateTime.Now,
-                    //   CategoryId = model.CategoryId,
-                    //   SubscriberUserId = subscriberUserId                      
-                       
-                       
-                    //});
 
                     if(response == DbActionsResponse.DuplicateExist)
                     {
@@ -134,7 +144,7 @@ namespace Forum.Controllers
                         var category = _channelService.GetCategoryById(model.CategoryId);
 
                         //return RedirectToAction("CategoryThreads", "Channels", new { category = category?.Title });
-                        return RedirectToAction("Thread", "Threads", new { id = data.Id });
+                        return RedirectToAction("Thread", "Threads", new { id = data.Title });
                     }
 
                     //Failed

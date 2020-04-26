@@ -9,7 +9,7 @@
             @foreach (var item in Model)
             {
             <li><a asp-action="ChannelThreads" asp-controller="Channels" asp-route-channel="@item.ChannelTitle">@item.ChannelTitle
-                <span class="badge pull-right">@item.ThreadCount </span></a></li>
+                <span class="badge ">@item.ThreadCount </span></a></li>
             }
         </ul>           
 

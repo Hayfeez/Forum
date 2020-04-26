@@ -5,25 +5,14 @@
     Layout = "_NoLoginLayout";
 }
 
-<!-- HEADER -->
-<header class="signup__header">
-    <div class="container">
-        <div class="signup__header-content">
-            <p>No account yet?</p>
-            <a asp-action="JoinForum" asp-controller="Account" class="btn">Join now</a>
-        </div>
-    </div>
-</header>
+
 <!-- MAIN -->
 <main class="signup__main">
-    <img class="signup__bg" src="~/images/signup-bg.png" alt="bg">
-
     <div class="container">
         <div class="signup__container">
             <div class="signup__logo">
                 <a href="#"><img src="~/fonts/icons/main/Logo_Forum.svg" alt="logo">Forum</a>
             </div>
-
             <div class="signup__head">
                 <h3>Login to your Forum Account</h3>
             </div>
@@ -64,6 +53,10 @@
                     <p>
                         Forgot your password?
                         <a asp-action="ForgotPassword" asp-controller="Account" class=" btn-link">Click here to Reset</a>
+
+                        or
+
+                        <a asp-action="JoinForum" asp-controller="Account" class="btn-link">Click here to Join</a>
                     </p>
                 </form>
             </div>

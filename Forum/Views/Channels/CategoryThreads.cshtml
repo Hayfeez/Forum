@@ -32,7 +32,7 @@
                             </div>
                         </div>
                         <div class="posttext pull-left">
-                            <h2><a asp-controller="Threads" asp-action="Thread" asp-route-id="@item.Id">@item.Title</a></h2>
+                            <h2><a asp-controller="Threads" asp-action="Thread" asp-route-id="@item.Title">@item.Title</a></h2>
                             <p>@Html.Raw(@item.Content)</p>
                         </div>
 
@@ -98,7 +98,7 @@
                         @foreach (var item in userThreads)
                         {
 
-                            <a asp-action="Thread" asp-controller="Threads" asp-route-id="@item.Id">@item.Title</a>
+                            <a asp-action="Thread" asp-controller="Threads" asp-route-id="@item.Title">@item.Title</a>
 
 
                         }
@@ -125,7 +125,7 @@
                     @foreach (var item in mostReplies)
                     {
 
-                        <a asp-action="Thread" asp-controller="Threads" asp-route-id="@item.Id">@item.Title</a>
+                        <a asp-action="Thread" asp-controller="Threads" asp-route-id="@item.Title">@item.Title</a>
                   
 
                 }

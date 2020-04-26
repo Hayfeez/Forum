@@ -11,6 +11,15 @@ namespace Forum.Helpers
     {
         public MappingProfile()
         {
+            CreateMap<RegisterVM, SubscriberUser>()
+               .ForMember(dest => dest.UserRole, opt => { opt.MapFrom(d => UserRoles.User); })
+               .ForMember(dest => dest.DateJoined, opt => { opt.MapFrom(d => DateTime.Now); })
+               .ForMember(dest => dest.IsActive, opt => { opt.MapFrom(d => true); })
+               .ForMember(dest => dest.Rating, opt => { opt.MapFrom(d => 0.1); });
+
+            CreateMap<SubscriberUser, TenantUsersList>();
+            CreateMap<SubscriberInvite, TenantInviteList>();
+
             CreateMap<SaveThreadVM, Thread>()
                 .ForMember(dest => dest.DateCreated, opt => { opt.MapFrom(d => DateTime.Now); });
 

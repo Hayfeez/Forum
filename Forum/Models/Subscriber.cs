@@ -16,6 +16,8 @@ namespace Forum.Models
         public string HeaderImageUrl { get; set; }
         public string LogoImageUrl { get; set; }
         public bool AllowJoinNow { get; set; }
+        public bool IsPublic { get; set; }
+        public bool IsActive { get; set; }
 
         public  IEnumerable<SubscriberUser> SubscriberUsers { get; set; }
         public  IEnumerable<Channel> Channels { get; set; }
