@@ -21,6 +21,8 @@ namespace Forum.Components
             _tenant = tenant;
         }
 
+
+
        
         public IViewComponentResult Invoke()
         {
