@@ -2384,7 +2384,7 @@ select {
 }
 @media only screen and (min-width: 1040px) {
   .signup__main {
-    padding-top: 110px;
+    
   }
 }
 @media only screen and (max-width: 1039px) {

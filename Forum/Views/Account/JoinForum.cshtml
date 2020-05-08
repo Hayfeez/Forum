@@ -1,0 +1,44 @@
+﻿@model JoinVM
+
+@{
+    ViewData["Title"] = "Join Now";
+    Layout = "_NoLoginLayout";
+}
+
+<!-- MAIN -->
+<main class="signup__main">
+    <div class="container">
+        <div class="signup__container">
+            <div class="signup__logo">
+                <a href="#"><img src="~/fonts/icons/main/Logo_Forum.svg" alt="logo">Forum</a>
+            </div>
+
+            <div class="signup__head">
+                <h3>Join a Forum </h3>
+            </div>
+            <div class="signup__form">
+                <form asp-action="JoinForum" asp-controller="Account" method="post">
+
+                    <div class="signup__section">
+                        <label class="signup__label" asp-for="Email"></label>
+                        <input type="text" class="form-control" asp-for="Email" id="email">
+                        <!--  <span asp-validation-for="Email" class="text-danger"></span> -->
+                    </div>
+
+
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <button type="submit" class="signup__btn-create btn btn--type-02">Join Now!</button>
+                    <p>
+                        Already have an account?
+                        <a asp-action="Login" asp-controller="Account" class=" btn-link">Click here to Login</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

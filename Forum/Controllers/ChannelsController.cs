@@ -21,18 +21,16 @@ namespace Forum.Controllers
         private readonly IMapper _mapper;
         private readonly IChannelService _channelService;
         private readonly IThreadService _threadService;
-        private readonly ISubscriberService _subscriberService;
-        private readonly int _subscriberId;
+        private readonly Subscriber _tenant;
 
-        public ChannelsController(ILogger<ChannelsController> logger, IMapper mapper, IChannelService channelService,
-            IThreadService threadService, ISubscriberService subscriberService)
+        public ChannelsController(ILogger<ChannelsController> logger, Subscriber tenant, IMapper mapper, IChannelService channelService,
+            IThreadService threadService)
         {
              _logger = logger;
             _mapper = mapper;
             _channelService = channelService;
             _threadService = threadService;
-            _subscriberService = subscriberService;
-            _subscriberId = _subscriberService.GetSubscriberId();
+            _tenant = tenant;
         }
 
         public IActionResult Index()
@@ -82,7 +80,7 @@ namespace Forum.Controllers
                     var threadList = new ChannelThreads
                     {
                         Channel = _mapper.Map<ChannelVM>(chanel),
-                        Threads = _mapper.Map<IEnumerable<ThreadVM>>(threads).OrderByDescending(a=>a.DatePosted)
+                        Threads = _mapper.Map<IEnumerable<ThreadVM>>(threads)
                     };
 
                     return View(threadList);
@@ -108,7 +106,7 @@ namespace Forum.Controllers
                     var threadList = new CategoryThreads
                     {
                         Category = _mapper.Map<CategoryVM>(catego),
-                        Threads = _mapper.Map<IEnumerable<ThreadVM>>(catego.Threads).OrderByDescending(a => a.DatePosted)
+                        Threads = _mapper.Map<IEnumerable<ThreadVM>>(catego.Threads)
                     };
 
                     return View(threadList);

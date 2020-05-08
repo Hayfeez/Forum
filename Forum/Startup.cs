@@ -22,6 +22,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using Forum.Models;
+using SaasKit.Multitenancy.Internal;
 
 namespace Forum
 {
@@ -102,20 +104,28 @@ namespace Forum
 
             services.Configure<ReadAppSettings>(Configuration.GetSection("AppConfig"));
             services.AddTransient<SeedData>();
+
+            services.AddMultitenancy<Subscriber, TenantResolver>();
+
             services.AddSingleton<MailHelper>();
             services.AddSingleton<LoadStaticContent>();
-            services.AddScoped<LoadDynamicContent>();
+            services.AddTransient<LoadDynamicContent>();
 
-            services.AddScoped<ISubscriberService, SubscriberService>();
+            services.AddScoped<ITenantService, TenantService>();
             services.AddScoped<IThreadService, ThreadService>();
             services.AddScoped<IChannelService, ChannelService>();
             services.AddScoped<IReplyService, ReplyService>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddTransient<ISearchService, SearchService>();
+            services.AddScoped<IPinnedPostService, PinnedPostService>();
 
-            //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
-
+        private static bool CheckTenant(HttpContext context)
+        {
+            var path = context.Request.Path;
+            return !path.StartsWithSegments("/default");  //return false if route is in default controller
+        }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, SeedData seedData)
@@ -132,28 +142,50 @@ namespace Forum
                 app.UseHsts();
             }
 
-            //seedData.ClearDB();
+           // seedData.ClearDB();
             seedData.Seed();
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseStaticFiles();           
 
             app.UseRouting();
-            //app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
+           
+            app.UseMultitenancy<Subscriber>();
+            // app.UseMiddleware<TenantUnresolvedRedirectMiddleware<Subscriber>>("http://saaskit.net", false);
+            // app.UseMiddleware<TenantUnresolvedRedirectMiddleware<Subscriber>>("/tenantnotfound.html", false);
 
-           // var supportedCultures = new[]
-           //{
-           //     new CultureInfo("en-NG")
-           // };
+            app.UseWhen(CheckTenant, appBuilder =>
+            {
+                appBuilder.UseMiddleware<CustomTenantMiddleware>();
+            });
 
-           // app.UseRequestLocalization(new RequestLocalizationOptions
-           // {
-           //     DefaultRequestCulture = new RequestCulture("en-NG"),
-           //     SupportedCultures = supportedCultures,
-           //     SupportedUICultures = supportedCultures
-           // });
+            app.Use(async (ctx, next) =>
+            {
+                await next.Invoke();
+
+                if (ctx.Response.StatusCode == 404 && !ctx.Response.HasStarted)
+                {
+                    //Re-execute the request so the user gets the error page
+                    string originalPath = ctx.Request.Path.Value;
+                    ctx.Items["originalPath"] = originalPath;
+                    ctx.Request.Path = "/404";
+                    //await next();
+                }
+            });
+
+            // var supportedCultures = new[]
+            //{
+            //     new CultureInfo("en-NG")
+            // };
+
+            // app.UseRequestLocalization(new RequestLocalizationOptions
+            // {
+            //     DefaultRequestCulture = new RequestCulture("en-NG"),
+            //     SupportedCultures = supportedCultures,
+            //     SupportedUICultures = supportedCultures
+            // });
 
             app.UseEndpoints(endpoints =>
             {

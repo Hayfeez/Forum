@@ -20,30 +20,28 @@ namespace Forum.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IMapper _mapper;
         private readonly IThreadService _threadService;
-        private readonly ISubscriberService _subscriberService;
-        private readonly int _subscriberId;
+        private readonly Subscriber _tenant;
 
-        public HomeController(ILogger<HomeController> logger, IMapper mapper,
-            IThreadService threadService, ISubscriberService subscriberService)
+        public HomeController(ILogger<HomeController> logger, Subscriber tenant, IMapper mapper,
+            IThreadService threadService)
         {
             _logger = logger;
             _mapper = mapper;
             _threadService = threadService;
-            _subscriberService = subscriberService;
-            _subscriberId = _subscriberService.GetSubscriberId();
+            _tenant = tenant;
         }
 
        
-        public IActionResult Index()
+        public IActionResult Index([FromServices]IPinnedPostService _pinnedPostService)
         {
             try
             {
-                var guideline = _threadService.GetGuideline();
-                var threads = _threadService.GetAllThreads(_subscriberId);
+                var pinnedPosts = _pinnedPostService.GetPinnedPosts(_tenant.Id);
+                var threads = _threadService.GetLatestThreads(_tenant.Id, 10);
                 var model = new HomeViewModel
                 {
-                    Guideline = _mapper.Map<ThreadVM>(guideline),
-                    Threads = _mapper.Map<List<ThreadVM>>(threads).OrderByDescending(a => a.DatePosted)
+                    PinnedPosts = _mapper.Map<List<PinnedPost>>(pinnedPosts),
+                    Threads = _mapper.Map<List<ThreadVM>>(threads)
                 };
 
                 return View(model);

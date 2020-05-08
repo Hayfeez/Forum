@@ -1,25 +1,27 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using Forum.Models
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
+@inject Subscriber  Tenant
 
 <header>
     <div class="header js-header js-dropdown">
         <div class="container">
             <div class="header__logo">
                 <a asp-action="Index" asp-controller="Home">
-                    Forum
+                    @Tenant.Name
                 </a>
             </div>
             <div class="header__search">
-                <form asp-action="Search" asp-controller="Thread" method="post">
+                <form asp-action="Search" asp-controller="Search" method="get">
                     <label>
                         <i class="icon-Search js-header-search-btn-open"></i>
-                        <input type="search" placeholder="Search topics in all channels" class="form-control">
+                        <input type="search" placeholder="Search in all channels" class="form-control">
                     </label>
                 </form>
                 <div class="header__search-close js-header-search-btn-close"><i class="icon-Cancel"></i></div>
                 <div class="header__search-btn">
-                   <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+                    <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
 
                 </div>
 
@@ -62,9 +64,9 @@
                     <nav class="dropdown dropdown--design-01" data-dropdown-list="user">
                         <div>
                             <div class="dropdown__icons">
-                                <a href="#"><i class="icon-Bookmark" title="Bookmarks"></i></a>
+                                <a asp-controller="Profile" asp-action="Bookmarks"><i class="icon-Bookmark" title="Bookmarks"></i></a>
                                 <a href="#"><i class="icon-Message" title="Messages"></i></a>
-                                <a href="#"><i class="icon-User" title="Profile"></i></a>
+                                <a asp-controller="Profile" asp-action="Index"><i class="icon-User" title="Profile"></i></a>
                                 <form class="form-inline" asp-action="Logout" asp-controller="Account" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                                     <button type="submit" class="nav-link btn-link text-dark"> <i class="icon-Logout" title="Logout"></i></button>
                                 </form>
@@ -72,31 +74,47 @@
                         </div>
                         <div>
                             <ul class="dropdown__catalog">
-                                <li><a href="#">My Threads</a></li>
-                                <li><a href="#">Notifications</a></li>
-                                <li><a href="#">Followed Threads</a></li>
-                                <li><a href="#">Followed People</a></li>
+                                <li><a asp-controller="Profile" asp-action="MyThread">My Threads</a></li>
+                                <li><a asp-controller="Profile" asp-action="FollowedThread">Followed Threads</a></li>
+                                <li><a asp-controller="Profile" asp-action="Following">Followed People</a></li>
                             </ul>
                         </div>
-                    </nav>
-                </div>
+                          @if (User.Identity.GetSubscriberUserRole().Equals(UserRoles.Admin))
+                          {
+                        <div>
+                            <ul class="dropdown__catalog">
+                                <li>Admin Panel</li>
+                                <li><a asp-controller="Manage" asp-action="Settings">Settings</a></li>
+                                <li><a asp-controller="Manage" asp-action="Users"> Users</a></li>
+                                <li><a asp-controller="Manage" asp-action="Moderators">Moderators</a></li>
+                            </ul>
+                        </div>
+                          }
+                                    </nav>
+                                </div>
 
 
             }
             else
             {
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-action="JoinForum" asp-controller="Account">Join Now</a>
-                    </li>&nbsp;&nbsp;
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-action="Login" asp-controller="Account">Login</a>
-                    </li>
-                </ul>
+        <ul class="navbar-nav">
+            @if (Tenant.AllowJoinNow)
+            {
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-action="JoinForum" asp-controller="Account"> Join Now</a>
+                </li>
+                <li class="nav-item">  &nbsp;&nbsp; </li>
+
+            }
+
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-action="Login" asp-controller="Account">Login</a>
+            </li>
+        </ul>
             }
 
 
-        </div>
+                        </div>
 
-    </div>
-</header>
+                    </div>
+                </header>

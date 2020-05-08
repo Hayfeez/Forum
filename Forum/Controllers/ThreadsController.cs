@@ -13,6 +13,7 @@ using Forum.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace Forum.Controllers
 {
@@ -23,58 +24,77 @@ namespace Forum.Controllers
         private readonly IMapper _mapper;
         private readonly IThreadService _threadService;
         private readonly IChannelService _channelService;
-        private readonly ISubscriberService _subscriberService;
-        private readonly int _subscriberId;
+        private readonly Subscriber _tenant;
 
-
-
-        public ThreadsController(ILogger<ThreadsController> logger, IMapper mapper,
-                    IThreadService threadService, ISubscriberService subscriberService, IChannelService channelService)
+        public ThreadsController(ILogger<ThreadsController> logger, Subscriber tenant, IMapper mapper,
+                    IThreadService threadService, IChannelService channelService)
         {
             _logger = logger;
             _threadService = threadService;
             _channelService = channelService;
             _mapper = mapper;
-            _subscriberService = subscriberService;
-            _subscriberId = _subscriberService.GetSubscriberId();
+            _tenant = tenant;
 
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string tag)
         {
-            return RedirectToAction("Index", "Home");
+            try
+            {
+                if (string.IsNullOrEmpty(tag)) tag = "lt";
+
+                var allthreads = _threadService.GetAllThreads(_tenant.Id);
+                IEnumerable<ThreadVM> data;
+
+                if (tag == "fp")  //fp is latest for now
+                    data = _mapper.Map<IEnumerable<ThreadVM>>(allthreads.OrderByDescending(a => a.DateCreated));
+
+                else if (tag == "pp") //popular by no of replies
+                    data = _mapper.Map<IEnumerable<ThreadVM>>(allthreads.OrderByDescending(a => a.ThreadReplies.Count()));
+
+                else if (tag == "nr") //no replies
+                    data = _mapper.Map<IEnumerable<ThreadVM>>(allthreads.Where(a => a.ThreadReplies.Count() == 0));
+                else
+                    data = _mapper.Map<IEnumerable<ThreadVM>>(allthreads.OrderByDescending(a => a.DateCreated));
+
+                ViewBag.tag = tag;
+                return View(data);
+
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index", "Home");
+            }            
         }
 
-        public IActionResult Thread(long id)
+        public IActionResult Thread(string id)
         {
             try
             {
                 var thread = _threadService.GetThreadById(id);
                 var model = _mapper.Map<ThreadVM>(thread);
-                
+                if(model == null) return RedirectToAction("Index", "Home");
                 return View(model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(0, ex, "Error while getting thread");
                 return View("Views/Shared/Error.cshtml", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-
-                // _logger.LogError(0, ex, "Error while processing request from {Address}", address);
             }            
         }
 
-        public IActionResult Guideline()
+        public IActionResult Pinned(string id, [FromServices] IPinnedPostService _pinnedPostService)
         {
             try
             {
-                var thread = _threadService.GetGuideline() ;
-                var model =  _mapper.Map<ThreadVM>(thread);
+                var pinned = _pinnedPostService.GetPinnedPostById(id);
+                var model =  _mapper.Map<ThreadVM>(pinned);
 
-                return View("Thread", model);
+                return View("Pinned", model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(0, ex, "Error while getting guideline");
+                _logger.LogError(0, ex, "Error while getting pinned post");
                 return View("Views/Shared/Error.cshtml", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
                 // _logger.LogError(0, ex, "Error while processing request from {Address}", address);
@@ -109,19 +129,9 @@ namespace Forum.Controllers
             {
                 if(ModelState.IsValid)
                 {
-                    //model.UserId = _userManager.GetUserId; "1";
-                    long subscriberUserId = User.Identity.GetSubscriberUserId();
-                    var response =  await _threadService.CreateThread(new Thread
-                    {
-                       Content = model.Content,
-                       Title = model.Title,
-                       Tags = model.Tags,
-                       DateCreated = DateTime.Now,
-                       CategoryId = model.CategoryId,
-                       SubscriberUserId = subscriberUserId                      
-                       
-                       
-                    });
+                    var data = _mapper.Map<Thread>(model);
+                    data.SubscriberUserId = User.Identity.GetSubscriberUserId(); ;
+                    var response = await _threadService.CreateThread(data);
 
                     if(response == DbActionsResponse.DuplicateExist)
                     {
@@ -133,7 +143,8 @@ namespace Forum.Controllers
                         ModelState.AddModelError(string.Empty, "Topic saved successfully");
                         var category = _channelService.GetCategoryById(model.CategoryId);
 
-                        return RedirectToAction("CategoryThreads", "Channels", new { category = category?.Title });
+                        //return RedirectToAction("CategoryThreads", "Channels", new { category = category?.Title });
+                        return RedirectToAction("Thread", "Threads", new { id = data.Title });
                     }
 
                     //Failed
@@ -153,6 +164,7 @@ namespace Forum.Controllers
         }
 
 
+      
         #region private methods
 
         public void AddToViewBag(string type, string message)

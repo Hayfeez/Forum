@@ -28,12 +28,13 @@ namespace Forum.Data
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Channel> Channels { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Subscriber> Subscribers { get; set; }
+        public DbSet<Subscriber> Tenants { get; set; }
         public DbSet<SubscriberUser> SubscriberUsers { get; set; }
         public DbSet<SubscriberInvite> SubscriberInvites { get; set; }
         public DbSet<Thread> Threads { get; set; }
         public DbSet<ThreadReply> ThreadReplies { get; set; }
         public DbSet<ResetPasswordCode> ResetPasswordCodes { get; set; }
+        public DbSet<PinnedPost> PinnedPosts { get; set; }
 
     }
 }

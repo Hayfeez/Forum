@@ -2,8 +2,8 @@
 @inject LoadStaticContent  _staticData;
 
 <div class="nav">
-    <div class="nav__categories js-dropdown">
-        <div class="nav__select">
+    <div class="nav__categories js-dropdown col-md-6 col-lg-6 col-xs-6">
+        <div class="nav__select col-md-6 col-lg-6 col-xs-6">
             <div class="btn-select" data-dropdown-btn="categories">All Channels</div>
             <nav class="dropdown dropdown--design-01" data-dropdown-list="categories">
                 <ul class="dropdown__catalog row">
@@ -21,7 +21,7 @@
                 </ul>
             </nav>
         </div>
-        @*   <div class="nav__select">
+          <div class="nav__select col-md-6 col-lg-6 col-xs-6">
             <div class="btn-select" data-dropdown-btn="tags">Tags</div>
             <div class="dropdown dropdown--design-01" data-dropdown-list="tags">
                 <div class="tags">
@@ -36,14 +36,14 @@
 
                 </div>
             </div>
-        </div>*@
+        </div>
     </div>
-    <div class="nav__menu js-dropdown">
+    <div class="nav__menu js-dropdown col-md-5 col-lg-5 col-xs-5">
         <ul>
-            <li class="active"><a href="#">FrontPage</a></li>
-            <li><a href="#">Latest</a></li>
-            <li><a href="#">Popular</a></li>
-            <li><a href="#">Unanswered</a></li>
+            <li id="fp"><a asp-controller="Threads" asp-action="Index" asp-route-tag="fp" >FrontPage</a></li>
+            <li id="lt"><a asp-controller="Threads" asp-action="Index" asp-route-tag="lt">Latest</a></li>
+            <li id="pp"><a asp-controller="Threads" asp-action="Index" asp-route-tag="pp">Popular</a></li>
+            <li id="nr"><a asp-controller="Threads" asp-action="Index" asp-route-tag="nr">No Replies</a></li>
         </ul>
     </div>
     

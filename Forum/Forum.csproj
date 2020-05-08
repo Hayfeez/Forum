@@ -15,6 +15,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.2" />
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
+    <PackageReference Include="SaasKit.Multitenancy" Version="1.1.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,8 +28,6 @@
     <Folder Include="Views\Threads\" />
     <Folder Include="Helpers\" />
     <Folder Include="Views\Shared\Components\" />
-    <Folder Include="Views\Shared\Components\ChannelCount\" />
-    <Folder Include="Views\Shared\Components\NavBar\" />
     <Folder Include="Views\Shared\Components\ThreadsFollowing\" />
     <Folder Include="Views\Shared\Components\FeaturedPoll\" />
     <Folder Include="Components\" />
@@ -37,6 +36,16 @@
     <Folder Include="Views\Account\" />
     <Folder Include="StaticData\" />
     <Folder Include="wwwroot\scripts\" />
+    <Folder Include="Views\Manage\" />
+    <Folder Include="Views\Search\" />
+    <Folder Include="Views\Default\" />
+    <Folder Include="wwwroot\default\" />
+    <Folder Include="wwwroot\default\css\" />
+    <Folder Include="wwwroot\default\js\" />
+    <Folder Include="wwwroot\default\images\" />
+    <Folder Include="Views\Shared\Components\ForumStats\" />
+    <Folder Include="Views\Shared\Components\ForumUsers\" />
+    <Folder Include="Views\Shared\Components\ForumInvites\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\summernote-bs4.min.js" />
@@ -73,5 +82,8 @@
     <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-de-DE.min.js" />
     <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-sk-SK.min.js" />
     <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-pt-PT.min.js" />
+    <Content Remove="Views\Shared\Components\NavBar\Default.cshtml" />
+    <Content Remove="Views\Shared\Components\ChannelCount\Default.cshtml" />
+    <Content Remove="Views\Manage\Moderators.cshtml" />
   </ItemGroup>
 </Project>

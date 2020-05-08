@@ -34,6 +34,7 @@ namespace Forum.ViewModels
         public int AuthorRating { get; set; }
         public DateTime DatePosted { get; set; }
         public string Content { get; set; }
+        public bool IsAuthorAdmin { get; set; }
         public string Tags { get; set; }
         public IEnumerable<ThreadReplyVM> Replies { get; set; }
 
@@ -51,6 +52,7 @@ namespace Forum.ViewModels
         public int AuthorRating { get; set; }
         public DateTime DatePosted { get; set; }
         public string Content { get; set; }
+        public bool IsAuthorAdmin { get; set; }
 
         public ThreadVM Thread { get; set; }
     }
@@ -71,7 +73,7 @@ namespace Forum.ViewModels
 
         public string Tags { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        //public DateTime DateCreated { get; set; }
 
         [Required]
         public int ChannelId { get; set; }

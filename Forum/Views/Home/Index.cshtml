@@ -5,15 +5,13 @@
 
 <div class="row">
     <div class="posts col-lg-8 col-md-8">
-        @if (Model.Threads.Count() > 0)
-        {
-            <div class="posts__body">
-
+       
+        <div class="posts__body">
+            <!-- pinned posts -->
+            @foreach (var item in Model.PinnedPosts)
+            {
                 <div class="post ">
                     <div class="wrap-ut pull-left">
-                        <div class="posts__tags tags">
-
-                        </div>
                         <div class="userinfo pull-left">
                             <div class="avatar">
                                 <img src="~/fonts/icons/main/Pinned.svg" alt="Pinned">
@@ -24,8 +22,8 @@
                             </div>
                         </div>
                         <div class="posttext pull-left">
-                            <h2><a asp-controller="Threads" asp-action="Guideline"> @Model.Guideline.Title </a></h2>
-                            <p>@Html.Raw(@Model.Guideline.Content)</p>
+                            <h2><a asp-controller="Threads" asp-action="Pinned" asp-route-id="@item.Title"> @item.Title </a></h2>
+                            <p>@Html.Raw(@item.Content)</p>
                         </div>
 
                         <div class="clearfix"></div>
@@ -37,12 +35,17 @@
 
                 </div>
 
+            }
+
+            <!--posts begin here -->
+            @if (Model.Threads.Count() > 0)
+            {
                 @foreach (var item in Model.Threads)
                 {
                     <div class="post bg-f2f4f6">
                         <div class="wrap-ut pull-left">
                             <div class="posts__tags tags">
-                               
+
                             </div>
                             <div class="userinfo pull-left">
                                 <div class="avatar">
@@ -55,7 +58,7 @@
                                 </div>
                             </div>
                             <div class="posttext pull-left">
-                                <h2><a asp-controller="Threads" asp-action="Thread" asp-route-id="@item.Id">@item.Title</a></h2>
+                                <h2><a asp-controller="Threads" asp-action="Thread" asp-route-id="@item.Title">@item.Title</a></h2>
                                 <p>@Html.Raw(@item.Content)</p>
                             </div>
 
@@ -94,17 +97,18 @@
                     <div class="pull-left"><a href="#" class="prevnext last"><i class="fa fa-angle-right"></i></a></div>
                     <div class="clearfix"></div>
                 </div>
-            </div>
-        }
-        else
-        {
-            <p>
-                There are no posts to display.
-                Click <a asp-action="CreateThread" asp-controller="Threads">
-                    here
-                </a> to add a post in this channel
-            </p>
-        }
+            }
+            else
+            {
+                <p>
+                    There are no posts to display.
+                    Click <a asp-action="CreateThread" asp-controller="Threads">
+                        here
+                    </a> to add a post in this channel
+                </p>
+            }
+        </div>       
+       
 
     </div>
 

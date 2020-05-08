@@ -1,19 +1,19 @@
-﻿@model ChannelThreads
+﻿@model List<ThreadVM>
 @{
-    ViewData["Title"] = Model.Channel.Name;
+    ViewData["Title"] = "Threads";
 }
 
 <div class="row">
     <div class="posts col-lg-8 col-md-8">
 
-        <p> <a asp-action="Index" asp-controller="Home">Home</a> >
-            @Model.Channel.Name
+        <p>
+            <a asp-action="Index" asp-controller="Home">Home</a> > Threads
+            
         </p>
-        <p>No of Threads: @Model.Channel.Categories.Sum(a=>a.ThreadCount)</p>
 
-        @if(Model.Threads.Count()  > 0) {
+        @if(Model.Count() > 0) { 
         <div class="posts__body">
-            @foreach (var item in Model.Threads)
+            @foreach (var item in Model)
             {
                 <div class="post bg-f2f4f6">
                     <div class="wrap-ut pull-left">
@@ -73,32 +73,16 @@
         </div>
         }
         else {
-            <p>There are no posts to display.
-            Click <a asp-action="CreateThread" asp-controller="Threads" asp-route-channelId="@Model.Channel.Id">
-                here</a> to add a post in this channel </p>
+        <p>
+            There are no posts to display.
+            Click <a asp-action="CreateThread" asp-controller="Threads">
+                here
+            </a> to add a new post
+        </p>
         }
     </div>
 
     <div class="col-lg-4 col-md-4">
-        <!-- Categories-->
-        <div class="sidebarblock">
-            <h3>Categories</h3>
-            <div class="divline"></div>
-            <div class="blocktxt">
-                @{
-                    var categories = Model.Channel.Categories.Take(10);
-                    @foreach (var item in categories)
-                    {
-
-                        <a asp-action="CategoryThreads" asp-controller="Channels" asp-route-category="@item.Name">@item.Name</a>
-
-
-                    }
-
-                }
-
-            </div>
-        </div>
 
         <!-- user posts-->
         <div class="sidebarblock">
@@ -108,7 +92,7 @@
                 @{
                     if (User.Identity.IsAuthenticated)
                     {
-                        var userThreads = Model.Threads.Where(a => a.AuthorId == User.Identity.GetSubscriberUserId().ToString()).Take(10);
+                        var userThreads = Model.Where(a => a.AuthorId == User.Identity.GetSubscriberUserId().ToString()).Take(10);
                         @foreach (var item in userThreads)
                         {
 
@@ -121,7 +105,7 @@
                     {
                         <p>
                             You are not logged in.
-                            <a asp-action="Login" asp-controller="Account" asp-route-returnUrl="Channels/ChannelThreads">Login now</a>
+                            <a asp-action="Login" asp-controller="Account" asp-route-returnUrl="Channels/Categoryhreads">Login now</a>
                         </p>
                     }
                 }
@@ -135,18 +119,34 @@
             <div class="divline"></div>
             <div class="blocktxt">
                 @{
-                    var mostReplies = Model.Threads.OrderByDescending(a => a.RepliesCount).Take(10);
+                    var mostReplies = Model.OrderByDescending(a => a.RepliesCount).Take(10);
                     @foreach (var item in mostReplies)
                     {
 
                         <a asp-action="Thread" asp-controller="Threads" asp-route-id="@item.Title">@item.Title</a>
+                  
 
-
-                    }
+                }
 
                 }
             </div>
         </div>
 
+        @await Component.InvokeAsync("ThreadsFollowing")
+
     </div>
 </div>
+
+@section Scripts {
+<script>
+    var tag = '@ViewBag.tag';
+    
+    $(document).ready(function () {
+        if (tag != '' || tag != undefined || tag != null) {
+            $('#' + tag).addClass('active');
+        }        
+
+    });
+</script>
+
+}

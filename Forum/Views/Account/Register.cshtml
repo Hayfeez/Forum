@@ -4,20 +4,8 @@
     Layout = "_NoLoginLayout";
 }
 
-<!-- HEADER -->
-<header class="signup__header">
-    <div class="container">
-        <div class="signup__header-content">
-            <p>Already have an account?</p>
-            <a asp-action="Login" asp-controller="Account" class="btn">Log in</a>
-        </div>
-    </div>
-</header>
-
 <!-- MAIN -->
 <main class="signup__main">
-    <img class="signup__bg" src="~/images/signup-bg.png" alt="bg">
-
     <div class="container">
         <div class="signup__container">
             <div class="signup__logo">
@@ -30,7 +18,7 @@
             </div>
             <div class="signup__form">
                 <form asp-action="Register" asp-controller="Account" method="post">
-                   
+
                     <span class="text-primary">@Model.Email</span>
                     <div class="signup__section">
                         <input type="hidden" class="form-control" asp-for="Email" id="email">

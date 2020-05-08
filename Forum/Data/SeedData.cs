@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Forum.Helpers;
 using Forum.Models;
 using Microsoft.AspNetCore.Identity;
 
@@ -24,7 +25,7 @@ namespace Forum.Data
                 if (_context.Channels.Any())
                     return Task.CompletedTask;
 
-                var subscriber = new Subscriber { Description = "Main Forum", DateCreated = DateTime.Now, Domain = "", HeaderImageUrl = "", Name = "" };
+                var subscriber = new Subscriber { Description = "Main Forum", DateCreated = DateTime.Now, Domain = "myforum.localhost", AllowJoinNow = false, HeaderImageUrl = "", Name = "Main Forum", IsActive = true, IsPublic = true };
 
                 var channel1 = new Channel { Subscriber = subscriber, DateCreated = DateTime.Now, Description = "Career", LogoUrl = "", Title = "Career" };
                 var channel2 = new Channel { Subscriber = subscriber, DateCreated = DateTime.Now, Description = "Sports", LogoUrl = "", Title = "Sports" };
@@ -48,9 +49,9 @@ namespace Forum.Data
                 string password = hasher.HashPassword(superUser, "password");
                 superUser.PasswordHash = password;
 
-                var subscriberUser = new SubscriberUser { ApplicationUser = superUser, DateJoined = DateTime.Now, IsActive = true, Subscriber = subscriber, Rating = 0.0, ProfileImageUrl = "", HeaderImageUrl = "" };
+                var subscriberUser = new SubscriberUser { ApplicationUserId = userId, Email = superUser.Email, Password = superUser.PasswordHash, UserRole = UserRoles.Admin,  DateJoined = DateTime.Now, IsActive = true, Subscriber = subscriber, Rating = 0.0, ProfileImageUrl = "" };
 
-                _context.Subscribers.Add(subscriber);
+                _context.Tenants.Add(subscriber);
                 _context.Channels.AddRange(channels);
                 _context.Categories.AddRange(categories);
                 _context.ApplicationUsers.Add(superUser);
@@ -70,7 +71,7 @@ namespace Forum.Data
         {
             try
             {
-                var subscribers = _context.Subscribers.ToList();
+                var subscribers = _context.Tenants.ToList();
                 var channels = _context.Channels.ToList();
                 var categories = _context.Categories.ToList();
                 var appUsers = _context.ApplicationUsers.ToList();
@@ -80,7 +81,7 @@ namespace Forum.Data
                 channels.ForEach(a => _context.Channels.Remove(a));
                 subscriberUsers.ForEach(a => _context.SubscriberUsers.Remove(a));
                 appUsers.ForEach(a => _context.ApplicationUsers.Remove(a));
-                subscribers.ForEach(a => _context.Subscribers.Remove(a));
+                subscribers.ForEach(a => _context.Tenants.Remove(a));
 
                 _context.SaveChanges();
             }

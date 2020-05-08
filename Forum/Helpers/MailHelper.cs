@@ -32,6 +32,12 @@ namespace Forum.Helpers
             try
             {
                 SmtpClient client = new SmtpClient(_appSettings.Value.SMTPServerHost, _appSettings.Value.SMTPServerPort);
+
+                client.UseDefaultCredentials = false;
+                client.EnableSsl = true;
+                client.Credentials = new System.Net.NetworkCredential(_appSettings.Value.SMTPServerUsername, _appSettings.Value.SMTPServerPassword);            
+
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;                
                 client.Send(mailMsg);
                 
                 return true;

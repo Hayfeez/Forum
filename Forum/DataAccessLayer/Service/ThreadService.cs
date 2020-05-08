@@ -26,7 +26,28 @@ namespace Forum.DataAccessLayer.Service
                         .Include(a => a.Category)
                             .ThenInclude(b => b.Channel)
                                 .ThenInclude(c => c.Subscriber)
+                        .Include(a=>a.ThreadReplies)
                         .Where(a => a.Category.Channel.Subscriber.Id == subscriberId);
+
+                return threads;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public IEnumerable<Thread> GetLatestThreads(int subscriberId, int num = 10)
+        {
+            try
+            {
+                var threads = _dbContext.Threads
+                        .Include(a => a.Category)
+                            .ThenInclude(b => b.Channel)
+                                .ThenInclude(c => c.Subscriber)
+                        .Where(a => a.Category.Channel.Subscriber.Id == subscriberId)
+                        .OrderByDescending(a => a.DateCreated)
+                        .Take(num);
 
                 return threads;
             }
@@ -48,55 +69,19 @@ namespace Forum.DataAccessLayer.Service
                 if (categoryId != null)
                     threads = threads.Where(a => a.Id == categoryId);
 
-                return threads;
+                return threads.OrderByDescending(a => a.DateCreated);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-
-        public IEnumerable<Thread> SearchThread(string searchQuery)
+       
+        public Thread GetThreadById(string title)
         {
             try
             {
-                var topic = _dbContext.Threads
-                    .Where(a => a.Title.Contains(searchQuery) || a.Content.Contains(searchQuery))
-                   .Include(a => a.ThreadReplies).ThenInclude(b => b.SubscriberUser)
-                   .Include(a => a.SubscriberUser);
-
-                return topic;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }            
-        }
-
-        public Thread GetGuideline()
-        {
-            try
-            {
-                var thread = new Thread
-                {
-                    Title = "Welcome New Users! Please read this before posting!",
-                    Content = "Congratulations oh, you have found the Community! Before you make a new topic or post, please read community guidelines.",
-                    //   DatePosted = 
-                };
-
-                return thread;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public Thread GetThreadById(long threadId)
-        {
-            try
-            {
-                var topic = _dbContext.Threads.Where(a => a.Id == threadId)
+                var topic = _dbContext.Threads.Where(a => a.Title == title)
                     .Include(a=>a.Category).ThenInclude(b=>b.Channel)
                     .Include(a => a.ThreadReplies).ThenInclude(b => b.SubscriberUser)
                     .Include(a => a.SubscriberUser).FirstOrDefault();
