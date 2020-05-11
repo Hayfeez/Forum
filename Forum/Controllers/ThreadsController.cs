@@ -83,7 +83,7 @@ namespace Forum.Controllers
             }            
         }
 
-        public IActionResult Pinned(string id, [FromServices] IPinnedPostService _pinnedPostService)
+        public IActionResult Pinned(int id, [FromServices] IPinnedPostService _pinnedPostService)
         {
             try
             {

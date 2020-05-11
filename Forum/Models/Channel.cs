@@ -13,7 +13,6 @@ namespace Forum.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime DateCreated { get; set; }
-        public string LogoUrl { get; set; }
 
         public int SubscriberId { get; set; }
         public  Subscriber Subscriber { get; set; }

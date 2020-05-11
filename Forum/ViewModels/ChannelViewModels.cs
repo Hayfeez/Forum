@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Forum.Models;
 
 namespace Forum.ViewModels
@@ -33,7 +34,6 @@ namespace Forum.ViewModels
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string LogoUrl { get; set; }
         public IEnumerable<CategoryVM> Categories { get; set; }
 
         public int CategoryCount { get; set; }
@@ -54,23 +54,22 @@ namespace Forum.ViewModels
 
     #region Add/Update
 
-    public class SaveChannel
+    public class SaveChannelVM
     {
         public int Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
+        [Required]public string Title { get; set; }
+        [Required]public string Description { get; set; }
         public DateTime DateCreated { get; set; }
-        public string LogoUrl { get; set; }
         public int SubscriberId { get; set; }
     }
 
-    public class SaveCategory
+    public class SaveCategoryVM
     {
         public int Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
+        [Required] public string Title { get; set; }
+        [Required] public string Description { get; set; }
         public DateTime DateCreated { get; set; }
-        public int ChannelId { get; set; }
+        [Required] public int ChannelId { get; set; }
     }
 
     #endregion

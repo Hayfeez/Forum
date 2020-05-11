@@ -36,5 +36,13 @@ namespace Forum.Data
         public DbSet<ResetPasswordCode> ResetPasswordCodes { get; set; }
         public DbSet<PinnedPost> PinnedPosts { get; set; }
 
+        public DbSet<ThreadInfo> ThreadInfos { get; set; }
+        public DbSet<ThreadReplyInfo> ThreadReplyInfos { get; set; }
+        public DbSet<ThreadHistory> ThreadHistories { get; set; }
+
+        public DbSet<UserBookmarkedThread> UserBookmarkedThreads { get; set; }
+        public DbSet<UserFlaggedThread> UserFlaggedThreads { get; set; }
+        public DbSet<UserFollowedThread> UserFollowedThreads { get; set; }
+        public DbSet<UserFollowedPeople> UserFollowedPeoples { get; set; }
     }
 }

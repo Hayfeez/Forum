@@ -17,8 +17,6 @@ namespace Forum.DataAccessLayer.Service
         {
             _dbContext = dbContext;
         }
-       
-  
 
         public IEnumerable<PinnedPost> GetPinnedPosts(int subscriberId)
         {
@@ -27,9 +25,9 @@ namespace Forum.DataAccessLayer.Service
                 IEnumerable<PinnedPost> pinnedPosts;
 
                 pinnedPosts = _dbContext.PinnedPosts
-                       // .Include(a => a.Subscriber)
-                        .Where(a => a.SubscriberId == subscriberId)
-                        .OrderByDescending(a => a.DateCreated).Take(2);
+                        // .Include(a => a.Subscriber)
+                        .Where(a => a.SubscriberId == subscriberId);
+                       // .OrderByDescending(a => a.DateCreated).Take(2);
 
                 if (pinnedPosts.Count() > 0)
                     return pinnedPosts;
@@ -41,7 +39,8 @@ namespace Forum.DataAccessLayer.Service
                         {
                             Title = "Welcome New Users! Please read this before posting!",
                             Content = "Congratulations oh, you have found the Community! Before you make a new topic or post, please read community guidelines.",
-                            DateCreated = DateTime.Now
+                            DateCreated = DateTime.Now,
+                            IsActive = true
                         });
 
                     return pinnedPosts;
@@ -55,11 +54,11 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-        public PinnedPost GetPinnedPostById(string title )
+        public PinnedPost GetPinnedPostById(int id )
         {
             try
             {
-                var topic = _dbContext.PinnedPosts.Where(a => a.Title == title)
+                var topic = _dbContext.PinnedPosts.Where(a => a.Id == id)
                     //.Include(a => a.Subscriber)
                     .FirstOrDefault();
 
@@ -90,11 +89,11 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-        public async Task<DbActionsResponse> DeletePost(long postId)
+        public async Task<DbActionsResponse> DeletePost(long postId, int tenantId)
         {
             try
             {
-                var post = _dbContext.PinnedPosts.Where(a => a.Id == postId).FirstOrDefault();
+                var post = _dbContext.PinnedPosts.FirstOrDefault(a => a.Id == postId && a.SubscriberId == tenantId);
                 if (post == null) return DbActionsResponse.NotFound;
 
                 
@@ -109,12 +108,32 @@ namespace Forum.DataAccessLayer.Service
                 throw ex;
             }
         }
-
-        public async  Task<DbActionsResponse> UpdatePost(long postId, string newContent)
+        public async Task<DbActionsResponse> ToggleActive(long postId, int tenantId)
         {
             try
             {
-                var existingPost = _dbContext.PinnedPosts.Where(a => a.Id == postId).FirstOrDefault();
+                var post = _dbContext.PinnedPosts.FirstOrDefault(a => a.Id == postId && a.SubscriberId == tenantId);
+                if (post == null) return DbActionsResponse.NotFound;
+
+                post.IsActive = !post.IsActive;
+
+                _dbContext.PinnedPosts.Update(post);
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
+
+                return DbActionsResponse.Failed;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async  Task<DbActionsResponse> UpdatePost(long postId, string newContent, int tenantId)
+        {
+            try
+            {
+                var existingPost = _dbContext.PinnedPosts.FirstOrDefault(a => a.Id == postId && a.SubscriberId == tenantId);
                 if (existingPost == null) return DbActionsResponse.NotFound;
              
                 existingPost.Content = newContent;

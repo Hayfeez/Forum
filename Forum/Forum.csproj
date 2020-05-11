@@ -37,7 +37,6 @@
     <Folder Include="StaticData\" />
     <Folder Include="wwwroot\scripts\" />
     <Folder Include="Views\Manage\" />
-    <Folder Include="Views\Search\" />
     <Folder Include="Views\Default\" />
     <Folder Include="wwwroot\default\" />
     <Folder Include="wwwroot\default\css\" />
@@ -46,6 +45,8 @@
     <Folder Include="Views\Shared\Components\ForumStats\" />
     <Folder Include="Views\Shared\Components\ForumUsers\" />
     <Folder Include="Views\Shared\Components\ForumInvites\" />
+    <Folder Include="wwwroot\vendor\toastr\" />
+    <Folder Include="wwwroot\vendor\sweetalert\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\summernote-bs4.min.js" />
@@ -82,8 +83,9 @@
     <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-de-DE.min.js" />
     <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-sk-SK.min.js" />
     <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-pt-PT.min.js" />
-    <Content Remove="Views\Shared\Components\NavBar\Default.cshtml" />
-    <Content Remove="Views\Shared\Components\ChannelCount\Default.cshtml" />
     <Content Remove="Views\Manage\Moderators.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Forum.csproj" />
   </ItemGroup>
 </Project>

@@ -9,11 +9,12 @@ namespace Forum.DataAccessLayer.IService
     public interface IPinnedPostService
     {
         IEnumerable<PinnedPost> GetPinnedPosts(int subscriberId);
-        PinnedPost GetPinnedPostById(string title);
+        PinnedPost GetPinnedPostById(int postId);
 
         Task<DbActionsResponse> CreatePinnedPost(PinnedPost post);
-        Task<DbActionsResponse> UpdatePost(long postId, string newContent);
-        Task<DbActionsResponse> DeletePost(long postId);
+        Task<DbActionsResponse> UpdatePost(long postId, string newContent, int tenantId);
+        Task<DbActionsResponse> DeletePost(long postId, int tenantId);
+        Task<DbActionsResponse> ToggleActive(long postId, int tenantId);
 
     }
 }

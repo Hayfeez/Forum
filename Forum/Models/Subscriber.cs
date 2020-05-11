@@ -18,6 +18,8 @@ namespace Forum.Models
         public bool AllowJoinNow { get; set; }
         public bool IsPublic { get; set; }
         public bool IsActive { get; set; }
+        public int FlagLimit { get; set; }
+        public int DownvoteLimit { get; set; }
 
         public  IEnumerable<SubscriberUser> SubscriberUsers { get; set; }
         public  IEnumerable<Channel> Channels { get; set; }

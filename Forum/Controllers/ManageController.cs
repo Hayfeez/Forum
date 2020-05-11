@@ -114,6 +114,54 @@ namespace Forum.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> CancelInvite(long Id, [FromServices] ITenantService _tenantService)
+        {
+            try
+            {
+                var response = await _tenantService.CancelInvite(_tenant.Id, Id);
+                if (response == DbActionsResponse.NotFound)
+                    return Json(new { Status = -1, Message = "User not found" });
+
+                if (response == DbActionsResponse.Success)
+                    return Json(new { Status = 1, Message = "Invite deleted successfully" });
+
+                return Json(new { Status = -1, Message = "Deleting invite failed" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error occured while deleting invite");
+                return BadRequest("Could not delete invite");
+            }
+
+        }
+
+        [HttpPost]
+        public IActionResult ResendInviteMail(string email, [FromServices] ITenantService _tenantService, [FromServices]MailHelper _mailHelper)
+        {
+            try
+            {
+                var getInvite = _accountService.GetSubscriberInvite(email, _tenant.Id);
+                if (getInvite != null)
+                {
+                    var callbackUrl = Url.Action("Register", "Account", new { inviteCode = getInvite.InviteCode, email = getInvite.Email }, Request.Scheme);
+                    _mailHelper.SendMail(
+                       getInvite.Email,
+                       $"You have been invited to join the {_tenant.Name} forum. Please accept this invite by <a href='{callbackUrl}'>clicking here</a>.",
+                       $"{_tenant.Name} Forum Invitation");
+
+                    return Json(new { Status = 1, Message = "Invite deleted successfully" });
+                }
+
+                return Json(new { Status = -1, Message = "Resending invite mail failed" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error occured while resending invite");
+                return BadRequest("Could not resend invite");
+            }
+        }
+
+        [HttpPost]
         public async Task<IActionResult> UpdateUserRole(UpdateUserRole model, [FromServices] ITenantService _tenantService)
         {
             try
@@ -157,28 +205,6 @@ namespace Forum.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CancelInvite(long Id, [FromServices] ITenantService _tenantService)
-        {
-            try
-            {
-                var response = await _tenantService.CancelInvite(_tenant.Id, Id);
-                if (response == DbActionsResponse.NotFound)
-                    return Json(new { Status = -1, Message = "User not found" });
-
-                if (response == DbActionsResponse.Success)
-                    return Json(new { Status = 1, Message = "Invite deleted successfully" });
-
-                return Json(new { Status = -1, Message = "Deleting invite failed" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(0, ex, "Error occured while deleting invite");
-                return BadRequest("Could not delete invite");
-            }
-
-        }
-
         #endregion
 
         #region Tenant
@@ -204,8 +230,23 @@ namespace Forum.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult GetSubscriberInfo()
+        {
+            try
+            {
+               return Json(new { Status = 1, Data = _tenant, Message = "" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Could not load info");
+            }
+
+        }
+
+
         [HttpPost]
-        public async Task<IActionResult> UpdateSettings(UpdateSubscriberSetting model, [FromServices] ITenantService _tenantService)
+        public async Task<IActionResult> UpdateSubscriberInfo(SaveSubscriberInfo model, [FromServices] ITenantService _tenantService)
         {
             try
             {
@@ -214,20 +255,20 @@ namespace Forum.Controllers
                     return Json(new { Status = -1, Message = "Name or domain name is already taken" });
 
                 if (response == DbActionsResponse.Success)
-                    return Json(new { Status = 1, Message = "Settings updated successfully" });
+                    return Json(new { Status = 1, Message = "Subscription Info updated successfully" });
 
                 return Json(new { Status = -1, Message = "Update failed" });
             }
             catch (Exception ex)
             {
-                _logger.LogError(0, ex, "Error occured while updating forum settings");
-                return BadRequest("Could not update settings");
+                _logger.LogError(0, ex, "Error occured while updating forum info");
+                return BadRequest("Could not update subscriber info");
             }
 
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteAccount([FromServices] ITenantService _tenantService)
+        public async Task<IActionResult> DeleteSubscriberAccount([FromServices] ITenantService _tenantService)
         {
             try
             {
@@ -250,6 +291,373 @@ namespace Forum.Controllers
 
         #endregion
 
+
+        #region Channel
+        public async Task<IActionResult> AddChannel(SaveChannelVM model, [FromServices] IChannelService _channelService)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var data = _mapper.Map<Channel>(model);
+                    data.SubscriberId = _tenant.Id;
+                    var response = await _channelService.CreateChannel(data);
+
+                    if (response == DbActionsResponse.DuplicateExist)
+                        return Json(new { Status = -1, Message = "This channel exists" });
+
+                    else if (response == DbActionsResponse.Success)
+                        return Json(new { Status = 1, Message = "Channel saved successfully" });
+
+                    return Json(new { Status = -1, Message = "Channel not saved" });
+                }
+
+                return Json(new { Status = -1, Message = "Required fileds are empty" });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error while creating channel");
+                return BadRequest("Could not create channel");
+            }
+        }
+
+        public async Task<IActionResult> UpdateChannel(SaveChannelVM model, [FromServices] IChannelService _channelService)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var data = _mapper.Map<Channel>(model);
+                    data.SubscriberId = _tenant.Id;
+                    var response = await _channelService.UpdateChannel(data);
+
+                    if (response == DbActionsResponse.NotFound)
+                        return Json(new { Status = -1, Message = "This channel cannot be found" });
+
+                    else if (response == DbActionsResponse.DuplicateExist)
+                        return Json(new { Status = -1, Message = "This channel exists" });
+
+                    else if (response == DbActionsResponse.Success)
+                        return Json(new { Status = 1, Message = "Channel updated successfully" });
+
+                    return Json(new { Status = -1, Message = "Channel not updated" });
+                }
+
+                return Json(new { Status = -1, Message = "Required fileds are empty" });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error while updating channel");
+                return BadRequest("Could not update channel");
+            }
+        }
+
+        public async Task<IActionResult> DeleteChannel(int channelId, [FromServices] IChannelService _channelService)
+        {
+            try
+            {
+
+                var response = await _channelService.DeleteChannel(channelId, _tenant.Id);
+
+                if (response == DbActionsResponse.NotFound)
+                    return Json(new { Status = -1, Message = "This channel cannot be found" });
+
+                else if (response == DbActionsResponse.DeleteDenied)
+                    return Json(new { Status = -1, Message = "This channel cannot be deleted" });
+
+                else if (response == DbActionsResponse.Success)
+                    return Json(new { Status = 1, Message = "Channel deleted successfully" });
+
+                return Json(new { Status = -1, Message = "Channel not deleted" });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error while deleting channel");
+                return BadRequest("Could not delete channel");
+            }
+        }
+
+        public IActionResult GetChannel(int channelId, [FromServices] IChannelService _channelService)
+        {
+            try
+            {
+
+                var response = _channelService.GetChannelById(channelId);
+
+                if (response == null)
+                    return Json(new { Status = -1, Message = "This channel cannot be found" });
+
+                else if (response.SubscriberId != _tenant.Id)
+                    return Json(new { Status = -1, Message = "This channel does not exist" });
+
+                else
+                    return Json(new { Status = -1, Message = "", Data = response });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error while retrieving channel");
+                return BadRequest("Could not retrieve channel");
+            }
+        }
+
+        #endregion
+
+        #region Categories
+        public async Task<IActionResult> AddCategory(SaveCategoryVM model, [FromServices] IChannelService _channelService)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var data = _mapper.Map<Category>(model);
+                    var response = await _channelService.CreateCategory(data);
+
+                    if (response == DbActionsResponse.DuplicateExist)
+                        return Json(new { Status = -1, Message = "This category exists" });
+
+                    else if (response == DbActionsResponse.Success)
+                        return Json(new { Status = 1, Message = "Category saved successfully" });
+
+                    return Json(new { Status = -1, Message = "Category not saved" });
+                }
+
+                return Json(new { Status = -1, Message = "Required fileds are empty" });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error while creating category");
+                return BadRequest("Could not create category");
+            }
+        }
+
+        public async Task<IActionResult> UpdateCategory(SaveCategoryVM model, [FromServices] IChannelService _channelService)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var data = _mapper.Map<Category>(model);
+                    var response = await _channelService.UpdateCategory(data);
+
+                    if (response == DbActionsResponse.NotFound)
+                        return Json(new { Status = -1, Message = "This category cannot be found" });
+
+                    else if (response == DbActionsResponse.DuplicateExist)
+                        return Json(new { Status = -1, Message = "This category exists" });
+
+                    else if (response == DbActionsResponse.Success)
+                        return Json(new { Status = 1, Message = "Category updated successfully" });
+
+                    return Json(new { Status = -1, Message = "Category not updated" });
+                }
+
+                return Json(new { Status = -1, Message = "Required fileds are empty" });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error while updating category");
+                return BadRequest("Could not update category");
+            }
+        }
+
+        public async Task<IActionResult> DeleteCategory(int categoryId, [FromServices] IChannelService _channelService)
+        {
+            try
+            {
+
+                var response = await _channelService.DeleteCategory(categoryId, _tenant.Id);
+
+                if (response == DbActionsResponse.NotFound)
+                    return Json(new { Status = -1, Message = "This category cannot be found" });
+
+                else if (response == DbActionsResponse.DeleteDenied)
+                    return Json(new { Status = -1, Message = "This category cannot be deleted" });
+
+                else if (response == DbActionsResponse.Success)
+                    return Json(new { Status = 1, Message = "Category deleted successfully" });
+
+                return Json(new { Status = -1, Message = "Category not deleted" });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error while deleting category");
+                return BadRequest("Could not delete category");
+            }
+        }
+
+        public IActionResult GetCategory(int categoryId, [FromServices] IChannelService _channelService)
+        {
+            try
+            {
+
+                var response = _channelService.GetCategoryById(categoryId);
+
+                if (response == null)
+                    return Json(new { Status = -1, Message = "This category cannot be found" });
+
+                else if (response.Channel.SubscriberId != _tenant.Id)
+                    return Json(new { Status = -1, Message = "This category does not exist" });
+
+                else
+                    return Json(new { Status = -1, Message = "", Data = response });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error while retrieving category");
+                return BadRequest("Could not retrieve category");
+            }
+        }
+
+
+        #endregion
+
+        #region Pinned Posts
+
+        public async Task<IActionResult> AddPinnedPost(SavePinnedPostVM model, [FromServices] IPinnedPostService _pinnedService)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var data = _mapper.Map<PinnedPost>(model);
+                    data.SubscriberId = _tenant.Id;
+                    var response = await _pinnedService.CreatePinnedPost(data);
+
+                    if (response == DbActionsResponse.DuplicateExist)
+                        return Json(new { Status = -1, Message = "This post exists" });
+
+                    else if (response == DbActionsResponse.Success)
+                        return Json(new { Status = 1, Message = "Post saved successfully" });
+
+                    return Json(new { Status = -1, Message = "Post not saved" });
+                }
+
+                return Json(new { Status = -1, Message = "Required fileds are empty" });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error while creating Post");
+                return BadRequest("Could not create Post");
+            }
+        }
+
+        public async Task<IActionResult> UpdatePinnedPost(SavePinnedPostVM model, [FromServices] IPinnedPostService _pinnedService)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var response = await _pinnedService.UpdatePost(model.Id, model.Content, _tenant.Id);
+
+                    if (response == DbActionsResponse.NotFound)
+                        return Json(new { Status = -1, Message = "This Post cannot be found" });
+
+                    else if (response == DbActionsResponse.DuplicateExist)
+                        return Json(new { Status = -1, Message = "This Post exists" });
+
+                    else if (response == DbActionsResponse.Success)
+                        return Json(new { Status = 1, Message = "Post updated successfully" });
+
+                    return Json(new { Status = -1, Message = "Post not updated" });
+                }
+
+                return Json(new { Status = -1, Message = "Required fileds are empty" });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error while updating Post");
+                return BadRequest("Could not update Post");
+            }
+        }
+
+        public async Task<IActionResult> DeletePinnedPost(int postId, [FromServices] IPinnedPostService _pinnedService)
+        {
+            try
+            {
+
+                var response = await _pinnedService.DeletePost(postId, _tenant.Id);
+
+                if (response == DbActionsResponse.NotFound)
+                    return Json(new { Status = -1, Message = "This Post cannot be found" });
+
+                else if (response == DbActionsResponse.DeleteDenied)
+                    return Json(new { Status = -1, Message = "This Post cannot be deleted" });
+
+                else if (response == DbActionsResponse.Success)
+                    return Json(new { Status = 1, Message = "Post deleted successfully" });
+
+                return Json(new { Status = -1, Message = "Post not deleted" });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error while deleting Post");
+                return BadRequest("Could not delete Post");
+            }
+        }
+
+        public async Task<IActionResult> TogglePinnedPost(int postId, [FromServices] IPinnedPostService _pinnedService)
+        {
+            try
+            {
+
+                var response = await _pinnedService.ToggleActive(postId, _tenant.Id);
+
+                if (response == DbActionsResponse.NotFound)
+                    return Json(new { Status = -1, Message = "This Post cannot be found" });
+
+                else if (response == DbActionsResponse.DeleteDenied)
+                    return Json(new { Status = -1, Message = "This Post's status cannot be changed" });
+
+                else if (response == DbActionsResponse.Success)
+                    return Json(new { Status = 1, Message = "Status changed successfully" });
+
+                return Json(new { Status = -1, Message = "Post's status not changed" });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error while changing Post's status");
+                return BadRequest("Could not change Post's status");
+            }
+        }
+
+        public IActionResult GetPinnedPost(int postId, [FromServices] IPinnedPostService _pinnedService)
+        {
+            try
+            {
+
+                var response = _pinnedService.GetPinnedPostById(postId);
+
+                if (response == null)
+                    return Json(new { Status = -1, Message = "This Post cannot be found" });
+
+                else if (response.SubscriberId != _tenant.Id)
+                    return Json(new { Status = -1, Message = "This Post does not exist" });
+
+                else
+                    return Json(new { Status = -1, Message = "", Data = response });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error while retrieving Post");
+                return BadRequest("Could not retrieve Post");
+            }
+        }
+
+
+        #endregion
 
         #region Moderators
 

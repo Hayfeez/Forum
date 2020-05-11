@@ -14,48 +14,53 @@
         <p>No of Threads: @Model.Category.ThreadCount</p>
 
         @if(Model.Threads.Count() > 0) { 
-        <div class="posts__body">
-            @foreach (var item in Model.Threads)
-            {
-                <div class="post bg-f2f4f6">
-                    <div class="wrap-ut pull-left">
-                        <div class="posts__tags tags">
-                        </div>
-                        <div class="userinfo pull-left">
-                            <div class="avatar">
-                                <img src="@item.AuthorImageUrl" alt="User Photo">
-                                <div class="status green">&nbsp;</div>
-                            </div>
-
-                            <div class="icons">
-                                <img src="~/images/icon1.jpg" alt=""><img src="~/images/icon4.jpg" alt="">
-                            </div>
-                        </div>
-                        <div class="posttext pull-left">
-                            <h2><a asp-controller="Threads" asp-action="Thread" asp-route-id="@item.Title">@item.Title</a></h2>
-                            <p>@Html.Raw(@item.Content)</p>
-                        </div>
-
-                        <div class="clearfix"></div>
+    <div class="posts__body">
+        <p>
+            Click <a asp-action="CreateThread" asp-controller="Threads" asp-route-channelId="@Model.Category.Channel.Id" asp-route-categoryId="@Model.Category.Id">
+                here
+            </a> to add a post in this category
+        </p>
+        @foreach (var item in Model.Threads)
+        {
+            <div class="post bg-f2f4f6">
+                <div class="wrap-ut pull-left">
+                    <div class="posts__tags tags">
                     </div>
-                    <div class="postinfo pull-left">
-                        <div class="comments">
-                            <div class="commentbg">
-                                @item.RepliesCount
-                                <div class="mark"></div>
-                            </div>
-
+                    <div class="userinfo pull-left">
+                        <div class="avatar">
+                            <img src="@item.AuthorImageUrl" alt="User Photo">
+                            <div class="status green">&nbsp;</div>
                         </div>
-                        <div class="views"><i class="fa fa-eye"></i> 1,568</div>
-                        <div class="time"><i class="fa fa-clock-o"></i> 24 min</div>
+
+                        <div class="icons">
+                            <img src="~/images/icon1.jpg" alt=""><img src="~/images/icon4.jpg" alt="">
+                        </div>
                     </div>
+                    <div class="posttext pull-left">
+                        <h2><a asp-controller="Threads" asp-action="Thread" asp-route-id="@item.Title">@item.Title</a></h2>
+                        <p>@Html.Raw(@item.Content)</p>
+                    </div>
+
                     <div class="clearfix"></div>
-
                 </div>
+                <div class="postinfo pull-left">
+                    <div class="comments">
+                        <div class="commentbg">
+                            @item.RepliesCount
+                            <div class="mark"></div>
+                        </div>
 
-            }
+                    </div>
+                    <div class="views"><i class="fa fa-eye"></i> 1,568</div>
+                    <div class="time"><i class="fa fa-clock-o"></i> 24 min</div>
+                </div>
+                <div class="clearfix"></div>
 
-        </div>
+            </div>
+
+        }
+
+    </div>
 
         <div class="col-lg-8 col-xs-12 col-md-8">
             <div class="pull-left"><a href="#" class="prevnext"><i class="fa fa-angle-left"></i></a></div>

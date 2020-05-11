@@ -13,10 +13,7 @@
             <span>Forum Guidelines</span>
         </div>
         <form method="post" asp-action="CreateThread" asp-acontroler="Threads">
-            <div class="create__section">
-                <label class="create__label" for="title">Thread Title</label>
-                <input type="text" class="form-control" asp-for="Title" id="title" placeholder="Add here">
-            </div>
+
             <div class="row" id="channelSection">
                 <input type="hidden" asp-for="ChannelId" />
                 <input type="hidden" asp-for="CategoryId" />
@@ -47,6 +44,10 @@
                     </div>
                 </div>
             </div>
+            <div class="create__section">
+                <label class="create__label" for="title">Thread Title</label>
+                <input type="text" class="form-control" asp-for="Title" id="title" placeholder="Add here">
+            </div>
             <div class="create__section create__textarea">
                 <label class="create__label" for="content">Content</label>
 
@@ -55,11 +56,10 @@
                 </textarea>
             </div>
 
-            
-            @* <div class="create__section">
-            <label class="create__label" for="tags">Add Tags</label>
-            <input type="text" class="form-control" asp-for="Tags" id="tags" placeholder="e.g. nature, science">
-        </div> *@
+            <div class="create__section">
+                <label class="create__label" for="tags">Add Tags</label>
+                <input type="text" class="form-control" asp-for="Tags" id="tags" placeholder="e.g. nature, science">
+            </div>
             <div class="create__advanced">
                 <div class="row">
 
@@ -101,23 +101,18 @@
             ['insert', ['link', 'picture', 'table']],  //'video', 'hr'
             ['view', ['fullscreen']] //, 'codeview', 'help', 'undo', 'redo'
         ];
-
        
-        $(document).ready(function () {
-            alert($('#ChannelId').val());
-            alert($('#CategoryId').val());
+        $(document).ready(function () {            
             loadChannelCategory($('#channel').val());
             debugger;
-            if (!($('#ChannelId').val() != "" || $('#ChannelId'.val() != "0"))) {
-                debugger;
+            if (!($('#ChannelId').val() == "" || $('#ChannelId').val() == "0")) {
+                $('#channel').val($('#ChannelId').val());
                 $('#channel').attr('disabled', true);
-                if (!($('#CategoryId').val() != "" || $('#CategoryId'.val() != "0"))) {
-                    debugger;
-                    $('#channelSection').hide();
+                if ($('#CategoryId').val() == "" || $('#CategoryId').val() == "0") {
+                    loadChannelCategory($('#ChannelId').val());
                 }
                 else {
-                    debugger;
-                    loadChannelCategory($('#ChannelId').val());
+                    $('#channelSection').hide();                   
                 }
             }       
             

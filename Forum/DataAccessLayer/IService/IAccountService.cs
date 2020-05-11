@@ -22,6 +22,9 @@ namespace Forum.DataAccessLayer.IService
         ResetPasswordCode GetResetPasswordCode(string Email, int subscriberId);
         Task<DbActionsResponse> CreateResetPasswordCode(ResetPasswordCode reset);
         Task<DbActionsResponse> DeleteResetPasswordCode(ResetPasswordCode reset);
+        SubscriberUser GetSubscriberUserWithEmail(string email, int subscriberId);
+        Task<DbActionsResponse> ResetSubscriberUserPassword(string email, string newPassword);
+        Task<DbActionsResponse> ChangeSubscriberUserPassword(string email, string oldPassword, string newPassword);
 
     }
 }
