@@ -292,6 +292,12 @@ namespace Forum.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    if (model.Password != model.ConfirmPassword)
+                    {
+                        ModelState.AddModelError("", "New Password and Confirm Password must be the same");
+                        return View(model);
+                    }
+
                     var getInvite = _accountService.GetSubscriberInvite(model.Email, _tenant.Id);
                     if (getInvite == null) // no pending invite for subscriber
                     {
@@ -342,6 +348,9 @@ namespace Forum.Controllers
 
                         else if (response == DbActionsResponse.Success)
                         {
+                            //delete the invite
+                            var deleteInvite = await _accountService.DeleteSubscriberInvite(getInvite);
+
                             _logger.LogInformation("User created a new account with password.");
                             var callbackUrl = Url.Action("Login", "Account");
                             _mailHelper.SendMail(
@@ -407,13 +416,41 @@ namespace Forum.Controllers
         }
 
         [HttpPost]
-        public IActionResult ForgotPassword(ForgotPasswordVM model)
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordVM model, [FromServices]MailHelper _mailHelper)
         {
             try
             {
                 if(ModelState.IsValid)
                 {
                     //save reset code and send email
+                    var code = Guid.NewGuid().ToString();
+                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    var reset = await _accountService.CreateResetPasswordCode(new ResetPasswordCode
+                    {
+                        DateCreated = DateTime.Now,
+                        SubscriberId = _tenant.Id,
+                        Email = model.Email,
+                        ResetCode = code
+                    });
+                    if (reset == DbActionsResponse.DuplicateExist)
+                    {
+                        //user has an invite
+                        ModelState.AddModelError(string.Empty, "There is a pending reset password link.");
+                        return View(model);
+                    }
+                    else if (reset == DbActionsResponse.Success)
+                    {
+                        _logger.LogInformation("User Reset password code saved.");
+                        var callbackUrl = Url.Action("ResetPassword", "Account", new { resetCode = code, email = model.Email }, Request.Scheme);
+
+                        _mailHelper.SendMail(
+                           model.Email,
+                           $"Please reset the password to your account on the {_tenant.Name} forum by <a href='{callbackUrl}'> clicking here </a>.",
+                           $"{_tenant.Name} Forum - Reset Password");
+
+                        //add success message
+                        return View(new ForgotPasswordVM());
+                    }
                 }
 
                 // If we got this far, something failed, redisplay form
@@ -467,12 +504,18 @@ namespace Forum.Controllers
           
 
         [HttpPost]
-        public IActionResult ResetPassword(ResetPasswordVM model)
+        public async Task<IActionResult> ResetPassword(ResetPasswordVM model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
+                    if(model.NewPassword != model.ConfirmNewPassword)
+                    {
+                        ModelState.AddModelError("", "New Password and Confirm Password must be the same");
+                        return View(model);
+                    }
+
                     var getResetCode = _accountService.GetResetPasswordCode(model.Email, _tenant.Id);
                     if (getResetCode == null) // no pending reset for subscriber
                     {
@@ -485,7 +528,31 @@ namespace Forum.Controllers
                     }
 
                     //begin reset
+                    IdentityUser user;
+                    user = await _userManager.FindByEmailAsync(model.Email);
+                    if(user == null)
+                    {
+                        ModelState.AddModelError("", "User not found");
+                        return View(model);
+                    }
 
+                    var hasher = new PasswordHasher<IdentityUser>();
+                    string newPassword = hasher.HashPassword(user, model.NewPassword);
+                    var resetPwd = await _accountService.ResetSubscriberUserPassword(model.Email, newPassword);
+                    if (resetPwd == DbActionsResponse.NotFound)
+                    {
+                        ModelState.AddModelError(string.Empty, "User not found");
+                        return View(model);
+                    }
+                    else if (resetPwd == DbActionsResponse.Success)
+                    {
+                        _logger.LogInformation("User password reset successfully");
+                        //delete the resetcode
+                        var deleteCode = await _accountService.DeleteResetPasswordCode(getResetCode);
+
+                        //add success message
+                        return RedirectToAction("Login", "Account");
+                    }
                 }
 
                 // If we got this far, something failed, redisplay form
@@ -501,6 +568,84 @@ namespace Forum.Controllers
             }
         }
 
-        #endregion      
+
+        #endregion
+
+        #region Change Password
+        public IActionResult ChangePassword()
+        {
+            try
+            {
+
+                return View(new ChangePasswordVM());
+            }
+            catch (Exception ex)
+            {
+                return View("Views/Shared/Error.cshtml", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
+
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordVM model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (model.NewPassword != model.ConfirmNewPassword)
+                    {
+                        ModelState.AddModelError("", "New Password and Confirm Password must be the same");
+                        return View(model);
+                    }
+
+                    string name = User.Identity.Name;
+                    IdentityUser user;
+                    user = await _userManager.FindByNameAsync(name);
+                    if (user == null)
+                    {
+                        ModelState.AddModelError("", "User not found");
+                        return View(model);
+                    }
+
+                    var hasher = new PasswordHasher<IdentityUser>();
+                    string newPassword = hasher.HashPassword(user, model.NewPassword);
+                    var changePwd = await _accountService.ResetSubscriberUserPassword(user.Email, newPassword);
+                    if (changePwd == DbActionsResponse.NotFound)
+                    {
+                        ModelState.AddModelError(string.Empty, "User not found");
+                        return View(model);
+                    }
+                    else if (changePwd == DbActionsResponse.DeleteDenied)
+                    {
+                        ModelState.AddModelError(string.Empty, "Current Password is incorrect. Enter your correct password");
+                        return View(model);
+                    }
+                    else if (changePwd == DbActionsResponse.Success)
+                    {
+                        _logger.LogInformation("User password changed successfully");
+
+                        await _signInManager.SignOutAsync(); //sign user out
+
+                        //add success message
+                        return RedirectToAction("Login", "Account");
+                    }
+                }
+
+                // If we got this far, something failed, redisplay form
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error while handling change password");
+                return View("Views/Shared/Error.cshtml", new ErrorViewModel
+                {
+                    RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+                });
+            }
+        }
+
+
+        #endregion
     }
 }

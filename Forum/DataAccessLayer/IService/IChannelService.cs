@@ -14,7 +14,7 @@ namespace Forum.DataAccessLayer.IService
 
         Task<DbActionsResponse> CreateChannel(Channel channel);
         Task<DbActionsResponse> UpdateChannel(Channel channel);
-        Task<DbActionsResponse> DeleteChannel(int channelId);
+        Task<DbActionsResponse> DeleteChannel(int channelId, int tenantId);
 
         IEnumerable<Category> GetAllCategories(int subscriberd);
         IEnumerable<Category> GetAllCategoriesInChannel(int channelId, bool useInclude = true);
@@ -22,7 +22,7 @@ namespace Forum.DataAccessLayer.IService
         Category GetCategoryByName(string title);
         Task<DbActionsResponse> CreateCategory(Category cat);
         Task<DbActionsResponse> UpdateCategory(Category cat);
-        Task<DbActionsResponse> DeleteCategory(int categoryId);
+        Task<DbActionsResponse> DeleteCategory(int categoryId, int tenantId);
     }
 
 }

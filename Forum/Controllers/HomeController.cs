@@ -55,6 +55,35 @@ namespace Forum.Controllers
             
         }
 
+
+        [HttpGet]
+        public IActionResult Search(string searchText, [FromServices]ISearchService _searchService)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(searchText))
+                {
+                    var response = _searchService.SearchAllThreads(_tenant.Id, searchText);
+
+                    return View(new SearchViewModel
+                    {
+                        Threads = _mapper.Map<List<ThreadVM>>(response),
+                        SearchQuery = searchText,
+                        ResultCount = response.Count()
+                    });
+                }
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error while searching threads");
+                return View("Views/Shared/Error.cshtml", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+
+            }
+        }
+
+
         public IActionResult Privacy()
         {
             return View();

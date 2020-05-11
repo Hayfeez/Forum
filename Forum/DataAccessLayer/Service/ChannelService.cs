@@ -93,15 +93,14 @@ namespace Forum.DataAccessLayer.Service
         {
             try
             {
-                var chann = _dbContext.Channels.Where(a => a.Id == channel.Id).FirstOrDefault();
+                var chann = _dbContext.Channels.Where(a => a.Id == channel.Id && a.SubscriberId == channel.SubscriberId).FirstOrDefault();
                 if (chann == null) return DbActionsResponse.NotFound;
 
-                if (_dbContext.Channels.Any(a => a.Id != channel.Id && a.Title == channel.Title))
+                if (_dbContext.Channels.Any(a => a.Id != channel.Id && a.Title == channel.Title && a.SubscriberId == channel.SubscriberId))
                     return DbActionsResponse.DuplicateExist;
 
                 chann.Title = channel.Title;
                 chann.Description = channel.Description;
-                chann.LogoUrl = channel.LogoUrl;
 
                 _dbContext.Channels.Update(chann);
                 if (await _dbContext.SaveChangesAsync() > 0)
@@ -114,11 +113,12 @@ namespace Forum.DataAccessLayer.Service
                 throw ex;
             }
         }
-        public async Task<DbActionsResponse> DeleteChannel(int channelId)
+        public async Task<DbActionsResponse> DeleteChannel(int channelId, int tenantId)
         {
             try
             {
-                var channel = _dbContext.Channels.Where(a => a.Id == channelId).Include(a => a.Categories).FirstOrDefault();
+                var channel = _dbContext.Channels.Where(a => a.Id == channelId && a.SubscriberId == tenantId)
+                    .Include(a => a.Categories).FirstOrDefault();
                 if (channel == null) return DbActionsResponse.NotFound;
 
                 if (channel.Categories.Count() > 0)
@@ -178,6 +178,7 @@ namespace Forum.DataAccessLayer.Service
             try
             {
                 var f = _dbContext.Categories.Where(a => a.Id == categoryId)
+                    .Include(a=>a.Channel)
                     .Include(f => f.Threads).ThenInclude(a => a.SubscriberUser)
                     .Include(f => f.Threads).ThenInclude(a => a.ThreadReplies).ThenInclude(r => r.SubscriberUser)
                     .FirstOrDefault();
@@ -210,7 +211,7 @@ namespace Forum.DataAccessLayer.Service
         {
             try
             {
-                if (_dbContext.Categories.Any(a => a.Title == category.Title && a.Channel.Id == category.Channel.Id))
+                if (_dbContext.Categories.Any(a => a.Title == category.Title && a.Channel.Id == category.ChannelId))
                     return DbActionsResponse.DuplicateExist;
 
                 _dbContext.Categories.Add(category);
@@ -228,7 +229,7 @@ namespace Forum.DataAccessLayer.Service
         {
             try
             {
-                var existingCategory = _dbContext.Categories.Where(a => a.Id == category.Id).FirstOrDefault();
+                var existingCategory = _dbContext.Categories.FirstOrDefault(a => a.Id == category.Id && a.Channel.Id == category.ChannelId);
                 if (existingCategory == null) return DbActionsResponse.NotFound;
 
                 if (_dbContext.Categories.Any(a => a.Id != category.Id && a.Title == category.Title))
@@ -248,11 +249,15 @@ namespace Forum.DataAccessLayer.Service
                 throw ex;
             }
         }
-        public async Task<DbActionsResponse> DeleteCategory(int categoryId)
+        public async Task<DbActionsResponse> DeleteCategory(int categoryId, int tenantId)
         {
             try
             {
-                var cat = _dbContext.Categories.Where(a => a.Id == categoryId).Include(a => a.Threads).FirstOrDefault();
+                var cat = _dbContext.Categories
+                    .Include(a => a.Channel)
+                    .Include(a => a.Threads)
+                    .FirstOrDefault(a => a.Id == categoryId && a.Channel.SubscriberId == tenantId);
+
                 if (cat == null) return DbActionsResponse.NotFound;
 
                 if (cat.Threads.Count() > 0)

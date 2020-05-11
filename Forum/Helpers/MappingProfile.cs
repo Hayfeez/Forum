@@ -19,9 +19,14 @@ namespace Forum.Helpers
 
             CreateMap<SubscriberUser, TenantUsersList>();
             CreateMap<SubscriberInvite, TenantInviteList>();
+            CreateMap<SaveChannelVM, Channel>().ForMember(dest => dest.DateCreated, opt => { opt.MapFrom(d => DateTime.Now); });
+            CreateMap<SaveCategoryVM, Category>().ForMember(dest => dest.DateCreated, opt => { opt.MapFrom(d => DateTime.Now); });
+            CreateMap<SaveThreadVM, Thread>().ForMember(dest => dest.DateCreated, opt => { opt.MapFrom(d => DateTime.Now); });
+            CreateMap<SavePinnedPostVM, PinnedPost>().ForMember(dest => dest.DateCreated, opt => { opt.MapFrom(d => DateTime.Now); });
 
-            CreateMap<SaveThreadVM, Thread>()
-                .ForMember(dest => dest.DateCreated, opt => { opt.MapFrom(d => DateTime.Now); });
+            CreateMap<SaveSubscriberInfo, Subscriber>()
+                .ForMember(dest => dest.DateCreated, opt => { opt.MapFrom(d => DateTime.Now); })
+                .ForMember(dest => dest.IsActive, opt => { opt.MapFrom(d => true); });
 
             CreateMap<PinnedPost, ThreadVM>()
                .ForMember(dest => dest.DatePosted, opt => { opt.MapFrom(d => d.DateCreated); })

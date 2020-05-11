@@ -27,9 +27,9 @@ namespace Forum.Data
 
                 var subscriber = new Subscriber { Description = "Main Forum", DateCreated = DateTime.Now, Domain = "myforum.localhost", AllowJoinNow = false, HeaderImageUrl = "", Name = "Main Forum", IsActive = true, IsPublic = true };
 
-                var channel1 = new Channel { Subscriber = subscriber, DateCreated = DateTime.Now, Description = "Career", LogoUrl = "", Title = "Career" };
-                var channel2 = new Channel { Subscriber = subscriber, DateCreated = DateTime.Now, Description = "Sports", LogoUrl = "", Title = "Sports" };
-                var channel3 = new Channel { Subscriber = subscriber, DateCreated = DateTime.Now, Description = "General", LogoUrl = "", Title = "General" };
+                var channel1 = new Channel { Subscriber = subscriber, DateCreated = DateTime.Now, Description = "Career",  Title = "Career" };
+                var channel2 = new Channel { Subscriber = subscriber, DateCreated = DateTime.Now, Description = "Sports", Title = "Sports" };
+                var channel3 = new Channel { Subscriber = subscriber, DateCreated = DateTime.Now, Description = "General", Title = "General" };
 
 
                 var channels = new List<Channel> { channel1, channel2, channel3 };

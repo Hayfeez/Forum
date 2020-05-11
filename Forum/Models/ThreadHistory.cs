@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
 namespace Forum.Models
 {
-    public class PinnedPost
+    [Table("ThreadHistory")]
+    public class ThreadHistory
     {      
-
         public long Id { get; set; }
+        public long ThreadId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
-        public bool IsActive { get; set; }
-
         public DateTime DateCreated { get; set; }
-
-        public int SubscriberId { get; set; }
-        public  Subscriber Subscriber{ get; set; }
+        
+       // public  IEnumerable<Thread> Thread { get; set; }
     }
 }

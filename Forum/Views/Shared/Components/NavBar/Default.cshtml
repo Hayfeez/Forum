@@ -13,18 +13,18 @@
                 </a>
             </div>
             <div class="header__search">
-                <form asp-action="Search" asp-controller="Search" method="get">
+                <form asp-action="Search" asp-controller="Home" method="get">
                     <label>
                         <i class="icon-Search js-header-search-btn-open"></i>
-                        <input type="search" placeholder="Search in all channels" class="form-control">
+                        <input type="search" id="searchText" name="searchText" placeholder="Search in all channels" class="form-control">
                     </label>
+
+                    <div class="header__search-close js-header-search-btn-close"><i class="icon-Cancel"></i></div>
+                    <div class="header__search-btn">
+                        <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+
+                    </div>
                 </form>
-                <div class="header__search-close js-header-search-btn-close"><i class="icon-Cancel"></i></div>
-                <div class="header__search-btn">
-                    <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
-
-                </div>
-
             </div>
 
             @if (SignInManager.IsSignedIn(User))
@@ -67,6 +67,7 @@
                                 <a asp-controller="Profile" asp-action="Bookmarks"><i class="icon-Bookmark" title="Bookmarks"></i></a>
                                 <a href="#"><i class="icon-Message" title="Messages"></i></a>
                                 <a asp-controller="Profile" asp-action="Index"><i class="icon-User" title="Profile"></i></a>
+                                <a asp-controller="Account" asp-action="ChangePassword"><i class="fa-key" title="Change Password"></i></a>
                                 <form class="form-inline" asp-action="Logout" asp-controller="Account" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                                     <button type="submit" class="nav-link btn-link text-dark"> <i class="icon-Logout" title="Logout"></i></button>
                                 </form>
@@ -101,7 +102,7 @@
             @if (Tenant.AllowJoinNow)
             {
                 <li class="nav-item">
-                    <a class="nav-link text-dark" asp-action="JoinForum" asp-controller="Account"> Join Now</a>
+                    <a class="nav-link text-dark" asp-action="JoinForum" asp-controller="Account"> Join Now </a>
                 </li>
                 <li class="nav-item">  &nbsp;&nbsp; </li>
 
