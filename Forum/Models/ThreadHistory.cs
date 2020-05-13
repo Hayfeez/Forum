@@ -14,6 +14,5 @@ namespace Forum.Models
         public string Content { get; set; }
         public DateTime DateCreated { get; set; }
         
-       // public  IEnumerable<Thread> Thread { get; set; }
     }
 }

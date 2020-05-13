@@ -9,11 +9,8 @@ namespace Forum.Models
     public class ThreadInfo
     {      
         public long Id { get; set; }
-        public long ThreadId { get; set; }
-        public int Followers { get; set; }
-        public int Viewers { get; set; }
-        public int Likes { get; set; }
-        public int Flags { get; set; }
+        public long ThreadId { get; set; }        
+        public int Views { get; set; }
 
         public  Thread Thread { get; set; }
     }
