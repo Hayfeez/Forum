@@ -19,6 +19,16 @@ let STATUS = {
 };
 
 
+let UserActionEnum = {
+    Bookmark: 1,
+    Flag:2,
+    Follow:3,
+    Like:4,
+    Share:5,
+    Upvote:6,
+    Downvote:7
+};
+
 function buildDropdownOption(text, value) {
     var option = document.createElement("option");
     option.text = text;

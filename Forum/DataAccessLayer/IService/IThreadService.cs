@@ -17,5 +17,12 @@ namespace Forum.DataAccessLayer.IService
         Task<DbActionsResponse> UpdateThread(long threadId, string newContent);
         Task<DbActionsResponse> DeleteThread(long threadId);
 
+
+        IEnumerable<ThreadReply> GetAllRepliesToThread(long threadId);
+
+        Task<DbActionsResponse> CreateReply(ThreadReply reply);
+        Task<DbActionsResponse> UpdateReply(long replyId, string newContent);
+        Task<DbActionsResponse> DeleteReply(long replyId);
+
     }
 }

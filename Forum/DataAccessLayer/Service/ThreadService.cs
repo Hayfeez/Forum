@@ -82,8 +82,10 @@ namespace Forum.DataAccessLayer.Service
             try
             {
                 var topic = _dbContext.Threads.Where(a => a.Title == title)
+                    .Include(a=>a.ThreadInfo)
                     .Include(a=>a.Category).ThenInclude(b=>b.Channel)
                     .Include(a => a.ThreadReplies).ThenInclude(b => b.SubscriberUser)
+                    .Include(a => a.ThreadReplies).ThenInclude(a=>a.ThreadReplyInfo)
                     .Include(a => a.SubscriberUser).FirstOrDefault();
 
                 return topic;
@@ -155,5 +157,84 @@ namespace Forum.DataAccessLayer.Service
                 throw ex;
             }
         }
+
+
+        #region ThreadReplies
+
+        public IEnumerable<ThreadReply> GetAllRepliesToThread(long threadId)
+        {
+            try
+            {
+                var replies = _dbContext.ThreadReplies
+                    .Include(b => b.SubscriberUser)
+                        .Include(a => a.Thread)
+                            .ThenInclude(b => b.SubscriberUser)
+                        .Where(a => a.Thread.Id == threadId);
+
+                return replies;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DbActionsResponse> CreateReply(ThreadReply reply)
+        {
+            try
+            {
+                _dbContext.ThreadReplies.Add(reply);
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
+
+                return DbActionsResponse.Failed;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DbActionsResponse> DeleteReply(long replyId)
+        {
+            try
+            {
+                var reply = _dbContext.ThreadReplies.Where(a => a.Id == replyId).SingleOrDefault();
+                if (reply == null) return DbActionsResponse.NotFound;
+
+
+                _dbContext.ThreadReplies.Remove(reply);
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
+
+                return DbActionsResponse.Failed;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DbActionsResponse> UpdateReply(long replyId, string newContent)
+        {
+            try
+            {
+                var oldReply = _dbContext.ThreadReplies.Where(a => a.Id == replyId).FirstOrDefault();
+                if (oldReply == null) return DbActionsResponse.NotFound;
+
+                oldReply.Content = newContent;
+
+                _dbContext.ThreadReplies.Update(oldReply);
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
+
+                return DbActionsResponse.Failed;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion
     }
 }

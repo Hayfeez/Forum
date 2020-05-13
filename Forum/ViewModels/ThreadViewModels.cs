@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Forum.Helpers;
 
 namespace Forum.ViewModels
 {
@@ -41,6 +42,8 @@ namespace Forum.ViewModels
         public int RepliesCount { get; set; }
         public CategoryVM Category { get; set; }
         public ChannelVM Channel { get; set; }
+        public ThreadInfoVM ThreadInfo { get; set; }
+        public ThreadReplyInfoVM ThreadReplyInfo { get; set; }
     }
 
     public class ThreadReplyVM
@@ -55,6 +58,28 @@ namespace Forum.ViewModels
         public bool IsAuthorAdmin { get; set; }
 
         public ThreadVM Thread { get; set; }
+    }
+
+    public class ThreadInfoVM
+    {
+        public long Id { get; set; }
+        public long ThreadId { get; set; }
+        public int Follows { get; set; }        
+        public int Likes { get; set; }
+        public int Flags { get; set; }
+        public int Bookmarks { get; set; }
+      //  public int Views { get; set; }
+
+    }
+
+    public class ThreadReplyInfoVM
+    {
+        public long Id { get; set; }
+        public long ThreadReplyId { get; set; }
+        public int Upvote { get; set; }
+        public int Downvote { get; set; }
+        public int Shares { get; set; }
+
     }
 
     #endregion
@@ -116,4 +141,19 @@ namespace Forum.ViewModels
 
     #endregion
 
+    
+
+    #region User Thread Actions
+
+    public class SaveUserAction
+    {
+        public long ThreadId { get; set; }
+        public long ThreadReplyId { get; set; }
+        public long UserFollowingId { get; set; }
+        public long SubscriberUserId { get; set; }
+        public UserAction Action { get; set; }
+    }
+
+
+    #endregion
 }

@@ -40,9 +40,7 @@ namespace Forum.Data
         public DbSet<ThreadReplyInfo> ThreadReplyInfos { get; set; }
         public DbSet<ThreadHistory> ThreadHistories { get; set; }
 
-        public DbSet<UserBookmarkedThread> UserBookmarkedThreads { get; set; }
-        public DbSet<UserFlaggedThread> UserFlaggedThreads { get; set; }
-        public DbSet<UserFollowedThread> UserFollowedThreads { get; set; }
-        public DbSet<UserFollowedPeople> UserFollowedPeoples { get; set; }
+        public DbSet<UserThreadInfo> UserThreadInfos { get; set; }
+        public DbSet<UserPeopleInfo> UserPeopleInfos { get; set; }
     }
 }

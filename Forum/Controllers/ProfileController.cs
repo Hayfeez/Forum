@@ -24,14 +24,16 @@ namespace Forum.Controllers
         private readonly IMapper _mapper;
         private readonly IThreadService _threadService;
         private readonly IChannelService _channelService;
+        private readonly IForumUserService _userService;
         private readonly Subscriber _tenant;
 
         public ProfileController(ILogger<ProfileController> logger, Subscriber tenant, IMapper mapper,
-                    IThreadService threadService, IChannelService channelService)
+                    IThreadService threadService, IChannelService channelService, IForumUserService userService)
         {
             _logger = logger;
             _threadService = threadService;
             _channelService = channelService;
+            _userService = userService;
             _mapper = mapper;
             _tenant = tenant;
 
@@ -57,6 +59,22 @@ namespace Forum.Controllers
                 return View("Views/Shared/Error.cshtml", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }            
         }
+
+        //public IActionResult Thread(string id)
+        //{
+        //    try
+        //    {
+        //        var thread = _threadService.GetThreadById(id);
+        //        var model = _mapper.Map<ThreadVM>(thread);
+        //        if (model == null) return RedirectToAction("Index", "Home");
+        //        return View(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(0, ex, "Error while getting thread");
+        //        return View("Views/Shared/Error.cshtml", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        //    }
+        //}
 
     }
 }

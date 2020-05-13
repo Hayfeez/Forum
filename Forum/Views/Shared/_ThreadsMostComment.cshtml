@@ -1,0 +1,16 @@
+﻿@model IEnumerable<ThreadVM>
+
+<div class="sidebarblock">
+    <h3>Most Replies</h3>
+    <div class="divline"></div>
+    <div class="blocktxt">
+        @{
+            @foreach (var item in Model.OrderByDescending(a => a.RepliesCount).Take(10))
+            {
+                <a asp-action="Thread" asp-controller="Threads" asp-route-id="@item.Title">@item.Title</a>
+
+            }
+
+        }
+    </div>
+</div>
