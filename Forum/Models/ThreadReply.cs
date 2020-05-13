@@ -18,5 +18,7 @@ namespace Forum.Models
         public Thread Thread { get; set; }
         public ThreadReplyInfo ThreadReplyInfo { get; set; }
 
+        public IEnumerable<UserThreadReplyInfo> UserThreadReplyInfos { get; set; }
+
     }
 }

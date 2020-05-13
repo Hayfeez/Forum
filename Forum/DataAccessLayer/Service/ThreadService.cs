@@ -25,9 +25,24 @@ namespace Forum.DataAccessLayer.Service
                 var threads = _dbContext.Threads
                         .Include(a => a.Category)
                             .ThenInclude(b => b.Channel)
-                                .ThenInclude(c => c.Subscriber)
                         .Include(a=>a.ThreadReplies)
-                        .Where(a => a.Category.Channel.Subscriber.Id == subscriberId);
+                        .Where(a => a.Category.Channel.SubscriberId == subscriberId);
+
+                return threads;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public IEnumerable<Thread> GetAllThreadsByUser(long subscriberUserId)
+        {
+            try
+            {
+                var threads = _dbContext.Threads
+                    .Where(a=>a.SubscriberUserId == subscriberUserId)
+                    .Include(a => a.ThreadReplies);
 
                 return threads;
             }
@@ -42,10 +57,10 @@ namespace Forum.DataAccessLayer.Service
             try
             {
                 var threads = _dbContext.Threads
+                     .Include(a => a.SubscriberUser)
                         .Include(a => a.Category)
                             .ThenInclude(b => b.Channel)
-                                .ThenInclude(c => c.Subscriber)
-                        .Where(a => a.Category.Channel.Subscriber.Id == subscriberId)
+                        .Where(a => a.Category.Channel.SubscriberId == subscriberId)
                         .OrderByDescending(a => a.DateCreated)
                         .Take(num);
 
@@ -63,8 +78,9 @@ namespace Forum.DataAccessLayer.Service
             {
                 var threads = _dbContext.Threads
                         .Include(a => a.Category)
-                            .ThenInclude(b => b.Channel)
-                        .Where(a => a.Category.Channel.Id == channelId);
+                           .ThenInclude(b => b.Channel)
+                        .Include(a => a.SubscriberUser)
+                        .Where(a => a.Category.ChannelId == channelId);
 
                 if (categoryId != null)
                     threads = threads.Where(a => a.Id == categoryId);
@@ -80,12 +96,10 @@ namespace Forum.DataAccessLayer.Service
         public Thread GetThreadById(string title)
         {
             try
-            {
+            {               
                 var topic = _dbContext.Threads.Where(a => a.Title == title)
                     .Include(a=>a.ThreadInfo)
                     .Include(a=>a.Category).ThenInclude(b=>b.Channel)
-                    .Include(a => a.ThreadReplies).ThenInclude(b => b.SubscriberUser)
-                    .Include(a => a.ThreadReplies).ThenInclude(a=>a.ThreadReplyInfo)
                     .Include(a => a.SubscriberUser).FirstOrDefault();
 
                 return topic;
@@ -166,11 +180,11 @@ namespace Forum.DataAccessLayer.Service
             try
             {
                 var replies = _dbContext.ThreadReplies
+                    .Where(a => a.ThreadId == threadId)
                     .Include(b => b.SubscriberUser)
-                        .Include(a => a.Thread)
-                            .ThenInclude(b => b.SubscriberUser)
-                        .Where(a => a.Thread.Id == threadId);
-
+                    .Include(a => a.UserThreadReplyInfos)
+                    .Include(a => a.ThreadReplyInfo);
+                        
                 return replies;
             }
             catch (Exception ex)

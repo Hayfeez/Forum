@@ -12,7 +12,8 @@ namespace Forum.Helpers
     {
         public const string SusbcriberUserId = "SusbcriberUserId";
         public const string SusbcriberUserRole = "SusbcriberUserRole";
-       // public const string SusbcriberId = "SusbcriberId";
+        public const string SusbcriberUserImageUrl = "SusbcriberUserImageUrl";
+        // public const string SusbcriberId = "SusbcriberId";
     }
 
     public static class IdentityExtensions
@@ -43,6 +44,14 @@ namespace Forum.Helpers
         {
             ClaimsIdentity claimsIdentity = identity as ClaimsIdentity;
             Claim claim = claimsIdentity?.FindFirst(CustomClaimTypes.SusbcriberUserRole);
+
+            return claim?.Value ?? string.Empty;
+        }
+
+        public static string GetSubscriberUserImageUrl(this IIdentity identity)
+        {
+            ClaimsIdentity claimsIdentity = identity as ClaimsIdentity;
+            Claim claim = claimsIdentity?.FindFirst(CustomClaimTypes.SusbcriberUserImageUrl);
 
             return claim?.Value ?? string.Empty;
         }

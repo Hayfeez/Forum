@@ -35,5 +35,9 @@ namespace Forum.DataAccessLayer.IService
 
         #endregion
 
+        #region Moderators
+
+        #endregion
+
     }
 }

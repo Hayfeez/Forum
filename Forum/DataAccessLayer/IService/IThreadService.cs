@@ -11,6 +11,7 @@ namespace Forum.DataAccessLayer.IService
         IEnumerable<Thread> GetAllThreads(int subscriberId);
         IEnumerable<Thread> GetLatestThreads(int subscriberId, int num = 10);
         IEnumerable<Thread> GetAllThreadsInChannelOrCategory(int channelId, int? categoryId);
+        IEnumerable<Thread> GetAllThreadsByUser(long subscriberUserId);
         Thread GetThreadById(string title);
        
         Task<DbActionsResponse> CreateThread(Thread thread);

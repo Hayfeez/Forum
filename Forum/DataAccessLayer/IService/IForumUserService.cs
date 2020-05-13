@@ -11,12 +11,18 @@ namespace Forum.DataAccessLayer.IService
     {
         IEnumerable<UserThreadInfo> GetUserThreadActions(long subscriberUserId);
         UserThreadInfo GetUserThreadInfo(long subscriberUserId, long threadId);              
-        Task<DbActionsResponse> SaveUserThreadInfo(SaveUserAction model);
+        Task<DbActionsResponse> SaveUserThreadInfo(SaveUserAction model, long subscriberUserId);
 
-        IEnumerable<UserPeopleInfo> GetUserPeopleInfos(long subscriberUserId);
-        UserPeopleInfo GetUserPeopleInfo(long subscriberUserId, long personId);
-        Task<DbActionsResponse> SaveUserFollowing(SaveUserAction model);
+        IEnumerable<UserFollower> GetUserFollowings(long subscriberUserId);
 
+        IEnumerable<UserFollower> GetUserFollowers(long subscriberUserId);
+
+        bool IsUserFollowingPerson(long subscriberUserId, long personId);
+
+        Task<DbActionsResponse> FollowUser(long userId, long personId);
+        Task<DbActionsResponse> UnfollowUser(long userId, long personId);
+
+        SubscriberUser GetUserProfile(long userId);
 
     }
 }

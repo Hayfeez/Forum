@@ -1,5 +1,12 @@
-﻿<div class="w-100" style="height:200px;">
-    <h5>Image Goes Here</h5>
-    
+﻿@using Forum.Models
+@inject Subscriber  Tenant
+
+<div class="w-100" style="height:200px;">
+   
+    @{
+        string forumHeader = Tenant.HeaderImageUrl;
+        if (string.IsNullOrEmpty(forumHeader)) forumHeader = ""; //default header Image
+    }
+    <img src="@forumHeader" />
 </div>
 

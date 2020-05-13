@@ -4,14 +4,16 @@ using Forum.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Forum.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200513184115_AddUserFollowerTable")]
+    partial class AddUserFollowerTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -430,28 +432,6 @@ namespace Forum.Migrations
                     b.ToTable("UserThreadInfo");
                 });
 
-            modelBuilder.Entity("Forum.Models.UserThreadReplyInfo", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("SubscriberUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("ThreadReplyId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubscriberUserId");
-
-                    b.HasIndex("ThreadReplyId");
-
-                    b.ToTable("UserThreadReplyInfo");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -803,21 +783,6 @@ namespace Forum.Migrations
                     b.HasOne("Forum.Models.Thread", "Thread")
                         .WithMany()
                         .HasForeignKey("ThreadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Forum.Models.UserThreadReplyInfo", b =>
-                {
-                    b.HasOne("Forum.Models.SubscriberUser", "SubscriberUser")
-                        .WithMany()
-                        .HasForeignKey("SubscriberUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Forum.Models.ThreadReply", "Reply")
-                        .WithMany("UserThreadReplyInfos")
-                        .HasForeignKey("ThreadReplyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

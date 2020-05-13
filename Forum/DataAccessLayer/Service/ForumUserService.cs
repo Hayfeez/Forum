@@ -20,17 +20,20 @@ namespace Forum.DataAccessLayer.Service
             _dbContext = dbContext;
         }
 
-
-        public UserPeopleInfo GetUserPeopleInfo(long subscriberUserId, long personId)
+        public SubscriberUser GetUserProfile(long userId)
         {
             try
             {
-                var data = _dbContext.UserPeopleInfos
-                    .Where(a=>a.SubscriberUserId == subscriberUserId && a.PersonId == personId)
-                      //  .Include(a => a.UserFollowing)
-                       // .Include(a => a.SubscriberUser)
+                var data = _dbContext.SubscriberUsers
+                    .Where(a => a.Id == userId)
+                        .Include(a => a.ApplicationUser)
+                        .Include(a => a.Threads).ThenInclude(b => b.ThreadInfo)
+                        .Include(a => a.ThreadReplies)
+                        .Include(a => a.UserFollowings)
+                        .Include(a => a.UserThreadInfos)
                         .FirstOrDefault();
 
+
                 return data;
             }
             catch (Exception ex)
@@ -39,14 +42,74 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-        public IEnumerable<UserPeopleInfo> GetUserPeopleInfos(long subscriberUserId)
+        public async Task<DbActionsResponse> FollowUser(long userId, long personId)
         {
             try
             {
-                var data = _dbContext.UserPeopleInfos
-                    .Where(a => a.SubscriberUserId == subscriberUserId);
-                      //  .Include(a => a.UserFollowing);
-                      //  .Include(a => a.SubscriberUser);
+                if (!_dbContext.UserFollowers.Any(a => a.SubscriberUserId == userId && a.PersonId == personId))
+                {
+                    _dbContext.UserFollowers.Add(new UserFollower
+                    {
+                        PersonId = personId,
+                        SubscriberUserId = userId
+                    });
+
+                    if (await _dbContext.SaveChangesAsync() > 0)
+                        return DbActionsResponse.Success;
+
+                    return DbActionsResponse.Failed;
+                }
+
+                return DbActionsResponse.DuplicateExist;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DbActionsResponse> UnfollowUser(long subscriberUserId, long personId)
+        {
+            try
+            {
+                var data = _dbContext.UserFollowers
+                    .SingleOrDefault(a => a.SubscriberUserId == subscriberUserId && a.PersonId == personId);
+
+                if (data == null) return DbActionsResponse.NotFound;
+                var response = _dbContext.UserFollowers.Remove(data);
+
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
+
+                return DbActionsResponse.Failed;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public bool IsUserFollowingPerson(long subscriberUserId, long personId)
+        {
+            try
+            {
+                return _dbContext.UserFollowers
+                    .Any(a => a.SubscriberUserId == subscriberUserId && a.PersonId == personId);
+                
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        
+        public IEnumerable<UserFollower> GetUserFollowings(long subscriberUserId)
+        {
+            try
+            {
+                var data = _dbContext.UserFollowers
+                    .Where(a => a.SubscriberUserId == subscriberUserId)
+                        .Include(a => a.SubscriberUser).ThenInclude(b=>b.ApplicationUser);
 
                 return data;
             }
@@ -55,6 +118,24 @@ namespace Forum.DataAccessLayer.Service
                 throw ex;
             }
         }
+
+        public IEnumerable<UserFollower> GetUserFollowers(long subscriberUserId)
+        {
+            try
+            {
+                var data = _dbContext.UserFollowers
+                    .Where(a => a.PersonId == subscriberUserId)
+                        .Include(a => a.SubscriberUser).ThenInclude(b => b.ApplicationUser);
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
 
         public IEnumerable<UserThreadInfo> GetUserThreadActions(long subscriberUserId)
         {
@@ -78,10 +159,7 @@ namespace Forum.DataAccessLayer.Service
             try
             {
                 var data = _dbContext.UserThreadInfos
-                    .Where(a => a.SubscriberUserId == subscriberUserId && a.ThreadId == threadId)
-                      //  .Include(a => a.Threads)
-                       // .Include(a => a.SubscriberUser)
-                        .FirstOrDefault();
+                    .FirstOrDefault(a => a.SubscriberUserId == subscriberUserId && a.ThreadId == threadId);
 
                 return data;
             }
@@ -91,56 +169,18 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-        public async Task<DbActionsResponse> SaveUserFollowing(SaveUserAction model)
+        public async Task<DbActionsResponse> SaveUserThreadInfo(SaveUserAction model, long userId)
         {
             try
             {
-                var dt = _dbContext.UserPeopleInfos.FirstOrDefault(a => a.SubscriberUserId == model.SubscriberUserId && a.PersonId == model.UserFollowingId);
-
-                if (dt == null)
-                {
-                    _dbContext.UserPeopleInfos.Add(new UserPeopleInfo
-                    {   PersonId = model.UserFollowingId,
-                        SubscriberUserId = model.SubscriberUserId,
-                        Followed = (model.Action == UserAction.Follow) });
-
-                    if (await _dbContext.SaveChangesAsync() > 0)
-                        return DbActionsResponse.Success;
-
-                    return DbActionsResponse.Failed;
-                }
-
-                else
-                {
-                    if (model.Action == UserAction.Follow)
-                        dt.Followed = !dt.Followed;
-
-                    _dbContext.UserPeopleInfos.Update(dt);
-                    if (await _dbContext.SaveChangesAsync() > 0)
-                        return DbActionsResponse.Success;
-
-                    return DbActionsResponse.Failed;
-                }
-               
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public async Task<DbActionsResponse> SaveUserThreadInfo(SaveUserAction model)
-        {
-            try
-            {
-                var dt = _dbContext.UserThreadInfos.FirstOrDefault(a => a.SubscriberUserId == model.SubscriberUserId && a.ThreadId == model.ThreadId);
+                var dt = _dbContext.UserThreadInfos.FirstOrDefault(a => a.SubscriberUserId == userId && a.ThreadId == model.ThreadId);
 
                 if (dt == null)
                 {
                     _dbContext.UserThreadInfos.Add(new UserThreadInfo
                     {
                         ThreadId = model.ThreadId,
-                        SubscriberUserId = model.SubscriberUserId,
+                        SubscriberUserId = userId,
                         Followed = (model.Action == UserAction.Follow),
                         Flagged = model.Action == UserAction.Flag,
                         Bookmarked = model.Action == UserAction.Bookmark,

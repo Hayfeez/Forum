@@ -10,6 +10,14 @@ axiosInstance = axios.create({
     }
 });
 
+let summernoteToolbar = [
+    ['style', ['style']],
+    ['font', ['bold', 'underline', 'strikethrough', 'italic', 'clear', 'superscript', 'subscript', 'fontsize', 'fontname']],
+    ['color', ['color']],
+    ['para', ['ul', 'ol', 'paragraph']], //'height', 'style'
+    ['insert', ['link', 'picture', 'table']],  //'video', 'hr'
+    ['view', ['fullscreen']] //, 'codeview', 'help', 'undo', 'redo'
+];
 
 let STATUS = {
     Success:1,
@@ -28,6 +36,8 @@ let UserActionEnum = {
     Upvote:6,
     Downvote:7
 };
+
+
 
 function buildDropdownOption(text, value) {
     var option = document.createElement("option");
