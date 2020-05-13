@@ -3,199 +3,320 @@
 @{
     ViewData["Title"] = Model.Title;
 }
+    <link href="~/vendor/summernote/summernote-lite.css" rel="stylesheet" />
 
-    <div class="col-md-8 col-xs-8 col-lg-8">
-       
-        <div class="topics">
-            <div class="topics__heading">
-                <h2 class="topics__heading-title">@Model.Title</h2>
-                <div class="topics__heading-info">
-                    <a asp-action="ChannelThreads" asp-controller="Channels"  asp-route-channel="@Model.Category.Channel.Name" class="category"><i class="bg-3ebafa"></i> @Model.Category.Channel.Name</a>
-                    
-                    <a asp-action="CategoryThreads" asp-controller="Channels" asp-route-category="@Model.Category.Name" class="category"><i class="bg-3ebafa"></i> @Model.Category.Name</a>
-                    <div class="tags">
-                      
-                    </div>
+<div class="col-md-8 col-xs-8 col-lg-8">
+
+    <div class="topics">
+        <div class="topics__heading">
+            <h2 class="topics__heading-title">@Model.Title</h2>
+            <div class="topics__heading-info">
+                <a asp-action="ChannelThreads" asp-controller="Channels" asp-route-channel="@Model.Category.Channel.Name" class="category"><i class="bg-3ebafa"></i> @Model.Category.Channel.Name</a>
+
+                <a asp-action="CategoryThreads" asp-controller="Channels" asp-route-category="@Model.Category.Name" class="category"><i class="bg-3ebafa"></i> @Model.Category.Name</a>
+                <div class="tags">
+                    @* @{
+            string[] threadTags = Model.Tags.Split(',');
+            string colourCode;
+            for (int i = 0; i < threadTags.Length; i++)
+            {
+                if (i == 0) colourCode = "bg-4f80b0";
+                else if (i % 2 == 0) colourCode = "bg-a3d39c";
+                else colourCode = "bg-8781bd";
+
+                <a href="#" class="@colourCode"> @threadTags[i]</a>
+            }
+
+        } *@
                 </div>
             </div>
-            <div class="topics__body">
-                <div class="topics__content">
-                    <!-- post -->
-                    <div class="topic">
-                        <div class="topic__head">
-                            <div class="topic__avatar">
-                                <a href="#" class="avatar"><img src="~/fonts/icons/avatars/B.svg" alt="avatar"></a>
-                            </div>
-                            <div class="topic__caption">
-                                <div class="topic__name">
-                                    <a href="#">Benjamin Caesar</a>
-                                </div>
-                                <div class="topic__date"><i class="icon-Watch_Later"></i>@Model.DatePosted.ToLongDateString()</div>
-                            </div>
-                        </div>
-                        <div class="topic__content">
-                            <div class="topic__text">
-                                @Html.Raw(Model.Content)
-                            </div>
-                            <div class="topic__footer">
-                                <div class="topic__footer-likes">
-                                    <div>
-
-                                        <span class="topic__info-count">@Model.RepliesCount</span>
-                                        <span class="topic__info-title">Replies</span>
-                                    </div>
-                                    <div>
-
-                                        <span class="topic__info-count">205</span>
-                                        <span class="topic__info-title">Views</span>
-                                    </div>
-                                    <div>
-
-                                        <span class="topic__info-count">6</span>
-                                        <span class="topic__info-title">Followers</span>
-                                    </div>
-                                    <div>
-
-                                        <span class="topic__info-count">315</span>
-                                        <span class="topic__info-title">Likes</span>
-                                    </div>
-                                </div>
-                                <div class="topic__footer-share">
-                                    <div data-visible="desktop">
-                                        <a href="#"><i class="icon-Favorite_Topic"></i></a>
-                                        <a href="#"><i class="icon-Flag_Topic"></i></a>
-                                        <a href="#"><i class="icon-Bookmark"></i></a>
-                                    </div>
-                                    <div data-visible="mobile">
-                                        <a href="#"><i class="icon-More_Options"></i></a>
-                                    </div>
-                                    <a href="#"><i class="icon-Reply_Fill"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- replies -->
-                    @if (Model.RepliesCount > 0)
-                    {
-                         <p><span> @Model.Replies.Count() replies</span> </p>
-                        @foreach (var item in Model.Replies)
-                        {
-                            <div class="topic">
-                                <div class="topic__head">
-                                    <div class="topic__avatar">
-                                        <a href="#" class="avatar"><img src="@item.AuthorImageUrl" alt="user photo"></a>
-                                    </div>
-                                    <div class="topic__caption">
-                                        <div class="topic__name">
-                                            <a href="#">@item.AuthorName</a>
-                                        </div>
-                                        <div class="topic__date">
-                                            <i class="icon-Watch_Later"></i>@item.DatePosted.ToLongDateString()
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="topic__content">
-                                    <div class="topic__text">
-                                        <p>@Html.Raw(item.Content)</p>
-                                    </div>
-                                    <div class="topic__footer">
-                                        <div class="topic__footer-likes">
-                                            <div>
-                                                <a href="#" onclick="performReplyAction(@item.Id, UserActionEnum.Upvote)" ><i class="icon-Upvote"></i></a>
-                                                <span>137</span>
-                                            </div>
-                                            <div>
-                                                <a href="#" onclick="performReplyAction(@item.Id, UserActionEnum.Downvote)"><i class="icon-Downvote"></i></a>
-                                                <span>02</span>
-                                            </div>
-                                            <div>
-                                                <a href="#" onclick="performReplyAction(@item.Id, UserActionEnum.Like)"><i class="icon-Favorite_Topic"></i></a>
-                                                <span>46</span>
-                                            </div>
-                                        </div>
-                                        <div class="topic__footer-share">
-                                           
-                                            <div data-visible="mobile">
-                                                <a href="#"><i class="icon-More_Options"></i></a>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="topic">
-                            <p>Be the first to reply to this post</p>
-                        </div>
-                    }
-
-                    <div class="topic topic--selected">
-                        <div class="topic__head">
-                            <div class="topic__avatar">
-                                <a href="#" class="avatar"><img src="~/fonts/icons/avatars/C.svg" alt="avatar"></a>
-                            </div>
-                            <div class="topic__caption">
-                                <div class="topic__name">
-                                    <a href="#">Callis</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="topic__content">
-                            <div class="topic__text">
-                                <p>This post has been hidden by a moderator. Received too much downvotes.</p>
-                            </div>
-                            <div class="topic__footer">
-                                <div class="topic__footer-likes">
-                                    <div>
-                                        <a href="#"><i class="icon-Downvote"></i></a>
-                                        <span>617</span>
-                                    </div>
-                                </div>
-                                <div class="topic__footer-show">
-                                    <a href="#" class="btn">Show me</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-
-
-                </div>
-               
-            </div>
-            <div class="topics__title"><i class="icon-Watch_Later"></i>This topic will close 6 months after the last reply.</div>
-            <div class="topics__control">
-                <a href="#" onclick="performThreadAction(@Model.Id, UserActionEnum.Bookmark)" class="btn"><i class="icon-Bookmark"></i>Bookmark</a>              
-                <a href="#" onclick="performThreadAction(@Model.Id, UserActionEnum.Flag)" class="btn"><i class="icon-Flag_Topic"></i>Flag</a>
-                <a href="#" onclick="performThreadAction(@Model.Id, UserActionEnum.Follow)" class="btn"><i class="icon-Track"></i>Follow</a>
-                <a href="#" class="btn btn--type-02" data-visible="desktop"><i class="icon-Reply_Fill"></i>Reply</a>
-            </div>
-         
         </div>
- 
-    </div>
-    <div class="col-md-3 col-xs-3 col-lg-3">
+        <div class="topics__body">
+            <div class="topics__content">
+                <!-- post -->
+                <div class="topic">
+                    <div class="topic__head">
+                        <div class="topic__avatar">
+                            @{ string userImage;
+                                userImage = string.IsNullOrEmpty(Model.AuthorImageUrl) ? "~/fonts/icons/avatars/B.svg" : Model.AuthorImageUrl;
+                            }
+                            <a href="@Url.Action("UserProfile","Profile", new { userId = Model.AuthorId})" class="avatar"><img src="@userImage" alt="avatar"></a>
+                        </div>
+                        <div class="topic__caption">
+                            <div class="topic__name">
+                                <a href="@Url.Action("UserProfile","Profile", new { userId = Model.AuthorId})">@Model.AuthorName</a>
+                            </div>
+                            <div class="topic__date"><i class="icon-Watch_Later"></i>@Model.DatePosted.ToLongDateString()</div>
+                        </div>
+                    </div>
+                    <div class="topic__content">
+                        <div class="topic__text">
+                            @Html.Raw(Model.Content)
+                        </div>
+                        <div class="topic__footer">
+                            <div class="topic__footer-likes">
+                                <div>
+                                    <span class="topic__info-count">205</span>
+                                    <span class="topic__info-title">Views</span>
+                                </div>
+                                <div>
+                                    <span class="topic__info-count">6</span>
+                                    <span class="topic__info-title">Followers</span>
+                                </div>
+                                <div>
+                                    <span class="topic__info-count">315</span>
+                                    <span class="topic__info-title">Likes</span>
+                                </div>
+                            </div>
+                            <div class="topic__footer-share">
+                                <div data-visible="desktop">
+                                    <a href="" onclick="performThreadAction(@Model.Id, UserActionEnum.Like)"><i class="icon-Favorite_Topic"></i></a>
+                                    <a href="" onclick="performThreadAction(@Model.Id, UserActionEnum.Bookmark)"><i class="icon-Bookmark"></i></a>
+                                    <a href="" onclick="performThreadAction(@Model.Id, UserActionEnum.Flag)"><i class="icon-Flag_Topic"></i></a>
+                                </div>
+                                <div data-visible="mobile">
+                                    <a href=""><i class="icon-More_Options"></i></a>
+                                </div>
+                                <a href="" onclick="replyThread(@Model.Id)"><i class="icon-Reply_Fill"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- replies -->
+                @if (Model.RepliesCount > 0)
+                {
+                    <p>
+                        <a href="" onclick="showReplies(@Model.Id)"> Show Replies to this thread </a>
+                    </p>
+
+                }
+                else
+                {
+                    <div class="topic">
+                        <p> <a href="" onclick="replyThread(@Model.Id)"> Be the first to reply to this post </a> </p>
+                    </div>
+                }
 
 
+                <!-- Replies Html to be removed -->
+                @foreach (var item in Model.Replies)
+                {
+                    <p><span id="noOfReplies">@Model.RepliesCount </span> replies </p>
+                    <div class="topic">
+                        @* add class topic--selected for flagged *@
+                        <div class="topic__head">
+
+                            <div class="topic__caption">
+                                <div class="topic__name">
+                                    <a href="@Url.Action("UserProfile","Profile", new { userId = Model.AuthorId})">@item.AuthorName</a>
+                                </div>
+                                <div class="topic__date">
+                                    <i class="icon-Watch_Later"></i>@item.DatePosted.ToLongDateString()
+                                </div>
+                            </div>
+                        </div>
+                        <div class="topic__content">
+                            <div class="topic__text">
+                                <p id="threadContent">@Html.Raw(item.Content)</p>
+                                <textarea class="summernote" asp-for="Content" id="editContent" style="display:none;">
+
+                                </textarea>
+                            </div>
+                            <div class="topic__footer">
+                                <div class="topic__footer-likes">
+                                    <div>
+                                        <a href="" onclick="performReplyAction(@item.Id, UserActionEnum.Upvote)"><i class="icon-Upvote"></i></a>
+                                        <span>137</span>
+                                    </div>
+                                    <div>
+                                        <a href="" onclick="performReplyAction(@item.Id, UserActionEnum.Downvote)"><i class="icon-Downvote"></i></a>
+                                        <span>02</span>
+                                    </div>
+                                    <div>
+                                        <a href="" onclick="performReplyAction(@item.Id, UserActionEnum.Like)"><i class="icon-Favorite_Topic"></i></a>
+                                        <span>46</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+        <div class="topics__control">
+            <a href="" onclick="performThreadAction(@Model.Id, UserActionEnum.Bookmark)" class="btn"><i class="icon-Bookmark"></i>Bookmark</a>
+            <a href="" onclick="performThreadAction(@Model.Id, UserActionEnum.Flag)" class="btn"><i class="icon-Flag_Topic"></i>Flag</a>
+            <a href="" onclick="performThreadAction(@Model.Id, UserActionEnum.Follow)" class="btn"><i class="icon-Track"></i>Follow</a>
+            <a href="" class="btn btn--type-02" data-visible="desktop" onclick="replyThread(@Model.Id)"><i class="icon-Reply_Fill"></i>Reply</a>
+        </div>
+
     </div>
+
+</div>
+
+<div class="col-md-3 col-xs-3 col-lg-3">
+
+
+</div>
 
 
 @section Scripts {
-   <script>
-       $(document).ready(function () {
+    <script src="~/vendor/summernote/summernote-lite.js"></script>
 
-           function performThreadAction(threadId, action) {
+    <script>
+        $(document).ready(function () {
+            increaseThreadView(@Model.Id);
+            loadThreadInfo(@Model.Id);
+            loadThreadUserInfo(@Model.Id);
 
-           }
+            //   performThreadAction(@Model.Id, UserActionEnum.Bookmark)
+            //   replyThread(@Model.Id);
 
-           function performReplyAction(threadId, action) {
+            //$('#editContent').summernote('code');
+            //$('#editContent').summernote('code', '');
+            //$('#editContent').summernote('code', data);
+            $('#editContent').summernote({
+                placeholder: 'Content',
+                height: 300,
+                toolbar: summernoteToolbar
+            });
+            function editThread(threadId) {
 
-           }
-       });
-   </script>
+            }
+
+
+            function loadThreadInfo(threadId) {
+                axiosInstance.get(`/Threads/LoadThreadInfo/`,
+                    {
+                        params: {
+                            threadId: `${threadId}`
+                        }
+                    })
+                    .then(res => {
+                        if (res.data) {
+                            if (res.data.status === 1) {
+                                console.log("threadInfo", res.data.data);
+                            }
+                        }
+                    }).catch(error => {
+                        alert('error');
+                    });
+            }
+
+            function loadThreadUserInfo(threadId) {
+                axiosInstance.get(`/Threads/LoadThreadUserInfo/`,
+                    {
+                        params: {
+                            threadId: `${threadId}`
+                        }
+                    })
+                    .then(res => {
+                        if (res.data) {
+                            if (res.data.status === 1) {
+                                console.log("threadUserInfo", res.data.data);
+                            }
+                        }
+                    }).catch(error => {
+                        alert('error');
+                    });
+            }
+
+            function loadReplies(threadId) {
+                axiosInstance.get(`/Threads/LoadReplies/`,
+                    {
+                        params: {
+                            threadId: `${threadId}`
+                        }
+                    })
+                    .then(res => {
+                        if (res.data) {
+                            if (res.data.status === 1) {
+                                console.log("replies", res.data.data);
+                            }
+                        }
+                    }).catch(error => {
+                        alert('error');
+                    });
+            }
+
+
+
+            function replyThread(threadId) {
+                axiosInstance.post(`/Threads/ReplyThread/`,
+                    {
+                        ThreadId: threadId,
+                        Content: "new reply"
+                    })
+                    .then(res => {
+                        if (res.data) {
+                            if (res.data.status === 1) {
+                                alert('reply saved');
+                            }
+                        }
+                    }).catch(error => {
+                        alert('error');
+                    });
+            }
+
+
+            function increaseThreadView(threadId) {
+                //don't do on reload
+                axiosInstance.gt('/Threads/IncreaseThreadView/',
+                    {
+                        params: {
+                            threadId: `${threadId}`
+                        }
+                    })
+            .then(res => {
+                if (res.data) {
+                    if (res.data.status === 1) {
+                        alert('views increased');
+                    }
+                }
+            }).catch(error => {
+                alert('error');
+            });
+            }
+
+            function performThreadAction(threadId, action) {
+                axiosInstance.post(`/Threads/ThreadAction/`,
+                    {
+                        ThreadId: threadId,
+                        Action: action
+                    })
+                    .then(res => {
+                        if (res.data) {
+                            if (res.data.status === 1) {
+                                alert('thread action done');
+                            }
+                        }
+                    }).catch(error => {
+                        alert('error');
+                    });
+            }
+
+            function performReplyAction(replyId, action) {
+                axiosInstance.post(`/Threads/ReplyAction/`,
+                    {
+                        ThreadReplyId: replyId,
+                        Action: action
+                    })
+                    .then(res => {
+                        if (res.data) {
+                            if (res.data.status === 1) {
+                                alert('reply action done');
+                            }
+                        }
+                    }).catch(error => {
+                        alert('error');
+                    });
+            }
+
+            function updateThread(threadId) {
+            }
+        });
+    </script>
 
 }

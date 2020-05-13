@@ -36,15 +36,9 @@
     <Folder Include="Views\Account\" />
     <Folder Include="StaticData\" />
     <Folder Include="wwwroot\scripts\" />
-    <Folder Include="Views\Manage\" />
-    <Folder Include="Views\Default\" />
     <Folder Include="wwwroot\default\" />
     <Folder Include="wwwroot\default\css\" />
     <Folder Include="wwwroot\default\js\" />
-    <Folder Include="wwwroot\default\images\" />
-    <Folder Include="Views\Shared\Components\ForumStats\" />
-    <Folder Include="Views\Shared\Components\ForumUsers\" />
-    <Folder Include="Views\Shared\Components\ForumInvites\" />
     <Folder Include="wwwroot\vendor\toastr\" />
     <Folder Include="wwwroot\vendor\sweetalert\" />
   </ItemGroup>
@@ -84,8 +78,13 @@
     <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-sk-SK.min.js" />
     <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\lang\summernote-pt-PT.min.js" />
     <Content Remove="Views\Manage\Moderators.cshtml" />
+    <Content Remove="wwwroot\default\js\jquery.magnific-popup.js" />
+    <Content Remove="wwwroot\default\js\jquery.min.js" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Forum.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Migrations\20200511190705_ModifyThreadInfoTables.Designer.cs" />
   </ItemGroup>
 </Project>

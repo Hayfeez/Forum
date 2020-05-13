@@ -164,8 +164,7 @@ namespace Forum.Controllers
                         
                         var subscriberUser = _accountService.GetSubscriberUser(user.Id, _tenant.Id);
                         if (subscriberUser == null || !subscriberUser.IsActive)
-                        {                            
-
+                        {                         
                             ModelState.AddModelError(string.Empty, "Account does not exist on this forum");
                             return View(model);
                         }
@@ -175,9 +174,9 @@ namespace Forum.Controllers
                         {
                             var ident = await _userManager.AddClaimsAsync(user, new[]
                             {
-                                new Claim("SusbcriberUserId", subscriberUser.Id.ToString()),
-                                new Claim("SusbcriberUserRole", subscriberUser.UserRole),
-                              //  new Claim("SusbcriberId", subscriberUser.SubscriberId.ToString())
+                                new Claim(CustomClaimTypes.SusbcriberUserId, subscriberUser.Id.ToString()),
+                                new Claim(CustomClaimTypes.SusbcriberUserRole, subscriberUser.UserRole),
+                                new Claim(CustomClaimTypes.SusbcriberUserImageUrl, subscriberUser.ProfileImageUrl)
                             });
 
                             await _signInManager.SignInAsync(user, isPersistent: model.RememberMe);
@@ -192,40 +191,6 @@ namespace Forum.Controllers
                         }
                     }
 
-                    //if (user != null)
-                    //{
-                    //    // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                    //    var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
-                    //    if (result.Succeeded)
-                    //    {
-                    //        var subscriberUser = _accountService.GetSubscriberUser(user.Id, _tenant.Id);
-                    //        if (subscriberUser == null || !subscriberUser.IsActive)
-                    //        {
-                    //            // Clear the existing external cookie to ensure a clean login process
-                    //            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-
-                    //            ModelState.AddModelError(string.Empty, "Account does not exist on this forum");
-                    //            return View(model);
-                    //        }
-                    //        //save subscriber user to sesssion
-                    //        _logger.LogInformation("User logged in.");
-                    //        return LocalRedirect(model.ReturnUrl);
-                    //    }
-                    //    if (result.RequiresTwoFactor)
-                    //    {
-                    //        return RedirectToPage("./LoginWith2fa", new { ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
-                    //    }
-                    //    if (result.IsLockedOut)
-                    //    {
-                    //        _logger.LogWarning("User account locked out.");
-                    //        return RedirectToPage("./Lockout");
-                    //    }
-                    //    else
-                    //    {
-                    //        ModelState.AddModelError(string.Empty, "Invalid credentials.");
-                    //        return View(model);
-                    //    }
-                    //}
                 }
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 return View(model);

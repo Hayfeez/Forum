@@ -41,6 +41,7 @@ namespace Forum.Data
         public DbSet<ThreadHistory> ThreadHistories { get; set; }
 
         public DbSet<UserThreadInfo> UserThreadInfos { get; set; }
-        public DbSet<UserPeopleInfo> UserPeopleInfos { get; set; }
+        public DbSet<UserThreadReplyInfo> UserThreadReplies { get; set; }
+        public DbSet<UserFollower> UserFollowers { get; set; }
     }
 }

@@ -27,6 +27,6 @@ namespace Forum.Models
 
         public IEnumerable<UserThreadInfo> UserThreadInfos { get; set; }
 
-       // public IEnumerable<UserPeopleInfo> UserPeopleInfos { get; set; }
+        public IEnumerable<UserFollower> UserFollowings { get; set; }
     }
 }

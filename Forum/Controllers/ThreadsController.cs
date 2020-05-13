@@ -71,9 +71,12 @@ namespace Forum.Controllers
         {
             try
             {
+
                 var thread = _threadService.GetThreadById(id);
                 var model = _mapper.Map<ThreadVM>(thread);
                 if(model == null) return RedirectToAction("Index", "Home");
+
+                model.Replies = new List<ThreadReplyVM>();  //temporary to be removed
                 return View(model);
             }
             catch (Exception ex)
@@ -82,7 +85,7 @@ namespace Forum.Controllers
                 return View("Views/Shared/Error.cshtml", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }            
         }
-
+     
         public IActionResult Pinned(int id, [FromServices] IPinnedPostService _pinnedPostService)
         {
             try
@@ -164,7 +167,145 @@ namespace Forum.Controllers
         }
 
 
-      
+       
+        [HttpGet]
+        public IActionResult LoadThreadInfo(long threadId, [FromServices] IThreadInfoService _threadInfoService)
+        {
+            try
+            {
+                var data = _threadInfoService.GetThreadInfo(threadId);
+                return Json(new { Status = 1, Data = data });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Status = -1, Message = "Error while loading thread info" });
+            }
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult LoadThreadUserInfo(long threadId, [FromServices] IForumUserService _userService)
+        {
+            try
+            {
+                var data = _userService.GetUserThreadInfo(User.Identity.GetSubscriberUserId(), threadId);
+
+                return Json(new { Status = 1, Data = _mapper.Map<UserThreadInfoVM>(data) }) ;
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Status = -1, Message = "Error while loading thread info" });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult LoadReplies(long threadId)
+        {
+            try
+            {
+                var eply = _threadService.GetAllRepliesToThread(threadId);
+                var model = _mapper.Map<ThreadReplyVM>(eply);
+
+                return Json(new { Status = 1, Data = model });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(0, ex, "Error while getting thread replies");
+                return Json(new { Status = -1, Message = "Error while loading thread replies" });
+            }
+        }
+       
+        [HttpGet]
+        public async Task<IActionResult> IncreaseThreadView([FromBody]long threadId, [FromServices] IThreadInfoService _threadInfoService)
+        {
+            try
+            {
+                if (threadId != 0)
+                {
+                    var response = await _threadInfoService.IncreaseThreadView(threadId);
+                    if (response == DbActionsResponse.Success)
+                    {
+                        return Json(new { Status = 1, Message = "Success" });
+                    }
+                }
+
+                return Json(new { Status = -1, Message = "Failed" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Status = -1, Message = "An error occured" });
+            }
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> ReplyThread([FromBody]SaveThreadReplyVM model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var data = _mapper.Map<ThreadReply>(model);
+                    data.SubscriberUserId = User.Identity.GetSubscriberUserId();
+
+                    var response = await _threadService.CreateReply(data);
+                    if (response == DbActionsResponse.Success)
+                    {
+                        return Json(new { Status = 1, Message = "Success" });
+                    }
+                }
+
+                return Json(new { Status = -1, Message = "Failed" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Status = -1, Message = "An error occured" });
+            }
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> ThreadAction([FromBody]SaveUserAction model, [FromServices] IForumUserService _userService)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var response = await _userService.SaveUserThreadInfo(model, User.Identity.GetSubscriberUserId());
+                    if (response == DbActionsResponse.Success)
+                    {
+                        return Json(new { Status = 1, Message = "Success" });
+                    }
+                }
+
+                return Json(new { Status = -1, Message = "Failed" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Status = -1, Message = "An error occured" });
+            }
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> ReplyAction([FromBody]SaveUserAction model, [FromServices] IThreadInfoService _threadInfoService)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var response = await _threadInfoService.SaveThreadReplyInfo(model, User.Identity.GetSubscriberUserId());
+                    if (response == DbActionsResponse.Success)
+                    {
+                        return Json(new { Status = 1, Message = "Success" });
+                    }
+                }
+
+                return Json(new { Status = -1, Message = "Failed" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Status = -1, Message = "An error occured" });
+            }
+        }
+
         #region private methods
 
         public void AddToViewBag(string type, string message)

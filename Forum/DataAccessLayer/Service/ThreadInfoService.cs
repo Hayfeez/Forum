@@ -54,22 +54,6 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-        public ThreadReplyInfo GetThreadReplyInfo(long replyId)
-        {
-            try
-            {
-                var data = _dbContext.ThreadReplyInfos
-                        // .Include(a => a.ThreadReply)
-                         .FirstOrDefault(a => a.ThreadReplyId == replyId);
-
-                return data;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
         public async Task<DbActionsResponse> IncreaseThreadView(long threadId)
         {
             try
@@ -111,7 +95,7 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-        public async Task<DbActionsResponse> SaveThreadReplyInfo(SaveUserAction model)
+        public async Task<DbActionsResponse> SaveThreadReplyInfo(SaveUserAction model, long userId)
         {
             try
             {
@@ -124,7 +108,7 @@ namespace Forum.DataAccessLayer.Service
                         ThreadReplyId = model.ThreadReplyId,
                         Shares =  (model.Action == UserAction.Share ? 1 : 0),
                         Upvote = model.Action == UserAction.Upvote ? 1 : 0,
-                        Downvote = model.Action == UserAction.Downvote ? 1 : 0
+                        Downvote = model.Action == UserAction.Downvote ? 1 : 0,
                     });
 
                     if (await _dbContext.SaveChangesAsync() > 0)
