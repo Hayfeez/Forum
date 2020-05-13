@@ -228,6 +228,9 @@ namespace Forum.Migrations
                     b.Property<int>("SubscriberId")
                         .HasColumnType("int");
 
+                    b.Property<long?>("UserPeopleInfoId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("UserRole")
                         .HasColumnType("nvarchar(max)");
 
@@ -236,6 +239,8 @@ namespace Forum.Migrations
                     b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("SubscriberId");
+
+                    b.HasIndex("UserPeopleInfoId");
 
                     b.ToTable("SubscriberUsers");
                 });
@@ -265,11 +270,16 @@ namespace Forum.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("UserThreadInfoId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("SubscriberUserId");
+
+                    b.HasIndex("UserThreadInfoId");
 
                     b.ToTable("Threads");
                 });
@@ -307,19 +317,10 @@ namespace Forum.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("Flags")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Followers")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Likes")
-                        .HasColumnType("int");
-
                     b.Property<long>("ThreadId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("Viewers")
+                    b.Property<int>("Views")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -385,15 +386,47 @@ namespace Forum.Migrations
                     b.ToTable("ThreadReplyInfo");
                 });
 
-            modelBuilder.Entity("Forum.Models.UserBookmarkedThread", b =>
+            modelBuilder.Entity("Forum.Models.UserPeopleInfo", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
+                    b.Property<bool>("Followed")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("PersonId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("SubscriberUserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubscriberUserId");
+
+                    b.ToTable("UserPeopleInfo");
+                });
+
+            modelBuilder.Entity("Forum.Models.UserThreadInfo", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Bookmarked")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Flagged")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Followed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Liked")
+                        .HasColumnType("bit");
 
                     b.Property<long>("SubscriberUserId")
                         .HasColumnType("bigint");
@@ -405,90 +438,7 @@ namespace Forum.Migrations
 
                     b.HasIndex("SubscriberUserId");
 
-                    b.HasIndex("ThreadId");
-
-                    b.ToTable("UserBookmarkedThread");
-                });
-
-            modelBuilder.Entity("Forum.Models.UserFlaggedThread", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long>("SubscriberUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("ThreadId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubscriberUserId");
-
-                    b.HasIndex("ThreadId");
-
-                    b.ToTable("UserFlaggedThread");
-                });
-
-            modelBuilder.Entity("Forum.Models.UserFollowedPeople", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("SubscriberUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("SubscriberUserId1")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("UserFollowerId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("UserFollowingId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubscriberUserId");
-
-                    b.HasIndex("SubscriberUserId1");
-
-                    b.ToTable("UserFollowedPeople");
-                });
-
-            modelBuilder.Entity("Forum.Models.UserFollowedThread", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long>("SubscriberUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("ThreadId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubscriberUserId");
-
-                    b.HasIndex("ThreadId");
-
-                    b.ToTable("UserFollowedThread");
+                    b.ToTable("UserThreadInfo");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -763,6 +713,10 @@ namespace Forum.Migrations
                         .HasForeignKey("SubscriberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Forum.Models.UserPeopleInfo", null)
+                        .WithMany("UserFollowing")
+                        .HasForeignKey("UserPeopleInfoId");
                 });
 
             modelBuilder.Entity("Forum.Models.Thread", b =>
@@ -778,6 +732,10 @@ namespace Forum.Migrations
                         .HasForeignKey("SubscriberUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Forum.Models.UserThreadInfo", null)
+                        .WithMany("Threads")
+                        .HasForeignKey("UserThreadInfoId");
                 });
 
             modelBuilder.Entity("Forum.Models.ThreadHistory", b =>
@@ -822,58 +780,20 @@ namespace Forum.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Forum.Models.UserBookmarkedThread", b =>
+            modelBuilder.Entity("Forum.Models.UserPeopleInfo", b =>
                 {
-                    b.HasOne("Forum.Models.SubscriberUser", null)
-                        .WithMany("UserBookmarkedThreads")
+                    b.HasOne("Forum.Models.SubscriberUser", "SubscriberUser")
+                        .WithMany()
                         .HasForeignKey("SubscriberUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Forum.Models.Thread", null)
-                        .WithMany("UserBookmarkedThreads")
-                        .HasForeignKey("ThreadId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Forum.Models.UserFlaggedThread", b =>
+            modelBuilder.Entity("Forum.Models.UserThreadInfo", b =>
                 {
-                    b.HasOne("Forum.Models.SubscriberUser", null)
-                        .WithMany("UserFlaggedThreads")
+                    b.HasOne("Forum.Models.SubscriberUser", "SubscriberUser")
+                        .WithMany("UserThreadInfos")
                         .HasForeignKey("SubscriberUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Forum.Models.Thread", null)
-                        .WithMany("UserFlaggedThreads")
-                        .HasForeignKey("ThreadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Forum.Models.UserFollowedPeople", b =>
-                {
-                    b.HasOne("Forum.Models.SubscriberUser", null)
-                        .WithMany("UserFollowers")
-                        .HasForeignKey("SubscriberUserId");
-
-                    b.HasOne("Forum.Models.SubscriberUser", null)
-                        .WithMany("UserFollowing")
-                        .HasForeignKey("SubscriberUserId1");
-                });
-
-            modelBuilder.Entity("Forum.Models.UserFollowedThread", b =>
-                {
-                    b.HasOne("Forum.Models.SubscriberUser", null)
-                        .WithMany("UserFollowedThreads")
-                        .HasForeignKey("SubscriberUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Forum.Models.Thread", null)
-                        .WithMany("UserFollowedThreads")
-                        .HasForeignKey("ThreadId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

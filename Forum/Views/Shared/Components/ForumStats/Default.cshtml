@@ -1,0 +1,80 @@
+﻿@model ForumStatistics
+
+<div class="row" matchHeight="card">
+    <div class="col-md-3 col-lg-3 col-xs-6">
+        <div class="card">
+            <a href="/Manage/Users">
+                <div class="card-content">
+                    <div class="px-3 py-3">
+                        <div class="media">
+                            <div class="media-body text-left">
+                                <h3 class="mb-1 success" id="">@Model.Users</h3>
+                                <span class="success"> User(s)</span>
+                            </div>
+                            <div class="media-right align-self-center">
+                                <i class="icon-user success font-large-2 float-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="col-md-3 col-lg-3 col-xs-6">
+        <div class="card">
+            <a href="/Manage/Users">
+                <div class="card-content">
+                    <div class="px-3 py-3">
+                        <div class="media">
+                            <div class="media-body text-left">
+                                <h3 class="mb-1 blue-grey" id="">@Model.PendingInvites</h3>
+                                <span class="blue-grey"> Invite(s)</span>
+                            </div>
+                            <div class="media-right align-self-center">
+                                <i class="ft-check-circle blue-grey font-large-2 float-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="col-md-3 col-lg-3 col-xs-6">
+        <div class="card">
+            <a href="/Manage/Settings">
+                <div class="card-content">
+                    <div class="px-3 py-3">
+                        <div class="media">
+                            <div class="media-body text-left">
+                                <h3 class="mb-1 warning" id="=">@Model.Channels</h3>
+                                <span class="warning">Channel(s)</span>
+                            </div>
+                            <div class="media-right align-self-center">
+                                <i class="ft-award warning font-large-2 float-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="col-md-3 col-lg-3 col-xs-6">
+        <div class="card">
+            <a href="#">
+                <div class="card-content">
+                    <div class="px-3 py-3">
+                        <div class="media">
+                            <div class="media-body text-left">
+                                <h3 class="mb-1 primary" id="">@Model.Threads</h3>
+                                <span class="primary">Thread(s)</span>
+                            </div>
+                            <div class="media-right align-self-center">
+                                <i class="icon-trophy primary font-large-2 float-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>

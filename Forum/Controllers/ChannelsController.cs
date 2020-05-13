@@ -44,20 +44,19 @@ namespace Forum.Controllers
             try
             {
                 if (channelId == 0)
-                    return Ok(new ResponseObject
+                    return Ok(new
                     {
-                        Data = null,
                         Message = "Select a Channel",
-                        Status = Status.NotFound
+                        Status = -1
                     });
 
                 var chanel = _channelService.GetAllCategoriesInChannel(channelId, false);
 
-                return Ok(new ResponseObject
+                return Ok(new
                 {
                     Data = chanel.ToList(),
                     Message = "",
-                    Status = Status.Success
+                    Status = 1
                 });
 
             }

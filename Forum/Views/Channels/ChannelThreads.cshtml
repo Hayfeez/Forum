@@ -1,153 +1,49 @@
 ﻿@model ChannelThreads
 @{
     ViewData["Title"] = Model.Channel.Name;
+    ViewData["ReturnUrl"] = "Channels/ChannelThreads";
 }
 
 <div class="row">
     <div class="posts col-lg-8 col-md-8">
 
-        <p> <a asp-action="Index" asp-controller="Home">Home</a> >
+        <p>
+            <a asp-action="Index" asp-controller="Home">Home</a> >
             @Model.Channel.Name
         </p>
-        <p>No of Threads: @Model.Channel.Categories.Sum(a=>a.ThreadCount)</p>
-
-        @if(Model.Threads.Count()  > 0) {
-    <div class="posts__body">
+        <p>No of Threads: @Model.Channel.Categories.Sum(a => a.ThreadCount)</p>
         <p>
             Click <a asp-action="CreateThread" asp-controller="Threads" asp-route-channelId="@Model.Channel.Id">
                 here
             </a> to add a post in this channel
         </p>
-        @foreach (var item in Model.Threads)
+
+        @if (Model.Threads.Count() > 0)
         {
-            <div class="post bg-f2f4f6">
-                <div class="wrap-ut pull-left">
-                    <div class="posts__tags tags">
-                    </div>
-                    <div class="userinfo pull-left">
-                        <div class="avatar">
-                            <img src="@item.AuthorImageUrl" alt="User Photo">
-                            <div class="status green">&nbsp;</div>
-                        </div>
-
-                        <div class="icons">
-                            <img src="~/images/icon1.jpg" alt=""><img src="~/images/icon4.jpg" alt="">
-                        </div>
-                    </div>
-                    <div class="posttext pull-left">
-                        <h2><a asp-controller="Threads" asp-action="Thread" asp-route-id="@item.Title">@item.Title</a></h2>
-                        <p>@Html.Raw(@item.Content)</p>
-                    </div>
-
-                    <div class="clearfix"></div>
-                </div>
-                <div class="postinfo pull-left">
-                    <div class="comments">
-                        <div class="commentbg">
-                            @item.RepliesCount
-                            <div class="mark"></div>
-                        </div>
-
-                    </div>
-                    <div class="views"><i class="fa fa-eye"></i> 1,568</div>
-                    <div class="time"><i class="fa fa-clock-o"></i> 24 min</div>
-                </div>
-                <div class="clearfix"></div>
-
-            </div>
-
+            <partial name="_ThreadsList" model="Model.Threads" />
         }
-
-    </div>
-
-        <div class="col-lg-8 col-xs-12 col-md-8">
-            <div class="pull-left"><a href="#" class="prevnext"><i class="fa fa-angle-left"></i></a></div>
-            <div class="pull-left">
-                <ul class="paginationforum">
-                    <li class="hidden-xs"><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#" class="active">4</a></li>
-                    <li><a href="#">8</a></li>
-                    <li class="hidden-xs"><a href="#">10</a></li>
-                    <li class="hidden-xs hidden-md"><a href="#">11</a></li>
-                    <li><a href="#">20</a></li>
-                </ul>
-            </div>
-            <div class="pull-left"><a href="#" class="prevnext last"><i class="fa fa-angle-right"></i></a></div>
-            <div class="clearfix"></div>
-        </div>
-        }
-        else {
-            <p>There are no posts to display.
-            Click <a asp-action="CreateThread" asp-controller="Threads" asp-route-channelId="@Model.Channel.Id">
-                here</a> to add a post in this channel </p>
+        else
+        {
+            <p>
+                There are no posts to display.
+                Click <a asp-action="CreateThread" asp-controller="Threads" asp-route-channelId="@Model.Channel.Id">
+                    here
+                </a> to add a post in this channel
+            </p>
         }
     </div>
 
     <div class="col-lg-4 col-md-4">
+
         <!-- Categories-->
-        <div class="sidebarblock">
-            <h3>Categories</h3>
-            <div class="divline"></div>
-            <div class="blocktxt">
-                @{
-                    var categories = Model.Channel.Categories.Take(10);
-                    @foreach (var item in categories)
-                    {
-                        <a asp-action="CategoryThreads" asp-controller="Channels" asp-route-category="@item.Name">@item.Name</a>
-                    }
-                }
-
-            </div>
-        </div>
-
-        <!-- user posts-->
-        <div class="sidebarblock">
-            <h3>My Last 10 Threads</h3>
-            <div class="divline"></div>
-            <div class="blocktxt">
-                @{
-                    if (User.Identity.IsAuthenticated)
-                    {
-                        var userThreads = Model.Threads.Where(a => a.AuthorId == User.Identity.GetSubscriberUserId().ToString()).Take(10);
-                        @foreach (var item in userThreads)
-                        {
-
-                            <a asp-action="Thread" asp-controller="Threads" asp-route-id="@item.Title">@item.Title</a>
-
-
-                        }
-                    }
-                    else
-                    {
-                        <p>
-                            You are not logged in.
-                            <a asp-action="Login" asp-controller="Account" asp-route-returnUrl="Channels/ChannelThreads">Login now</a>
-                        </p>
-                    }
-                }
-            </div>
-            </div>
-
+        <partial name="_ThreadsCategory" model="Model.Channel.Categories" />
 
         <!--  most comments-->
-        <div class="sidebarblock">
-            <h3>Top 10 Replies</h3>
-            <div class="divline"></div>
-            <div class="blocktxt">
-                @{
-                    var mostReplies = Model.Threads.OrderByDescending(a => a.RepliesCount).Take(10);
-                    @foreach (var item in mostReplies)
-                    {
-
-                        <a asp-action="Thread" asp-controller="Threads" asp-route-id="@item.Title">@item.Title</a>
+        <partial name="_ThreadsMostComment" model="Model.Threads" />
 
 
-                    }
-
-                }
-            </div>
-        </div>
-
+        <!-- user posts-->
+        <partial name="_ThreadsUser" model="Model.Threads", view-data="ViewData" />
+       
     </div>
 </div>

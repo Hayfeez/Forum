@@ -25,11 +25,8 @@ namespace Forum.Models
         public  IEnumerable<Thread> Threads { get; set; }
         public  IEnumerable<ThreadReply> ThreadReplies { get; set; }
 
-        public IEnumerable<UserFollowedThread> UserFollowedThreads { get; set; }
-        public IEnumerable<UserFlaggedThread> UserFlaggedThreads { get; set; }
-        public IEnumerable<UserBookmarkedThread> UserBookmarkedThreads { get; set; }
+        public IEnumerable<UserThreadInfo> UserThreadInfos { get; set; }
 
-        public IEnumerable<UserFollowedPeople> UserFollowing { get; set; }
-        public IEnumerable<UserFollowedPeople> UserFollowers { get; set; }
+       // public IEnumerable<UserPeopleInfo> UserPeopleInfos { get; set; }
     }
 }

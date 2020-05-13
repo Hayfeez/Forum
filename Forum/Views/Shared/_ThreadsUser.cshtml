@@ -1,0 +1,38 @@
+﻿@model IEnumerable<ThreadVM>
+
+<div class="sidebarblock">
+    <h3>My Recent Threads</h3>
+    <div class="divline"></div>
+    <div class="blocktxt">
+        @{
+            if (User.Identity.IsAuthenticated)
+            {
+                string userId = User.Identity.GetSubscriberUserId().ToString();
+                var userThreads = Model.Where(a => a.AuthorId == userId).Take(10);
+                if (userThreads.Count() > 0)
+                {
+                @foreach (var item in userThreads)
+                {
+                    <a asp-action="Thread" asp-controller="Threads" asp-route-id="@item.Title">@item.Title</a>
+
+                }
+                }
+                else
+                {
+                    <p>
+                        No threads yet
+                    </p>
+                }
+            }
+            else
+            {
+                <p>
+                    You are not logged in.
+                    @{ string retUrl = ViewData["ReturnUrl"].ToString(); 
+                    <a asp-action="Login" asp-controller="Account" asp-route-returnUrl="@retUrl">Login now</a>
+                    }
+                </p>
+            }
+        }
+    </div>
+</div>

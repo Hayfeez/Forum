@@ -50,6 +50,14 @@ namespace Forum.Helpers
                     .ForMember(dest => dest.AuthorRating, opt => { opt.MapFrom(d => d.SubscriberUser.Rating); })
                     .ForMember(dest => dest.Thread, opt => { opt.MapFrom(d => d.Thread); });
 
+            CreateMap<ThreadInfo, ThreadInfoVM>();
+            CreateMap<ThreadReplyInfo, ThreadReplyInfoVM>();
+            
+            CreateMap<SaveUserAction, UserThreadInfo>();
+            CreateMap<SaveUserAction, UserPeopleInfo>();
+            CreateMap<SaveUserAction, ThreadInfo>();
+            CreateMap<SaveUserAction, ThreadReplyInfo>();
+
             CreateMap<Category,  CategoryVM>()
                    .ForMember(dest => dest.Name, opt => { opt.MapFrom(d => d.Title); })
                     .ForMember(dest => dest.Threads, opt => { opt.MapFrom(d => d.Threads); })

@@ -147,7 +147,7 @@
                 axiosInstance.get(`../LoadChannelCategories/${channelId}`)
                     .then(res => {
                         if (res.data) {
-                            if (res.data.status === STATUS.Success) {
+                            if (res.data.status === 1) {
                                 $.each(res.data.data, function (index, item) {
                                     $('#category').append(`<option value='${item.id}'>${item.title} </option>`);
                                 });
