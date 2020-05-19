@@ -76,7 +76,6 @@ namespace Forum.Controllers
                 var model = _mapper.Map<ThreadVM>(thread);
                 if(model == null) return RedirectToAction("Index", "Home");
 
-                model.Replies = new List<ThreadReplyVM>();  //temporary to be removed
                 return View(model);
             }
             catch (Exception ex)
@@ -204,7 +203,7 @@ namespace Forum.Controllers
             try
             {
                 var eply = _threadService.GetAllRepliesToThread(threadId);
-                var model = _mapper.Map<ThreadReplyVM>(eply);
+                var model = _mapper.Map<List<ThreadReplyVM>>(eply);
 
                 return Json(new { Status = 1, Data = model });
             }
@@ -216,7 +215,7 @@ namespace Forum.Controllers
         }
        
         [HttpGet]
-        public async Task<IActionResult> IncreaseThreadView([FromBody]long threadId, [FromServices] IThreadInfoService _threadInfoService)
+        public async Task<IActionResult> IncreaseThreadView(long threadId, [FromServices] IThreadInfoService _threadInfoService)
         {
             try
             {

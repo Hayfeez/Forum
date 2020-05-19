@@ -181,7 +181,7 @@ namespace Forum.DataAccessLayer.Service
             {
                 var replies = _dbContext.ThreadReplies
                     .Where(a => a.ThreadId == threadId)
-                    .Include(b => b.SubscriberUser)
+                    .Include(b => b.SubscriberUser).ThenInclude(a=>a.ApplicationUser)
                     .Include(a => a.UserThreadReplyInfos)
                     .Include(a => a.ThreadReplyInfo);
                         

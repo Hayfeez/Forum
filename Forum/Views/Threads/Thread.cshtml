@@ -1,5 +1,6 @@
 ﻿@model ThreadVM
 @inject LoadStaticContent _staticData;
+@inject Forum.Models.Subscriber _tenant;
 @{
     ViewData["Title"] = Model.Title;
 }
@@ -15,19 +16,21 @@
 
                 <a asp-action="CategoryThreads" asp-controller="Channels" asp-route-category="@Model.Category.Name" class="category"><i class="bg-3ebafa"></i> @Model.Category.Name</a>
                 <div class="tags">
-                    @* @{
-            string[] threadTags = Model.Tags.Split(',');
-            string colourCode;
-            for (int i = 0; i < threadTags.Length; i++)
-            {
-                if (i == 0) colourCode = "bg-4f80b0";
-                else if (i % 2 == 0) colourCode = "bg-a3d39c";
-                else colourCode = "bg-8781bd";
+                    @{
+                        if (!string.IsNullOrEmpty(Model.Tags))
+                        {
+                            string[] threadTags = Model.Tags.Split(',');
+                            string colourCode;
+                            for (int i = 0; i < threadTags.Length; i++)
+                            {
+                                if (i == 0) colourCode = "bg-4f80b0";
+                                else if (i % 2 == 0) colourCode = "bg-a3d39c";
+                                else colourCode = "bg-8781bd";
 
-                <a href="#" class="@colourCode"> @threadTags[i]</a>
-            }
-
-        } *@
+                                <a href="#" class="@colourCode"> @threadTags[i]</a>
+                            }
+                        }
+                    }
                 </div>
             </div>
         </div>
@@ -51,106 +54,57 @@
                     </div>
                     <div class="topic__content">
                         <div class="topic__text">
-                            @Html.Raw(Model.Content)
+                            <p id="threadContent">@Html.Raw(Model.Content)</p>
+                            <textarea class="summernote" asp-for="Content" id="editContent" style="display:none;">
+
+                            </textarea>
                         </div>
                         <div class="topic__footer">
                             <div class="topic__footer-likes">
                                 <div>
-                                    <span class="topic__info-count">205</span>
-                                    <span class="topic__info-title">Views</span>
+                                    <span class="topic__info-count" id="noOfFollows">0</span>
+                                    <span class="topic__info-title">Follows</span>
                                 </div>
                                 <div>
-                                    <span class="topic__info-count">6</span>
-                                    <span class="topic__info-title">Followers</span>
-                                </div>
-                                <div>
-                                    <span class="topic__info-count">315</span>
+                                    <span class="topic__info-count" id="noOfLikes">0</span>
                                     <span class="topic__info-title">Likes</span>
+                                </div>
+                                <div>
+                                    <span class="topic__info-count" id="noOfBookmarks">0</span>
+                                    <span class="topic__info-title">Bookmarks</span>
+                                </div>
+                                <div>
+                                    <span class="topic__info-count" id="noOfFlags">0</span>
+                                    <span class="topic__info-title">Flags</span>
                                 </div>
                             </div>
                             <div class="topic__footer-share">
-                                <div data-visible="desktop">
-                                    <a href="" onclick="performThreadAction(@Model.Id, UserActionEnum.Like)"><i class="icon-Favorite_Topic"></i></a>
-                                    <a href="" onclick="performThreadAction(@Model.Id, UserActionEnum.Bookmark)"><i class="icon-Bookmark"></i></a>
-                                    <a href="" onclick="performThreadAction(@Model.Id, UserActionEnum.Flag)"><i class="icon-Flag_Topic"></i></a>
-                                </div>
-                                <div data-visible="mobile">
-                                    <a href=""><i class="icon-More_Options"></i></a>
-                                </div>
-                                <a href="" onclick="replyThread(@Model.Id)"><i class="icon-Reply_Fill"></i></a>
+
+                                <a href="javascript:void(0);" title="Reply Thread" onclick="showReplyForm(@Model.Id)"><i class="icon-Reply_Fill"></i></a>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- replies -->
-                @if (Model.RepliesCount > 0)
-                {
-                    <p>
-                        <a href="" onclick="showReplies(@Model.Id)"> Show Replies to this thread </a>
-                    </p>
+                <div class="topics__control">
+                    <a href="javascript:void(0);" title="Like" onclick="performThreadAction(@Model.Id, UserActionEnum.Like)" class="btn" id="likeThread"><i class="icon-Favorite_Topic"></i>Like</a>
+                    <a href="javascript:void(0);" title="Bookmark" onclick="performThreadAction(@Model.Id, UserActionEnum.Bookmark)" class="btn" id="bookmarkThread"><i class="icon-Bookmark"></i>Bookmark</a>
+                    <a href="javascript:void(0);" title="Flag" onclick="performThreadAction(@Model.Id, UserActionEnum.Flag)" class="btn" id="flagThread"><i class="icon-Flag_Topic"></i>Flag</a>
+                    <a href="javascript:void(0);" title="Follow" onclick="performThreadAction(@Model.Id, UserActionEnum.Follow)" class="btn" id="followThread"><i class="icon-Track"></i>Follow</a>
+                    <a href="javascript:void(0);" title="Reply Thread" class="btn btn--type-02" data-visible="desktop" onclick="showReplyForm(@Model.Id)"><i class="icon-Reply_Fill"></i>Reply</a>
+                </div>
 
-                }
-                else
-                {
-                    <div class="topic">
-                        <p> <a href="" onclick="replyThread(@Model.Id)"> Be the first to reply to this post </a> </p>
-                    </div>
-                }
+                <div id="threadRepliesDiv">
 
 
-                <!-- Replies Html to be removed -->
-                @foreach (var item in Model.Replies)
-                {
-                    <p><span id="noOfReplies">@Model.RepliesCount </span> replies </p>
-                    <div class="topic">
-                        @* add class topic--selected for flagged *@
-                        <div class="topic__head">
+                </div>
 
-                            <div class="topic__caption">
-                                <div class="topic__name">
-                                    <a href="@Url.Action("UserProfile","Profile", new { userId = Model.AuthorId})">@item.AuthorName</a>
-                                </div>
-                                <div class="topic__date">
-                                    <i class="icon-Watch_Later"></i>@item.DatePosted.ToLongDateString()
-                                </div>
-                            </div>
-                        </div>
-                        <div class="topic__content">
-                            <div class="topic__text">
-                                <p id="threadContent">@Html.Raw(item.Content)</p>
-                                <textarea class="summernote" asp-for="Content" id="editContent" style="display:none;">
 
-                                </textarea>
-                            </div>
-                            <div class="topic__footer">
-                                <div class="topic__footer-likes">
-                                    <div>
-                                        <a href="" onclick="performReplyAction(@item.Id, UserActionEnum.Upvote)"><i class="icon-Upvote"></i></a>
-                                        <span>137</span>
-                                    </div>
-                                    <div>
-                                        <a href="" onclick="performReplyAction(@item.Id, UserActionEnum.Downvote)"><i class="icon-Downvote"></i></a>
-                                        <span>02</span>
-                                    </div>
-                                    <div>
-                                        <a href="" onclick="performReplyAction(@item.Id, UserActionEnum.Like)"><i class="icon-Favorite_Topic"></i></a>
-                                        <span>46</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
+
             </div>
 
         </div>
-        <div class="topics__control">
-            <a href="" onclick="performThreadAction(@Model.Id, UserActionEnum.Bookmark)" class="btn"><i class="icon-Bookmark"></i>Bookmark</a>
-            <a href="" onclick="performThreadAction(@Model.Id, UserActionEnum.Flag)" class="btn"><i class="icon-Flag_Topic"></i>Flag</a>
-            <a href="" onclick="performThreadAction(@Model.Id, UserActionEnum.Follow)" class="btn"><i class="icon-Track"></i>Follow</a>
-            <a href="" class="btn btn--type-02" data-visible="desktop" onclick="replyThread(@Model.Id)"><i class="icon-Reply_Fill"></i>Reply</a>
-        </div>
+      
 
     </div>
 
@@ -167,28 +121,28 @@
 
     <script>
         $(document).ready(function () {
-            increaseThreadView(@Model.Id);
+           // increaseThreadView(@Model.Id);
             loadThreadInfo(@Model.Id);
             loadThreadUserInfo(@Model.Id);
+            loadReplies(@Model.Id);
 
-            //   performThreadAction(@Model.Id, UserActionEnum.Bookmark)
-            //   replyThread(@Model.Id);
 
             //$('#editContent').summernote('code');
             //$('#editContent').summernote('code', '');
             //$('#editContent').summernote('code', data);
-            $('#editContent').summernote({
-                placeholder: 'Content',
-                height: 300,
-                toolbar: summernoteToolbar
-            });
-            function editThread(threadId) {
 
-            }
+            //$('#editContent').summernote({
+            //    placeholder: 'Content',
+            //    height: 300,
+            //    toolbar: summernoteToolbar
+            //});
 
 
-            function loadThreadInfo(threadId) {
-                axiosInstance.get(`/Threads/LoadThreadInfo/`,
+        });
+
+         function increaseThreadView(threadId) {
+                //don't do on reload
+                axiosInstance.get('/Threads/IncreaseThreadView',
                     {
                         params: {
                             threadId: `${threadId}`
@@ -197,25 +151,7 @@
                     .then(res => {
                         if (res.data) {
                             if (res.data.status === 1) {
-                                console.log("threadInfo", res.data.data);
-                            }
-                        }
-                    }).catch(error => {
-                        alert('error');
-                    });
-            }
-
-            function loadThreadUserInfo(threadId) {
-                axiosInstance.get(`/Threads/LoadThreadUserInfo/`,
-                    {
-                        params: {
-                            threadId: `${threadId}`
-                        }
-                    })
-                    .then(res => {
-                        if (res.data) {
-                            if (res.data.status === 1) {
-                                console.log("threadUserInfo", res.data.data);
+                                alert('views increased');
                             }
                         }
                     }).catch(error => {
@@ -234,6 +170,54 @@
                         if (res.data) {
                             if (res.data.status === 1) {
                                 console.log("replies", res.data.data);
+                                $('#threadRepliesDiv').empty();
+
+                                if (res.data.data.length > 0) {
+                                    $('#threadRepliesDiv').prepend(`
+                                       <p><span id="noOfReplies">${res.data.data.length} </span> replies </p>
+                                    `);
+
+                                    $.each(res.data.data, function (i, j) {
+                                        $('#threadRepliesDiv').append(`
+                                                  <div class="topic">
+                        @* add class topic--selected for flagged *@
+                        <div class="topic__head">
+
+                            <div class="topic__caption">
+                                <div class="topic__name">
+                                    <a href="/Profile/UserProfile?userId=${j.authorId}">${j.authorName}</a>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="topic__content">
+                            <div class="topic__text">
+                                <p id="threadContent">${j.content}</p>
+                            </div>
+                            <div class="topic__footer">
+                                <div class="topic__footer-likes">
+                                    <div>
+                                        <a href="javascript:void(0);" onclick="performReplyAction(${j.id}, ${UserActionEnum.Upvote})"><i class="icon-Upvote"></i></a>
+                                        <span>${j.threadReplyInfo == null ? 0 : j.threadReplyInfo.upvote}</span>
+                                    </div>
+                                    <div>
+                                        <a href="javascript:void(0);" onclick="performReplyAction(${j.id}, ${UserActionEnum.Downvote})"><i class="icon-Downvote"></i></a>
+                                        <span>${j.threadReplyInfo == null ? 0 : j.threadReplyInfo.downvote}</span>
+                                    </div>
+                                    <div class="topic__date">
+                                        <i class="icon-Watch_Later"></i>${j.datePosted}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                                        `);
+                                    });
+                                }
+                                else {
+                                    $('#threadRepliesDiv').prepend(
+                                        `<p> <a href="javascript:void(0);" onclick="showReplyForm(@Model.Id)"> Be the first to reply to this post </a> </p>`);
+                                }
                             }
                         }
                     }).catch(error => {
@@ -241,82 +225,145 @@
                     });
             }
 
-
-
-            function replyThread(threadId) {
-                axiosInstance.post(`/Threads/ReplyThread/`,
-                    {
-                        ThreadId: threadId,
-                        Content: "new reply"
-                    })
-                    .then(res => {
-                        if (res.data) {
-                            if (res.data.status === 1) {
-                                alert('reply saved');
-                            }
-                        }
-                    }).catch(error => {
-                        alert('error');
-                    });
-            }
-
-
-            function increaseThreadView(threadId) {
-                //don't do on reload
-                axiosInstance.gt('/Threads/IncreaseThreadView/',
+            function loadThreadInfo(threadId) {
+                axiosInstance.get(`/Threads/LoadThreadInfo/`,
                     {
                         params: {
                             threadId: `${threadId}`
                         }
                     })
-            .then(res => {
-                if (res.data) {
-                    if (res.data.status === 1) {
-                        alert('views increased');
+                    .then(res => {
+                        if (res.data) {
+                            if (res.data.status === 1) {
+                                if (res.data.data != null) {
+                                    $('#noOfFollows').text(res.data.data.follows);
+                                    $('#noOfLikes').text(res.data.data.likes);
+                                    $('#noOfBookmarks').text(res.data.data.bookmarks);
+                                    $('#noOfFlags').text(res.data.data.flags);
+                                }
+                            }
+                        }
+                    }).catch(error => {
+                        alert('error');
+                    });
+            }
+
+            function loadThreadUserInfo(threadId) {
+                axiosInstance.get(`/Threads/LoadThreadUserInfo/`,
+                    {
+                        params: {
+                            threadId: `${threadId}`
+                        }
+                    })
+                    .then(res => {
+                        if (res.data) {
+                            if (res.data.status === 1) {
+                                if (res.data.data != null) {
+                                    if (res.data.data.liked === true) {
+                                        $('#likeThread').text('Unlike');
+                                        $('#likeThread').attr('title', 'Unlike');
+                                    }
+                                    else if (res.data.data.liked === false) {
+                                        $('#likeThread').text('Like');
+                                        $('#likeThread').attr('title', 'Like');
+                                    }
+                                    if (res.data.data.bookmarked === true) {
+                                        $('#bookmarkThread').text('Bookmark');
+                                        $('#bookmarkThread').attr('title', 'Remove Bookmark');
+                                    }
+                                    else if (res.data.data.bookmarked === false) {
+                                        $('#bookmarkThread').text('Bookmark');
+                                        $('#bookmarkThread').attr('title', 'Add Bookmark');
+                                    }
+                                    if (res.data.data.followed === true) {
+                                        $('#followThread').text('Unfollow');
+                                        $('#followThread').attr('title', 'Unfollow Tread');
+                                    }
+                                    else if (res.data.data.followed === false) {
+                                        $('#followThread').text('Follow');
+                                        $('#followThread').attr('title', 'Follow Tread');
+                                    }
+                                    if (res.data.data.flagged === true) {
+                                        $('#flagThread').text('Unflag');
+                                        $('#flagThread').attr('title', 'Unflag Thread');
+                                    }
+                                    else if (res.data.data.flagged === false) {
+                                        $('#flagThread').text('Flag');
+                                        $('#flagThread').attr('title', 'Flag Thread');
+                                    }
+                                }
+                            }
+                        }
+                    }).catch(error => {
+                        alert('error');
+                    });
+            }
+
+        function editThread(threadId) {
+
+        }
+
+        function updateThread(threadId) {
+        }
+
+        function showReplyForm(threadId) {
+
+        }
+
+        function replyThread(threadId) {
+            axiosInstance.post(`/Threads/ReplyThread/`,
+                {
+                    ThreadId: threadId,
+                    Content: "new reply"
+                })
+                .then(res => {
+                    if (res.data) {
+                        if (res.data.status === 1) {
+                            alert('reply saved');
+                        }
                     }
-                }
-            }).catch(error => {
-                alert('error');
-            });
-            }
+                }).catch(error => {
+                    alert('error');
+                });
+        }
 
-            function performThreadAction(threadId, action) {
-                axiosInstance.post(`/Threads/ThreadAction/`,
-                    {
-                        ThreadId: threadId,
-                        Action: action
-                    })
-                    .then(res => {
-                        if (res.data) {
-                            if (res.data.status === 1) {
-                                alert('thread action done');
-                            }
+        function performThreadAction(threadId, action) {
+            axiosInstance.post(`/Threads/ThreadAction/`,
+                {
+                    ThreadId: threadId,
+                    Action: action
+                })
+                .then(res => {
+                    if (res.data) {
+                        if (res.data.status === 1) {
+                            debugger;
+                            loadThreadInfo(threadId);
+                            loadThreadUserInfo(threadId);
                         }
-                    }).catch(error => {
-                        alert('error');
-                    });
-            }
+                    }
+                }).catch(error => {
+                    alert('error');
+                });
+        }
 
-            function performReplyAction(replyId, action) {
-                axiosInstance.post(`/Threads/ReplyAction/`,
-                    {
-                        ThreadReplyId: replyId,
-                        Action: action
-                    })
-                    .then(res => {
-                        if (res.data) {
-                            if (res.data.status === 1) {
-                                alert('reply action done');
-                            }
+        function performReplyAction(replyId, action) {
+            axiosInstance.post(`/Threads/ReplyAction/`,
+                {
+                    ThreadReplyId: replyId,
+                    Action: action
+                })
+                .then(res => {
+                    if (res.data) {
+                        if (res.data.status === 1) {
+                            debugger;
+                            loadReplies(@Model.Id);
                         }
-                    }).catch(error => {
-                        alert('error');
-                    });
-            }
+                    }
+                }).catch(error => {
+                    alert('error');
+                });
+        }
 
-            function updateThread(threadId) {
-            }
-        });
     </script>
 
 }

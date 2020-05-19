@@ -78,7 +78,7 @@ namespace Forum.DataAccessLayer.Service
 
                 else
                 {
-                    dt.Views = dt.Views++;
+                    dt.Views++;
 
                     _dbContext.ThreadInfos.Update(dt);
                     if (await _dbContext.SaveChangesAsync() > 0)
@@ -122,11 +122,11 @@ namespace Forum.DataAccessLayer.Service
                 else
                 {
                     if (model.Action == UserAction.Share)
-                        dt.Shares = dt.Shares++;
+                        dt.Shares++;
                     if (model.Action == UserAction.Upvote)
-                        dt.Upvote = dt.Upvote++;
+                        dt.Upvote++;
                     if (model.Action == UserAction.Downvote)
-                        dt.Downvote = dt.Downvote++;
+                        dt.Downvote++;
 
                     _dbContext.ThreadReplyInfos.Update(dt);
                     if (await _dbContext.SaveChangesAsync() > 0)

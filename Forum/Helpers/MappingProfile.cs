@@ -48,7 +48,7 @@ namespace Forum.Helpers
                     .ForMember(dest => dest.AuthorRating, opt => { opt.MapFrom(d => d.SubscriberUser.Rating); })
                     .ForMember(dest => dest.ThreadId, opt => { opt.MapFrom(d => d.ThreadId); })
                     .ForMember(dest => dest.ThreadReplyInfo, opt => { opt.MapFrom(d => d.ThreadReplyInfo); })
-                    .ForMember(dest => dest.ReplyInfoUserIds, opt => { opt.MapFrom(d => d.UserThreadReplyInfos.Select(a=>a.SubscriberUserId)); });
+                   .ForMember(dest => dest.ReplyInfoUserIds, opt => { opt.MapFrom(d => d.UserThreadReplyInfos.Select(a=>a.SubscriberUserId)); });
 
             CreateMap<ThreadInfo, ThreadInfoVM>();
             CreateMap<ThreadReplyInfo, ThreadReplyInfoVM>();

@@ -38,6 +38,10 @@ let UserActionEnum = {
 };
 
 
+function formatDate(dt) {
+    var d = new Date(dt);
+    return d.toDateString();
+}
 
 function buildDropdownOption(text, value) {
     var option = document.createElement("option");
