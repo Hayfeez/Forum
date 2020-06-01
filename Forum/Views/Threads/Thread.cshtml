@@ -55,9 +55,13 @@
                     <div class="topic__content">
                         <div class="topic__text">
                             <p id="threadContent">@Html.Raw(Model.Content)</p>
-                            <textarea class="summernote" asp-for="Content" id="editContent" style="display:none;">
+                            <div id="editContent" style="display:none;">
+                                <textarea class="summernote" asp-for="Content" id="editThreadContent">
 
                             </textarea>
+                                <a href="javascript:void(0);"  class="btn btn--type-02"  title="Update Thread" onclick="updateThread(@Model.Id)"><i class="icon-Save"></i>Update</a>
+                            </div>
+                           
                         </div>
                         <div class="topic__footer">
                             <div class="topic__footer-likes">
@@ -80,7 +84,7 @@
                             </div>
                             <div class="topic__footer-share">
 
-                                <a href="javascript:void(0);" title="Reply Thread" onclick="showReplyForm(@Model.Id)"><i class="icon-Reply_Fill"></i></a>
+                                <a href="javascript:void(0);" title="Reply Thread" onclick="showReplyForm()"><i class="icon-Reply_Fill"></i></a>
                             </div>
                         </div>
                     </div>
@@ -91,7 +95,7 @@
                     <a href="javascript:void(0);" title="Bookmark" onclick="performThreadAction(@Model.Id, UserActionEnum.Bookmark)" class="btn" id="bookmarkThread"><i class="icon-Bookmark"></i>Bookmark</a>
                     <a href="javascript:void(0);" title="Flag" onclick="performThreadAction(@Model.Id, UserActionEnum.Flag)" class="btn" id="flagThread"><i class="icon-Flag_Topic"></i>Flag</a>
                     <a href="javascript:void(0);" title="Follow" onclick="performThreadAction(@Model.Id, UserActionEnum.Follow)" class="btn" id="followThread"><i class="icon-Track"></i>Follow</a>
-                    <a href="javascript:void(0);" title="Reply Thread" class="btn btn--type-02" data-visible="desktop" onclick="showReplyForm(@Model.Id)"><i class="icon-Reply_Fill"></i>Reply</a>
+                    <a href="javascript:void(0);" title="Reply Thread" class="btn btn--type-02" data-visible="desktop" onclick="showReplyForm()"><i class="icon-Reply_Fill"></i>Reply</a>
                 </div>
 
                 <div id="threadRepliesDiv">
@@ -99,6 +103,16 @@
 
                 </div>
 
+                <div class="create__section create__textarea">
+                    <label class="create__label" for="content">Reply</label>
+
+                    <textarea class="summernote" id="threadReply">
+
+                    </textarea>
+
+                    <a href="javascript:void(0);" title="Reply Thread" class="btn btn--type-02" onclick="replyThread(@Model.Id)"><i class="icon-Reply_Fill"></i>Reply</a>
+
+                </div>
 
 
             </div>
@@ -126,16 +140,11 @@
             loadThreadUserInfo(@Model.Id);
             loadReplies(@Model.Id);
 
-
-            //$('#editContent').summernote('code');
-            //$('#editContent').summernote('code', '');
-            //$('#editContent').summernote('code', data);
-
-            //$('#editContent').summernote({
-            //    placeholder: 'Content',
-            //    height: 300,
-            //    toolbar: summernoteToolbar
-            //});
+             $('#threadReply').summernote({
+               placeholder: 'Reply',
+                height: 300,
+               toolbar: summernoteToolbar
+            });
 
 
         });
@@ -299,27 +308,52 @@
                     });
             }
 
-        function editThread(threadId) {
+        function editThread(content) {
+            $('#editThreadContent').summernote({
+                placeholder: '',
+                height: 300,
+                toolbar: summernoteToolbar
+            });
 
+              //$('#editContent').summernote('code', '');
+            $('#editThreadContent').summernote('code', content);
+            $('#editContent').show();
         }
 
         function updateThread(threadId) {
+            axiosInstance.post(`/Threads/UpdateThread/`,
+                {
+                    ThreadId: threadId,
+                    Content: $('#threadReply').summernote('code')
+                })
+                .then(res => {
+                    if (res.data) {
+                        if (res.data.status === 1) {
+                            alert('thread updated');
+                            location.reload();
+                        }
+                    }
+                }).catch(error => {
+                    alert('error');
+                });
         }
 
-        function showReplyForm(threadId) {
+        function showReplyForm() {
 
+            $('#threadReply').focus();
         }
 
         function replyThread(threadId) {
             axiosInstance.post(`/Threads/ReplyThread/`,
                 {
                     ThreadId: threadId,
-                    Content: "new reply"
+                    Content: $('#threadReply').summernote('code')
                 })
                 .then(res => {
                     if (res.data) {
                         if (res.data.status === 1) {
                             alert('reply saved');
+                            loadReplies(threadId);
                         }
                     }
                 }).catch(error => {
@@ -336,7 +370,6 @@
                 .then(res => {
                     if (res.data) {
                         if (res.data.status === 1) {
-                            debugger;
                             loadThreadInfo(threadId);
                             loadThreadUserInfo(threadId);
                         }
@@ -355,7 +388,6 @@
                 .then(res => {
                     if (res.data) {
                         if (res.data.status === 1) {
-                            debugger;
                             loadReplies(@Model.Id);
                         }
                     }

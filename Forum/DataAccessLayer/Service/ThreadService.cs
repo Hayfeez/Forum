@@ -151,13 +151,15 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-        public async  Task<DbActionsResponse> UpdateThread(long threadId, string newContent)
+        public async  Task<DbActionsResponse> UpdateThread(long threadId, string newContent, long userId)
         {
             try
             {
                 var existingThread = _dbContext.Threads.Where(a => a.Id == threadId).FirstOrDefault();
                 if (existingThread == null) return DbActionsResponse.NotFound;
-             
+
+                if (existingThread.SubscriberUserId != userId) return DbActionsResponse.DeleteDenied;
+
                 existingThread.Content = newContent;
 
                 _dbContext.Threads.Update(existingThread);

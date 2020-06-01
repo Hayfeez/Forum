@@ -165,8 +165,39 @@ namespace Forum.Controllers
             }
         }
 
+        [Authorize, HttpPost]
+        public async Task<IActionResult> UpdateThread(UpdateThreadVM model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var response = await _threadService.UpdateThread(model.Id, model.Content, User.Identity.GetSubscriberUserId());
 
-       
+                    if (response == DbActionsResponse.NotFound)
+                        return Json(new { Status = -1, Message = "Thread not found" });
+
+                    else if (response == DbActionsResponse.DeleteDenied)
+                        return Json(new { Status = -1, Message = "You cannot update this thread" });
+
+                    else if (response == DbActionsResponse.Success)
+                    {
+                        return Json(new { Status = 1, Message = "Thread updated successfully" });
+                    }
+
+                    return Json(new { Status = -1, Message = "Thread could not be updated" });
+                }
+
+                return Json(new { Status = -1, Message = "Required fields are empty" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Status = -1, Message = "An error occured while updating thread" });
+                
+            }
+        }
+
+
         [HttpGet]
         public IActionResult LoadThreadInfo(long threadId, [FromServices] IThreadInfoService _threadInfoService)
         {
@@ -249,15 +280,15 @@ namespace Forum.Controllers
                     var response = await _threadService.CreateReply(data);
                     if (response == DbActionsResponse.Success)
                     {
-                        return Json(new { Status = 1, Message = "Success" });
+                        return Json(new { Status = 1, Message = "Reply saved successfully" });
                     }
                 }
 
-                return Json(new { Status = -1, Message = "Failed" });
+                return Json(new { Status = -1, Message = "Reply could not be saved" });
             }
             catch (Exception ex)
             {
-                return Json(new { Status = -1, Message = "An error occured" });
+                return Json(new { Status = -1, Message = "An error occured while saving reply" });
             }
         }
 
