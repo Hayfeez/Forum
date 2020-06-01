@@ -41,6 +41,7 @@
     <Folder Include="wwwroot\default\js\" />
     <Folder Include="wwwroot\vendor\toastr\" />
     <Folder Include="wwwroot\vendor\sweetalert\" />
+    <Folder Include="Views\Profile\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\vendor\summernote-0.8.16-dist\summernote-bs4.min.js" />

@@ -151,13 +151,15 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-        public async  Task<DbActionsResponse> UpdateThread(long threadId, string newContent)
+        public async  Task<DbActionsResponse> UpdateThread(long threadId, string newContent, long userId)
         {
             try
             {
                 var existingThread = _dbContext.Threads.Where(a => a.Id == threadId).FirstOrDefault();
                 if (existingThread == null) return DbActionsResponse.NotFound;
-             
+
+                if (existingThread.SubscriberUserId != userId) return DbActionsResponse.DeleteDenied;
+
                 existingThread.Content = newContent;
 
                 _dbContext.Threads.Update(existingThread);
@@ -181,7 +183,7 @@ namespace Forum.DataAccessLayer.Service
             {
                 var replies = _dbContext.ThreadReplies
                     .Where(a => a.ThreadId == threadId)
-                    .Include(b => b.SubscriberUser)
+                    .Include(b => b.SubscriberUser).ThenInclude(a=>a.ApplicationUser)
                     .Include(a => a.UserThreadReplyInfos)
                     .Include(a => a.ThreadReplyInfo);
                         

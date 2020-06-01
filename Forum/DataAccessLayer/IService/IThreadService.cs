@@ -15,7 +15,7 @@ namespace Forum.DataAccessLayer.IService
         Thread GetThreadById(string title);
        
         Task<DbActionsResponse> CreateThread(Thread thread);
-        Task<DbActionsResponse> UpdateThread(long threadId, string newContent);
+        Task<DbActionsResponse> UpdateThread(long threadId, string newContent, long userId);
         Task<DbActionsResponse> DeleteThread(long threadId);
 
 

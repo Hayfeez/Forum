@@ -152,7 +152,9 @@ namespace Forum
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-           
+            app.UseStatusCodePages();
+           // app.UseStatusCodePagesWithRedirects();
+
             app.UseMultitenancy<Subscriber>();
             // app.UseMiddleware<TenantUnresolvedRedirectMiddleware<Subscriber>>("http://saaskit.net", false);
             // app.UseMiddleware<TenantUnresolvedRedirectMiddleware<Subscriber>>("/tenantnotfound.html", false);

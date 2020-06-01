@@ -12,34 +12,22 @@ namespace Forum.Components
 {
     public class ThreadsFollowing : ViewComponent
     {
-        private long _userId;
         private readonly IMapper _mapper;
         private readonly IForumUserService _userService;
-        private readonly Subscriber _tenant;
 
-        public ThreadsFollowing(IMapper mapper, IForumUserService userService, Subscriber tenant)
+        public ThreadsFollowing(IMapper mapper, IForumUserService userService)
         {
-            try
-            {
-                _mapper = mapper;
-                _userService = userService;
-                _tenant = tenant;
-                _userId = User.Identity.GetSubscriberUserId();
-            }
-            catch (Exception ex)
-            {
-
-            }
-           
+            _mapper = mapper;
+            _userService = userService;
         }
-       
+           
 
         public IViewComponentResult Invoke()
         {
             var following = new List<Thread>();
             try
             {
-                var dt = _userService.GetUserThreadActions(_userId).Where(a => a.Followed);
+                var dt = _userService.GetUserThreadActions(User.Identity.GetSubscriberUserId()).Where(a => a.Followed);
                 foreach (var item in dt)
                 {
                     following.Add(item.Thread);
