@@ -18,7 +18,7 @@ namespace Forum.DataAccessLayer.IService
         Task<DbActionsResponse> AddSubscriber(Subscriber model);
 
 
-        Task<DbActionsResponse> UpdateSubscriber(int subscriberId, UpdateSubscriberSetting model);     
+        Task<DbActionsResponse> UpdateSubscriber(int subscriberId, SaveSubscriberInfo model);     
         Task<DbActionsResponse> DeleteSubscriber(string domain);
         Task<DbActionsResponse> CancelInvite(int subscriberId, long inviteId);
         IEnumerable<SubscriberUser> GetAllTenantUsers(int subscriberId);
@@ -32,6 +32,10 @@ namespace Forum.DataAccessLayer.IService
         Task<DbActionsResponse> UpdateUserRating(int subscriberId, string ApplicationUserId, double rating);
         Task<DbActionsResponse> DeleteTenantUser(int subscriberId, string appUserId);
 
+
+        #endregion
+
+        #region Moderators
 
         #endregion
 

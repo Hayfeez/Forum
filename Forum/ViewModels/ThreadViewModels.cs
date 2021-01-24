@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Forum.Helpers;
 
 namespace Forum.ViewModels
 {
@@ -41,22 +42,59 @@ namespace Forum.ViewModels
         public int RepliesCount { get; set; }
         public CategoryVM Category { get; set; }
         public ChannelVM Channel { get; set; }
+        public ThreadInfoVM ThreadInfo { get; set; }
+       
     }
 
     public class ThreadReplyVM
     {
         public long Id { get; set; }
+        public long ThreadId { get; set; }
         public string AuthorId { get; set; }
         public string AuthorName { get; set; }
-        public string AuthorImageUrl { get; set; }
         public int AuthorRating { get; set; }
         public DateTime DatePosted { get; set; }
         public string Content { get; set; }
         public bool IsAuthorAdmin { get; set; }
 
-        public ThreadVM Thread { get; set; }
+        public ThreadReplyInfoVM ThreadReplyInfo { get; set; }
+        public IEnumerable<long> ReplyInfoUserIds { get; set; }
     }
 
+    public class ThreadInfoVM
+    {
+        public long Id { get; set; }
+        public long ThreadId { get; set; }
+        public int Follows { get; set; }        
+        public int Likes { get; set; }
+        public int Flags { get; set; }
+        public int Bookmarks { get; set; }
+      //  public int Views { get; set; }
+
+    }
+ 
+    public class ThreadReplyInfoVM
+    {
+        public long Id { get; set; }
+        public long ThreadReplyId { get; set; }
+        public int Upvote { get; set; }
+        public int Downvote { get; set; }
+        public int Shares { get; set; }
+       
+    }
+
+
+    public class UserThreadInfoVM
+    {
+        public long Id { get; set; }
+        public long ThreadId { get; set; }
+        public long SubscriberUserId { get; set; }
+        public bool Flagged { get; set; }
+        public bool Bookmarked { get; set; }
+        public bool Followed { get; set; }
+        public bool Liked { get; set; }
+
+    }
     #endregion
 
 
@@ -73,7 +111,6 @@ namespace Forum.ViewModels
 
         public string Tags { get; set; }
 
-        //public DateTime DateCreated { get; set; }
 
         [Required]
         public int ChannelId { get; set; }
@@ -84,24 +121,54 @@ namespace Forum.ViewModels
         //public string ChannelName { get; set; }
       
         //public string CategoryName { get; set; }
-
-        public string UserId { get; set; }
         
     }
 
+    public class UpdateThreadVM
+    {
+        [Required]public long Id { get; set; }
+
+
+        [Required]
+        public string Content { get; set; }
+    }
     public class SaveThreadReplyVM
     {
         public long Id { get; set; }
         [Required]
         public string Content { get; set; }
-        public DateTime DateCreated { get; set; }
 
         public long ThreadId { get; set; }
-        public string UserId { get; set; }
 
     }
 
+    public class SavePinnedPostVM
+    {
+        public long Id { get; set; }
+
+        [Required]
+        public string Title { get; set; }
+
+        [Required]
+        public string Content { get; set; }
+        public bool IsActive { get; set; }
+
+    }
 
     #endregion
 
+    
+
+    #region User Thread Actions
+
+    public class SaveUserAction
+    {
+        public long ThreadId { get; set; }
+        public long ThreadReplyId { get; set; }
+        public long UserFollowingId { get; set; }
+        public UserAction Action { get; set; }
+    }
+
+   
+    #endregion
 }

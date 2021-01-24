@@ -1,0 +1,90 @@
+﻿@model JoinVM
+
+@{
+    ViewData["Title"] = "Manage Users";
+}
+
+<link rel="stylesheet" type="text/css" href="~/vendor/datatable/datatables.min.css">
+
+<!-- Stats -->
+@await Component.InvokeAsync("ForumStats")
+
+<div class="row">
+
+    <div class="create col-lg-8 col-md-8">
+        <!--Pending Invites -->
+        @await Component.InvokeAsync("ForumInvites")
+    </div>
+
+    <div class="create col-lg-4 col-md-4">
+        <div class="create__head">
+            <div class="create__title"><span> Invite User</span></div>
+        </div>
+        <form method="post" asp-action="InviteUser" asp-acontroler="Manage">
+
+            <div class="signup__section">
+                <label class="signup__label" asp-for="Email"></label>
+                <input type="text" class="form-control" asp-for="Email" id="email">
+                <!--  <span asp-validation-for="Email" class="text-danger"></span> -->
+            </div>
+
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <button type="submit" class="signup__btn-create btn btn--type-02"> Invite </button>
+
+        </form>
+    </div>
+
+
+</div>
+
+<div class="row">
+    <div class="create col-lg-12 col-md-12 col-xs-12">
+        <!--Users -->
+        @await Component.InvokeAsync("ForumUsers")
+
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/vendor/datatable/datatables.min.js" type="text/javascript"></script>
+    <script src="~/vendor/datatable/dataTables.buttons.min.js" type="text/javascript"></script>
+    <script src="~/vendor/datatable/buttons.flash.min.js" type="text/javascript"></script>
+    <script src="~/vendor/datatable/jszip.min.js" type="text/javascript"></script>
+    <script src="~/vendor/datatable/pdfmake.min.js" type="text/javascript"></script>
+    <script src="~/vendor/datatable/vfs_fonts.js" type="text/javascript"></script>
+    <script src="~/vendor/datatable/buttons.html5.min.js" type="text/javascript"></script>
+    <script src="~/vendor/datatable/buttons.print.min.js" type="text/javascript"></script>
+    <script>
+        $(document).ready(function () {
+
+            $('.buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel').addClass('btn btn-outline-primary mr-1');
+
+            $('#Users').DataTable({
+                // dom: 'Bfrtip',
+                //  buttons: [
+                //       'copy', 'csv', 'excel', 'pdf', 'print'
+                //  ],
+                "fnRowCallback": function (nRow, aData, iDisplayIndex) {
+                    $('td:first', nRow).html(iDisplayIndex + 1);
+                    return nRow;
+                }
+            });
+
+            $('#Invites').DataTable({
+                // dom: 'Bfrtip',
+                //  buttons: [
+                //       'copy', 'csv', 'excel', 'pdf', 'print'
+                //  ],
+                "fnRowCallback": function (nRow, aData, iDisplayIndex) {
+                    $('td:first', nRow).html(iDisplayIndex + 1);
+                    return nRow;
+                }
+            });
+
+        });
+    </script>
+}

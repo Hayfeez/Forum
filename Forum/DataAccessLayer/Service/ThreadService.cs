@@ -25,9 +25,24 @@ namespace Forum.DataAccessLayer.Service
                 var threads = _dbContext.Threads
                         .Include(a => a.Category)
                             .ThenInclude(b => b.Channel)
-                                .ThenInclude(c => c.Subscriber)
                         .Include(a=>a.ThreadReplies)
-                        .Where(a => a.Category.Channel.Subscriber.Id == subscriberId);
+                        .Where(a => a.Category.Channel.SubscriberId == subscriberId);
+
+                return threads;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public IEnumerable<Thread> GetAllThreadsByUser(long subscriberUserId)
+        {
+            try
+            {
+                var threads = _dbContext.Threads
+                    .Where(a=>a.SubscriberUserId == subscriberUserId)
+                    .Include(a => a.ThreadReplies);
 
                 return threads;
             }
@@ -42,10 +57,10 @@ namespace Forum.DataAccessLayer.Service
             try
             {
                 var threads = _dbContext.Threads
+                     .Include(a => a.SubscriberUser)
                         .Include(a => a.Category)
                             .ThenInclude(b => b.Channel)
-                                .ThenInclude(c => c.Subscriber)
-                        .Where(a => a.Category.Channel.Subscriber.Id == subscriberId)
+                        .Where(a => a.Category.Channel.SubscriberId == subscriberId)
                         .OrderByDescending(a => a.DateCreated)
                         .Take(num);
 
@@ -63,8 +78,9 @@ namespace Forum.DataAccessLayer.Service
             {
                 var threads = _dbContext.Threads
                         .Include(a => a.Category)
-                            .ThenInclude(b => b.Channel)
-                        .Where(a => a.Category.Channel.Id == channelId);
+                           .ThenInclude(b => b.Channel)
+                        .Include(a => a.SubscriberUser)
+                        .Where(a => a.Category.ChannelId == channelId);
 
                 if (categoryId != null)
                     threads = threads.Where(a => a.Id == categoryId);
@@ -80,10 +96,10 @@ namespace Forum.DataAccessLayer.Service
         public Thread GetThreadById(string title)
         {
             try
-            {
+            {               
                 var topic = _dbContext.Threads.Where(a => a.Title == title)
+                    .Include(a=>a.ThreadInfo)
                     .Include(a=>a.Category).ThenInclude(b=>b.Channel)
-                    .Include(a => a.ThreadReplies).ThenInclude(b => b.SubscriberUser)
                     .Include(a => a.SubscriberUser).FirstOrDefault();
 
                 return topic;
@@ -135,13 +151,15 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-        public async  Task<DbActionsResponse> UpdateThread(long threadId, string newContent)
+        public async  Task<DbActionsResponse> UpdateThread(long threadId, string newContent, long userId)
         {
             try
             {
                 var existingThread = _dbContext.Threads.Where(a => a.Id == threadId).FirstOrDefault();
                 if (existingThread == null) return DbActionsResponse.NotFound;
-             
+
+                if (existingThread.SubscriberUserId != userId) return DbActionsResponse.DeleteDenied;
+
                 existingThread.Content = newContent;
 
                 _dbContext.Threads.Update(existingThread);
@@ -155,5 +173,84 @@ namespace Forum.DataAccessLayer.Service
                 throw ex;
             }
         }
+
+
+        #region ThreadReplies
+
+        public IEnumerable<ThreadReply> GetAllRepliesToThread(long threadId)
+        {
+            try
+            {
+                var replies = _dbContext.ThreadReplies
+                    .Where(a => a.ThreadId == threadId)
+                    .Include(b => b.SubscriberUser).ThenInclude(a=>a.ApplicationUser)
+                    .Include(a => a.UserThreadReplyInfos)
+                    .Include(a => a.ThreadReplyInfo);
+                        
+                return replies;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DbActionsResponse> CreateReply(ThreadReply reply)
+        {
+            try
+            {
+                _dbContext.ThreadReplies.Add(reply);
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
+
+                return DbActionsResponse.Failed;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DbActionsResponse> DeleteReply(long replyId)
+        {
+            try
+            {
+                var reply = _dbContext.ThreadReplies.Where(a => a.Id == replyId).SingleOrDefault();
+                if (reply == null) return DbActionsResponse.NotFound;
+
+
+                _dbContext.ThreadReplies.Remove(reply);
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
+
+                return DbActionsResponse.Failed;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DbActionsResponse> UpdateReply(long replyId, string newContent)
+        {
+            try
+            {
+                var oldReply = _dbContext.ThreadReplies.Where(a => a.Id == replyId).FirstOrDefault();
+                if (oldReply == null) return DbActionsResponse.NotFound;
+
+                oldReply.Content = newContent;
+
+                _dbContext.ThreadReplies.Update(oldReply);
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
+
+                return DbActionsResponse.Failed;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion
     }
 }

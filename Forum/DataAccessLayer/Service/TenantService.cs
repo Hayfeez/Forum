@@ -121,7 +121,7 @@ namespace Forum.DataAccessLayer.Service
             }
         }
 
-        public async Task<DbActionsResponse> UpdateSubscriber(int subscriberId, UpdateSubscriberSetting model)
+        public async Task<DbActionsResponse> UpdateSubscriber(int subscriberId, SaveSubscriberInfo model)
         {
             try
             {
@@ -137,6 +137,8 @@ namespace Forum.DataAccessLayer.Service
                 existing.HeaderImageUrl = model.HeaderImageUrl;
                 existing.LogoImageUrl = model.LogoImageUrl;
                 existing.IsPublic = model.IsPublic;
+                existing.DownvoteLimit = model.DownvoteLimit;
+                existing.FlagLimit = model.FlagLimit;
 
                 _dbContext.Tenants.Update(existing);
                 if (await _dbContext.SaveChangesAsync() > 0)

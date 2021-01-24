@@ -18,6 +18,10 @@ namespace Forum.Models
         public  SubscriberUser SubscriberUser { get; set; }
         public  Category Category { get; set; }
 
+        public ThreadInfo ThreadInfo { get; set; }
+        public IEnumerable<ThreadHistory> ThreadHistories { get; set; }
         public  IEnumerable<ThreadReply> ThreadReplies { get; set; }
+
+       // public IEnumerable<UserThreadInfo> UserThreadInfos { get; set; }
     }
 }

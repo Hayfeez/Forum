@@ -1,9 +1,9 @@
 ﻿@model List<ChannelVM>
-@inject LoadStaticContent  _staticData;
+@*@inject LoadStaticContent  _staticData; *@
 
 <div class="nav">
     <div class="nav__categories js-dropdown col-md-6 col-lg-6 col-xs-6">
-        <div class="nav__select col-md-6 col-lg-6 col-xs-6">
+        <div class="nav__select col-md-7 col-lg-7 col-xs-7">
             <div class="btn-select" data-dropdown-btn="categories">All Channels</div>
             <nav class="dropdown dropdown--design-01" data-dropdown-list="categories">
                 <ul class="dropdown__catalog row">
@@ -21,30 +21,30 @@
                 </ul>
             </nav>
         </div>
-          <div class="nav__select col-md-6 col-lg-6 col-xs-6">
-            <div class="btn-select" data-dropdown-btn="tags">Tags</div>
-            <div class="dropdown dropdown--design-01" data-dropdown-list="tags">
-                <div class="tags">
-                    @{ List<Tags> tags = _staticData.LoadTags(); }
-                    @if (tags.Count() > 0)
-                    {
-                        @foreach (var item in tags)
+        @* <div class="nav__select col-md-5 col-lg-5 col-xs-5">
+                <div class="btn-select" data-dropdown-btn="tags">Tags</div>
+                <div class="dropdown dropdown--design-01" data-dropdown-list="tags">
+                    <div class="tags">
+                        @{ List<Tags> tags = _staticData.LoadTags(); }
+                        @if (tags.Count() > 0)
                         {
-                            <a href="#" class="@item.ColourCode">@item.Text</a>
+                            @foreach (var item in tags)
+                            {
+                                <a href="#" class="@item.ColourCode">@item.Text</a>
+                            }
                         }
-                    }
 
+                    </div>
                 </div>
-            </div>
-        </div>
+            </div> *@
     </div>
     <div class="nav__menu js-dropdown col-md-5 col-lg-5 col-xs-5">
         <ul>
-            <li id="fp"><a asp-controller="Threads" asp-action="Index" asp-route-tag="fp" >FrontPage</a></li>
+            <li id="fp"><a asp-controller="Threads" asp-action="Index" asp-route-tag="fp">FrontPage</a></li>
             <li id="lt"><a asp-controller="Threads" asp-action="Index" asp-route-tag="lt">Latest</a></li>
             <li id="pp"><a asp-controller="Threads" asp-action="Index" asp-route-tag="pp">Popular</a></li>
             <li id="nr"><a asp-controller="Threads" asp-action="Index" asp-route-tag="nr">No Replies</a></li>
         </ul>
     </div>
-    
+
 </div>

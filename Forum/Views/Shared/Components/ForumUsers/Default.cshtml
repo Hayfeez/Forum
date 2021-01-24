@@ -1,0 +1,41 @@
+﻿@model List<TenantUsersList>
+
+<div class="card-body card-dashboard table-responsive">
+    <h5> Users </h5>
+    <table class="table table-striped table-bordered file-export" id="Users">
+        <thead>
+            <tr>
+                <th>S/No</th>
+                <th>Email</th>
+                <th>Rating</th>
+                <th>Role</th>
+                <th>Date Joined</th>
+                <th> </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td></td>
+                    <td>@item.Email</td>
+                    <td>@item.Rating</td>
+                    <td>@item.UserRole</td>
+                    <td>@item.DateJoined.ToShortDateString()</td>
+                    <td>
+                        @if (User.Identity.GetSubscriberUserId() != item.Id)
+                        {
+                            <button class="btn btn-primary" onclick="changeRole(@item.ApplicationUserId)"><i class="ft-edit"></i> Change Role</button>
+                            <button class="btn btn-success" onclick="deleteUser(@item.ApplicationUserId)"><i class="ft-trash"></i> Delete User</button>
+
+                        }
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+
+
+

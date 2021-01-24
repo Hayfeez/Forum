@@ -1,0 +1,31 @@
+﻿@model SearchViewModel
+@{
+    ViewData["Title"] = "Search";
+}
+
+<div class="row">
+    <div class="posts col-lg-12 col-md-12">
+       
+        <div class="posts__body">
+            
+                @if (Model.Threads.Count() > 0)
+                {
+                    <p>@Model.ResultCount result(s) found</p>
+
+                   <partial name="_ThreadsList" model="Model.Threads" />
+                }
+                else
+                {
+                    <p>
+                       No results found for the search text "@Model.SearchQuery"
+                        Click <a asp-action="Index" asp-controller="Home">
+                            here
+                        </a> to go back to home page
+                    </p>
+                }
+            </div>     
+       
+
+    </div>
+   
+</div>

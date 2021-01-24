@@ -114,10 +114,11 @@ namespace Forum
             services.AddScoped<ITenantService, TenantService>();
             services.AddScoped<IThreadService, ThreadService>();
             services.AddScoped<IChannelService, ChannelService>();
-            services.AddScoped<IReplyService, ReplyService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddTransient<ISearchService, SearchService>();
             services.AddScoped<IPinnedPostService, PinnedPostService>();
+            services.AddScoped<IThreadInfoService, ThreadInfoService>();
+            services.AddScoped<IForumUserService, ForumUserService>();
 
         }
 
@@ -151,7 +152,9 @@ namespace Forum
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-           
+            app.UseStatusCodePages();
+           // app.UseStatusCodePagesWithRedirects();
+
             app.UseMultitenancy<Subscriber>();
             // app.UseMiddleware<TenantUnresolvedRedirectMiddleware<Subscriber>>("http://saaskit.net", false);
             // app.UseMiddleware<TenantUnresolvedRedirectMiddleware<Subscriber>>("/tenantnotfound.html", false);

@@ -1,0 +1,15 @@
+﻿@model IEnumerable<CategoryVM>
+
+<div class="sidebarblock">
+    <h3>Categories</h3>
+    <div class="divline"></div>
+    <div class="blocktxt">
+        @{
+            @foreach (var item in Model.Take(10))
+            {
+                <a asp-action="CategoryThreads" asp-controller="Channels" asp-route-category="@item.Name">@item.Name</a>
+            }
+        }
+
+    </div>
+</div>

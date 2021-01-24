@@ -1,0 +1,38 @@
+﻿@model List<TenantInviteList>
+
+        <div class="card-body card-dashboard table-responsive">
+            <h5> Invites </h5>
+            <table class="table table-striped table-bordered file-export" id="Invites">
+                <thead>
+                    <tr>
+                        <th>S/No</th>
+                        <th>Email</th>
+                        <th>Invite Code</th>
+                        <th>Date</th>
+                        <th> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td></td>
+                            <td>@item.Email</td>
+                            <td>@item.InviteCode</td>
+                            <td>@item.DateCreated.ToShortDateString()</td>
+
+                            <td>
+                                @if (User.Identity.GetSubscriberUserId() != item.Id)
+                                {
+                                    <button class="btn-link btn-primary" onclick="cancelInvite(@item.Id)"><i class="ft-cancel"></i> Cancel </button>
+                                    <button class="btn-link btn-warning" onclick="resendEmail(@item.Email)"><i class="ft-edit"></i> Resend Invite </button>
+
+                                }
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+  

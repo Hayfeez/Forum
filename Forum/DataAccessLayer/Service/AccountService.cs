@@ -141,9 +141,66 @@ namespace Forum.DataAccessLayer.Service
                 var existingUser = _dbContext.SubscriberUsers.SingleOrDefault(a => a.Id == user.Id && a.IsActive);
                 if (existingUser == null)
                     return DbActionsResponse.NotFound;
-
+                
                 existingUser.ProfileImageUrl = user.ProfileImageUrl;
                 
+                _dbContext.SubscriberUsers.Update(existingUser);
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
+
+                return DbActionsResponse.Failed;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public SubscriberUser GetSubscriberUserWithEmail(string email, int subscriberId)
+        {
+            try
+            {
+                return _dbContext.SubscriberUsers
+                      .SingleOrDefault(a => a.Email == email && a.SubscriberId == subscriberId && a.IsActive);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<DbActionsResponse> ResetSubscriberUserPassword(string email, string newPassword)
+        {
+            try
+            {
+                var existingUser = _dbContext.SubscriberUsers.SingleOrDefault(a => a.Email == email && a.IsActive);
+                if (existingUser == null)
+                    return DbActionsResponse.NotFound;
+
+                existingUser.Password = newPassword;
+
+                _dbContext.SubscriberUsers.Update(existingUser);
+                if (await _dbContext.SaveChangesAsync() > 0)
+                    return DbActionsResponse.Success;
+
+                return DbActionsResponse.Failed;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<DbActionsResponse> ChangeSubscriberUserPassword(string email, string oldPassword, string newPassword)
+        {
+            try
+            {
+                var existingUser = _dbContext.SubscriberUsers.SingleOrDefault(a => a.Email == email && a.IsActive);
+                if (existingUser == null)
+                    return DbActionsResponse.NotFound;
+
+                if (existingUser.Password != oldPassword) return DbActionsResponse.DeleteDenied;
+
+                existingUser.Password = newPassword;
+
                 _dbContext.SubscriberUsers.Update(existingUser);
                 if (await _dbContext.SaveChangesAsync() > 0)
                     return DbActionsResponse.Success;
